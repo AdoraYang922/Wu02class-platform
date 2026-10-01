@@ -81,7 +81,6 @@
             margin-right: 12px; margin-bottom: 12px; font-family: inherit;
         }
 
-        /* ---------------- 學生端介面 (打卡站) ---------------- */
         #student-view { 
             padding: 0 40px 40px 40px; 
             flex: 1; 
@@ -130,11 +129,8 @@
 
         .student-main-layout { display: flex; gap: 35px; max-width: 1700px; margin: 0 auto; width: 100%; flex: 1; align-items: flex-start; }
         .student-grid-container { flex: 1; }
-        
-        /* 學生卡片網格：1:1 比例與放大尺寸 */
         .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 30px; }
 
-        /* 學生卡片：1:1 正方形比例，內容全部靠下推 */
         .student-card {
             background-size: cover;
             background-position: center;
@@ -148,16 +144,15 @@
             transition: 0.2s; 
             position: relative;
             overflow: hidden;
-            aspect-ratio: 1 / 1; /* 強制 1:1 長寬比例 */
+            aspect-ratio: 1 / 1;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end; /* 將所有內部元素全部往下推至底部 */
+            justify-content: flex-end;
         }
         .student-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(25, 118, 210, 0.3); }
         .student-card.all-done { border-color: var(--success-color); border-width: 5px; }
         .student-card.has-pending { border-color: var(--danger-color); border-width: 5px; }
 
-        /* 確保內部文字與標籤正常顯示在上層 */
         .student-card > * {
             position: relative;
             z-index: 2;
@@ -172,7 +167,6 @@
             flex-wrap: wrap;
         }
 
-        /* 加上白色細邊框（文字陰影效果），讓深色背景或照片上也能清晰顯示 */
         .student-name { 
             font-size: 46px; 
             font-weight: bold; 
@@ -197,7 +191,6 @@
         .shell-score { font-size: 24px; font-weight: bold; color: #d89e00; background-color: #fffde7; border-radius: 20px; padding: 6px 18px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .alligator-score { font-size: 24px; font-weight: bold; color: #2e7d32; background-color: #e8f5e9; border-radius: 20px; padding: 6px 18px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-        /* ---------------- 右側專區：公告與乙棵成長樹 ---------------- */
         .sidebar-right-container {
             width: 400px;
             display: flex;
@@ -229,102 +222,35 @@
         }
         .tree-card h3 { margin-top: 0; color: #2e7d32; font-size: 28px; margin-bottom: 12px; border-bottom: 2px solid var(--bg-color); padding-bottom: 10px; }
         
-        .tree-visual-box {
-            font-size: 80px;
-            margin: 10px 0;
-            transition: 0.3s;
-        }
-        .tree-stage-name {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2e7d32;
-            margin-bottom: 8px;
-        }
-        .tree-progress-bar-bg {
-            background-color: #e0e0e0;
-            border-radius: 10px;
-            height: 18px;
-            width: 100%;
-            overflow: hidden;
-            margin: 12px 0 8px 0;
-        }
-        .tree-progress-bar-fill {
-            background-color: var(--success-color);
-            height: 100%;
-            width: 0%;
-            transition: width 0.4s ease;
-        }
-        .tree-stats-text {
-            font-size: 18px;
-            color: #555;
-            font-weight: bold;
-        }
+        .tree-visual-box { font-size: 80px; margin: 10px 0; transition: 0.3s; }
+        .tree-stage-name { font-size: 24px; font-weight: bold; color: #2e7d32; margin-bottom: 8px; }
+        .tree-progress-bar-bg { background-color: #e0e0e0; border-radius: 10px; height: 18px; width: 100%; overflow: hidden; margin: 12px 0 8px 0; }
+        .tree-progress-bar-fill { background-color: var(--success-color); height: 100%; width: 0%; transition: width 0.4s ease; }
+        .tree-stats-text { font-size: 18px; color: #555; font-weight: bold; }
 
-        .tree-rank-box {
-            margin-top: 15px;
-            text-align: left;
-            background: #f9f9f9;
-            padding: 12px;
-            border-radius: 8px;
-            max-height: 180px;
-            overflow-y: auto;
-        }
+        .tree-rank-box { margin-top: 15px; text-align: left; background: #f9f9f9; padding: 12px; border-radius: 8px; max-height: 180px; overflow-y: auto; }
         .tree-rank-box h4 { margin: 0 0 8px 0; font-size: 18px; color: var(--sidebar-bg); text-align: center; }
         .tree-rank-list { list-style: none; padding: 0; margin: 0; font-size: 16px; }
         .tree-rank-list li { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #eee; }
 
-        /* ---------------- 右下角電子時鐘 ---------------- */
         .digital-clock-container {
-            position: fixed;
-            bottom: 25px;
-            right: 35px;
+            position: fixed; bottom: 25px; right: 35px;
             background: linear-gradient(135deg, #121212, #1e1e1e);
-            border: 4px solid #00ff66;
-            border-radius: 18px;
-            padding: 18px 32px;
-            color: #00ff66;
-            font-family: 'Courier New', Courier, monospace;
-            text-align: center;
+            border: 4px solid #00ff66; border-radius: 18px; padding: 18px 32px;
+            color: #00ff66; font-family: 'Courier New', Courier, monospace; text-align: center;
             box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 255, 102, 0.2);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            pointer-events: none; 
+            z-index: 100; display: flex; flex-direction: column; align-items: center; pointer-events: none; 
         }
-        .digital-clock-time {
-            font-size: 58px;
-            font-weight: bold;
-            letter-spacing: 3px;
-            text-shadow: 0 0 15px #00ff66, 0 0 30px rgba(0, 255, 102, 0.5);
-            line-height: 1.1;
-        }
-        .digital-clock-date {
-            font-size: 22px;
-            color: #aaeebb;
-            margin-top: 6px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            letter-spacing: 1px;
-            text-shadow: none;
-            font-weight: bold;
-        }
+        .digital-clock-time { font-size: 58px; font-weight: bold; letter-spacing: 3px; text-shadow: 0 0 15px #00ff66, 0 0 30px rgba(0, 255, 102, 0.5); line-height: 1.1; }
+        .digital-clock-date { font-size: 22px; color: #aaeebb; margin-top: 6px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; letter-spacing: 1px; text-shadow: none; font-weight: bold; }
 
-        /* ---------------- 學生專屬個人面板 ---------------- */
-        #student-personal-view {
-            display: none; padding: 40px; flex: 1; overflow-y: auto; background-color: var(--bg-color);
-        }
-        .personal-dashboard-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 25px; max-width: 1300px; margin: 0 auto;
-        }
-        .personal-card {
-            background: white; padding: 30px; border-radius: 14px; box-shadow: 0 6px 15px rgba(0,0,0,0.06);
-            border-top: 5px solid var(--primary-light);
-        }
+        #student-personal-view { display: none; padding: 40px; flex: 1; overflow-y: auto; background-color: var(--bg-color); }
+        .personal-dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; max-width: 1300px; margin: 0 auto; }
+        .personal-card { background: white; padding: 30px; border-radius: 14px; box-shadow: 0 6px 15px rgba(0,0,0,0.06); border-top: 5px solid var(--primary-light); }
         .personal-card h3 { color: var(--primary-color); margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 12px; font-size: 26px; }
         .personal-task-list { list-style: none; padding: 0; margin: 0; font-size: 20px; }
         .personal-task-list li { padding: 12px 0; border-bottom: 1px dashed #ccc; }
 
-        /* ---------------- 彈出視窗共用 ---------------- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.55); display: none; justify-content: center; align-items: center; z-index: 1000;
@@ -344,9 +270,7 @@
         .task-list ul { margin: 18px 0 0 0; padding-left: 35px; }
         .task-list li { margin-bottom: 20px; line-height: 1.6; font-size: 26px; }
 
-        .gacha-card-container {
-            display: flex; justify-content: center; gap: 25px; margin: 35px 0; perspective: 1000px; flex-wrap: wrap;
-        }
+        .gacha-card-container { display: flex; justify-content: center; gap: 25px; margin: 35px 0; perspective: 1000px; flex-wrap: wrap; }
         .gacha-card {
             width: 300px; height: 450px; background: linear-gradient(135deg, #ffc107, #ff9800);
             border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -358,8 +282,7 @@
         
         .gacha-card.spinning {
             animation: cardSpinGlow 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            pointer-events: none;
-            z-index: 10;
+            pointer-events: none; z-index: 10;
         }
         @keyframes cardSpinGlow {
             0% { transform: rotateY(0deg) scale(1); filter: brightness(1); box-shadow: 0 0 15px #ff9800; }
@@ -369,11 +292,9 @@
 
         .gacha-card.flipped {
             background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-            color: #2e7d32; border-color: #4caf50;
-            font-size: 30px; text-align: center; line-height: 1.6;
+            color: #2e7d32; border-color: #4caf50; font-size: 30px; text-align: center; line-height: 1.6;
         }
 
-        /* ---------------- 老師後台介面 ---------------- */
         #teacher-view { display: none; height: 100%; flex-direction: row; }
         .sidebar { width: 280px; background-color: var(--sidebar-bg); color: white; padding: 25px 0; display: flex; flex-direction: column; flex-shrink: 0; }
         .sidebar h2 { text-align: center; color: var(--secondary-color); margin-bottom: 30px; font-size: 28px;}
@@ -451,13 +372,11 @@
             </div>
             
             <div class="sidebar-right-container">
-                <!-- 公告專區 -->
                 <div class="student-announcements">
                     <h3>📢 班級最新公告</h3>
                     <ul id="student-announcement-list"></ul>
                 </div>
 
-                <!-- 乙棵成長樹專區 -->
                 <div class="tree-card">
                     <h3>🌳 乙棵成長樹</h3>
                     <div class="tree-visual-box" id="tree-visual">🌱</div>
@@ -598,7 +517,6 @@
                 </div>
             </div>
 
-            <!-- 學生分組與小組海螺加扣分管理專區 -->
             <div id="admin-groups" class="admin-section">
                 <div class="card">
                     <h3 style="color: var(--primary-color);">👥 學生分組設定</h3>
@@ -732,7 +650,6 @@
                 </div>
             </div>
 
-            <!-- 學生獎勵積分 (海螺與鱷魚) 區塊 -->
             <div id="admin-points" class="admin-section">
                 <div class="card" style="background-color: #e8f5e9; border-top: 5px solid var(--success-color);">
                     <h3 style="color: #2e7d32; margin-top: 0;">🎯 批次座號快速加分小幫手</h3>
@@ -785,7 +702,6 @@
                 </div>
             </div>
 
-            <!-- 乙棵成長樹管理 (加扣分) 專區 -->
             <div id="admin-tree" class="admin-section">
                 <div class="card" style="border-top: 5px solid var(--success-color);">
                     <h3 style="color: #2e7d32; margin-top: 0;">🌳 乙棵成長樹經驗值手動加扣分管理</h3>
@@ -819,7 +735,7 @@
                 </div>
                 <div class="card" style="border-top: 5px solid var(--success-color);">
                     <h3 style="color: var(--success-color); margin-top: 0;">💾 班級資料備份與還原 (匯出 / 匯入)</h3>
-                    <p style="font-size: 16px; color: #666;">備份所有學生名單、積分、任務與打卡紀錄，方便轉移到另一台電腦使用！</p>
+                    <p style="font-size: 16px; color: #666;">備份所有學生名單、積分、照片、任務與打卡紀錄！</p>
                     <div style="display: flex; gap: 15px; margin-top: 18px; flex-wrap: wrap; align-items: center;">
                         <button class="btn btn-success" onclick="exportBackupData()">📥 一鍵下載備份檔 (JSON)</button>
                         <div style="border-left: 2px solid #ccc; height: 35px; margin: 0 10px;"></div>
@@ -848,7 +764,6 @@
         </div>
     </div>
 
-    <!-- 所有彈出視窗 Modal -->
     <div class="modal-overlay" id="checkin-success-modal" style="z-index: 1100;">
         <div class="modal-content" style="max-width: 600px; padding: 60px;">
             <div style="font-size: 80px; margin-bottom: 20px;">🎉</div>
@@ -971,7 +886,7 @@
 
     <div class="modal-overlay" id="student-login-modal">
         <div class="modal-content" style="max-width: 500px;">
-            <h2 style="font-size: 32px;">👨‍🎓 學生個人面板登入</h2>
+            <h2 style="font-size: 32px;">👨‍‍🎓 學生個人面板登入</h2>
             <input type="number" id="login-seat-input" placeholder="請輸入「座號」" style="width: 80%; text-align:center; font-size:22px; padding:15px; margin-bottom:18px;">
             <input type="password" id="login-password-input" placeholder="請輸入密碼 (預設為座號)" style="width: 80%; text-align:center; font-size:22px; padding:15px;">
             <br><br>
@@ -1013,7 +928,7 @@
 
         window.onload = function() {
             loadDataFromStorage();
-            checkAndCleanupExpiredCompletedTasks(); // 核心：清理過期的已完成任務
+            checkAndCleanupExpiredCompletedTasks();
             checkDailyResets();
             checkPraiseExpirations();
             setDefaultTaskDeadlines();
@@ -1021,7 +936,6 @@
             startLiveClock();
         };
 
-        // 更新核心函數：檢查已完成任務是否超過「期限當天的 23:59 分」（即進入隔天 00:00）才進行清除
         function checkAndCleanupExpiredCompletedTasks() {
             const now = new Date();
             let changed = false;
@@ -1029,16 +943,13 @@
             students.forEach(student => {
                 if (student.tasks && student.tasks.length > 0) {
                     const originalLength = student.tasks.length;
-                    // 過濾條件：保留「未完成」或者「已完成但期限當天 23:59 分還沒過」的任務
                     student.tasks = student.tasks.filter(task => {
-                        if (!task.completed) return true; // 尚未完成的保留
-                        if (!task.deadline) return true;  // 沒有設定期限的已完成任務保留
+                        if (!task.completed) return true;
+                        if (!task.deadline) return true;
 
                         const deadlineDate = new Date(task.deadline);
-                        // 計算期限當天的 23:59:59 結束時間點
                         const deadlineNightEnd = new Date(deadlineDate.getFullYear(), deadlineDate.getMonth(), deadlineDate.getDate(), 23, 59, 59);
 
-                        // 如果目前時間已經超過了該期限當天的 23:59:59，且任務已完成 -> 刪除（回傳 false）
                         if (now > deadlineNightEnd) {
                             return false; 
                         }
@@ -1084,32 +995,27 @@
             if (selectedTaskInput && !selectedTaskInput.value) selectedTaskInput.value = `${y}-${m}-${d}T23:59`;
         }
 
-        // ==================== JSONBin.io 雲端同步設定 ====================
-        const JSONBIN_BIN_ID = "6abdbb2fac6210605a0780a6";
-        const JSONBIN_MASTER_KEY = "$2a$10$CVcW4JD58e9ZkflI0DKU/ek9Y/Aqmhi66WZO/Uo39wHLGdYFMfd.W";
+        // ==================== Firebase 雲端即時同步設定 ====================
+        // 請將下方引號內的網址替換為您自己的 Firebase Realtime Database 網址
+        const FIREBASE_URL = "https://class02-8cb8e-default-rtdb.firebaseio.com/";
         let isCloudSyncing = false;
 
         function loadDataFromStorage() {
             const savedPlatformName = localStorage.getItem('class_platform_name');
             if (savedPlatformName) platformName = savedPlatformName;
 
-            fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-                headers: {
-                    'X-Master-Key': JSONBIN_MASTER_KEY
-                }
-            })
+            fetch(FIREBASE_URL + "classData.json")
             .then(response => response.json())
-            .then(result => {
-                const data = result.record;
+            .then(data => {
                 if (data && data.students) {
                     applyCloudData(data);
                 } else {
-                    saveDataToStorage(); // 若雲端無資料則初始化
+                    saveDataToStorage();
                 }
                 refreshAllViews();
             })
             .catch(err => {
-                console.log("讀取雲端資料失敗，改用本機預設值", err);
+                console.log("讀取 Firebase 失敗，改用本機預設值", err);
                 if (students.length === 0) {
                     students = JSON.parse(JSON.stringify(defaultStudents));
                     announcements = JSON.parse(JSON.stringify(defaultAnnouncements));
@@ -1117,15 +1023,12 @@
                 }
             });
 
-            // 每隔 5 秒自動向雲端同步抓取最新狀態（實現多台裝置同步）
+            // 每隔 5 秒自動同步 Firebase 最新狀態
             setInterval(() => {
                 if (isCloudSyncing) return;
-                fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-                    headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
-                })
+                fetch(FIREBASE_URL + "classData.json")
                 .then(res => res.json())
-                .then(result => {
-                    const data = result.record;
+                .then(data => {
                     if (data && data.students) {
                         isCloudSyncing = true;
                         applyCloudData(data);
@@ -1167,7 +1070,6 @@
             if (data.studentGroups) studentGroups = data.studentGroups;
         }
 
-        // 將資料儲存並更新至雲端
         function saveDataToStorage() {
             if (isCloudSyncing) return;
             const backupData = {
@@ -1180,15 +1082,12 @@
                 studentGroups: studentGroups
             };
 
-            fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+            fetch(FIREBASE_URL + "classData.json", {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': JSONBIN_MASTER_KEY
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(backupData)
             }).catch(e => {
-                console.error("雲端同步失敗", e);
+                console.error("Firebase 同步失敗", e);
             });
         }
 
@@ -1196,7 +1095,7 @@
             const nameInput = document.getElementById('group-name-input').value.trim();
             const seatsInput = document.getElementById('group-seats-input').value.trim();
             if (!nameInput || !seatsInput) {
-                showAdminAlert("提示", "❌ 請輸入組別名稱與組員座號！", "⚠️️");
+                showAdminAlert("提示", "❌ 請輸入組別名稱與組員座號！", "⚠");
                 return;
             }
             let seats = seatsInput.split(/[\n,，\s]+/).map(s => parseInt(s.trim())).filter(s => !isNaN(s));
@@ -1737,7 +1636,7 @@
                 if (dateEl) dateEl.innerText = `民國${year}年${month}月${date}日`;
                 
                 checkPraiseExpirations();
-                checkAndCleanupExpiredCompletedTasks(); // 每秒時鐘跳動時也進行跨日過期清理檢查
+                checkAndCleanupExpiredCompletedTasks();
                 const isChanged = checkDailyResets();
                 if (isChanged) refreshAllViews();
             }
@@ -1771,7 +1670,6 @@
             saveDataToStorage();
         }
 
-        // ---------------- 乙棵成長樹核心邏輯 ----------------
         const treeStages = [
             { name: "第一階段 - 種子期", max: 500, icon: "🌱" },
             { name: "第二階段 - 萌芽期", max: 700, icon: "🌿" },
@@ -2162,7 +2060,6 @@
                             if (!isOverdue) {
                                 triggerConfetti();
                                 
-                                // 只有「全班任務」完成時，才給予海螺獎勵與大樹加分
                                 if (task.isClassTask) {
                                     const allDone = isAllTasksCompleted(student);
                                     if (allDone && !student.shellRewardedToday) {
@@ -2181,7 +2078,6 @@
                                     })();
                                     addTreePoints(student, index, hasClassTaskDone, hasValidCheckIn);
                                 } else {
-                                    // 個人任務完成：不加海螺、不加樹，僅提示完成
                                     showAdminAlert("個人任務完成", `✅ ${student.name} 已完成個人指定任務！(個人任務不列入海螺與大樹加分)`, "👍");
                                 }
                             } else {
@@ -2436,7 +2332,7 @@
                     student.tasks.splice(taskIndex, 1);
                     saveDataToStorage();
                     refreshAllViews();
-                    showAdminAlert("收回成功", `✅ 已成功收回該學生的任務！`, "🗑️");
+                    showAdminAlert("收回成功", `✅ 已成功收回該學生的任務！`, "🗑️️");
                 }
             }
         }
@@ -2931,7 +2827,7 @@
             }
         }
         function clearAllTasks() {
-            if(confirm("⚠️️ 警告：確定要清空「全班」目前所有任務嗎？此操作無法復原！")) {
+            if(confirm("⚠ 警告：確定要清空「全班」目前所有任務嗎？此操作無法復原！")) {
                 students.forEach(student => { student.tasks = []; student.shellRewardedToday = false; });
                 refreshAllViews(); 
                 showAdminAlert("清空成功", "全班任務已清空！", "🗑️");
