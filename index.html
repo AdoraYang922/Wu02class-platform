@@ -886,7 +886,7 @@
 
     <div class="modal-overlay" id="student-login-modal">
         <div class="modal-content" style="max-width: 500px;">
-            <h2 style="font-size: 32px;">👨‍‍‍🎓 學生個人面板登入</h2>
+            <h2 style="font-size: 32px;">👨‍‍🎓 學生個人面板登入</h2>
             <input type="number" id="login-seat-input" placeholder="請輸入「座號」" style="width: 80%; text-align:center; font-size:22px; padding:15px; margin-bottom:18px;">
             <input type="password" id="login-password-input" placeholder="請輸入密碼 (預設為座號)" style="width: 80%; text-align:center; font-size:22px; padding:15px;">
             <br><br>
@@ -905,7 +905,9 @@
         let gachaLogs = [];
         let studentGroups = []; 
         let activeAdminStudentTaskId = null;
-        let isCloudLoaded = false; // 🔒 終極安全鎖：防止未載入時寫入覆蓋
+        
+        // 🔒 終極安全鎖：防止未從雲端成功抓取資料前覆蓋 Firebase
+        let isCloudLoaded = false; 
 
         const taskTagColors = {
             '潔牙': '#E91E63', 'Ｔ－ＢＡＬＬ': '#9C27B0', '籃球隊': '#FF5722',
@@ -992,25 +994,24 @@
             const savedPlatformName = localStorage.getItem('class_platform_name');
             if (savedPlatformName) platformName = savedPlatformName;
 
-            // 加上 cache: 'no-store' 防止瀏覽器快取舊資料
+            // 搭配 { cache: 'no-store' } 徹底強制瀏覽器繞過快取，向雲端拿最新資料
             fetch(FIREBASE_URL + "classData.json", { cache: 'no-store' })
             .then(response => response.json())
             .then(data => {
                 if (data && data.students && data.students.length > 0) {
                     applyCloudData(data);
-                    isCloudLoaded = true; // 🔒 成功從雲端抓到資料，解鎖寫入權限！
+                    isCloudLoaded = true; // 🔓 成功下載雲端資料，安全鎖解鎖！
                     refreshAllViews();
-                    console.log("成功載入 Firebase 雲端資料庫");
+                    console.log("成功從 Firebase 載入雲端資料庫並解鎖");
                 } else {
-                    console.log("雲端目前尚無學生資料，等待手動上傳備份");
+                    console.log("雲端目前尚無學生資料，安全鎖維持中");
                 }
             })
             .catch(err => {
                 console.log("讀取 Firebase 失敗", err);
-                refreshAllViews();
             });
 
-            // 每隔 5 秒自動同步
+            // 每隔 5 秒自動與雲端同步
             setInterval(() => {
                 if (isCloudSyncing || !isCloudLoaded) return;
                 fetch(FIREBASE_URL + "classData.json", { cache: 'no-store' })
@@ -1060,9 +1061,9 @@
         function saveDataToStorage() {
             if (isCloudSyncing) return;
             
-            // 🛑 終極安全防護：如果雲端資料還沒下載成功，絕對不能存檔覆蓋！
+            // 🛑 終極安全鎖攔截：若雲端資料未正式載入完成，絕對禁止覆蓋寫入！
             if (!isCloudLoaded) {
-                console.log("安全鎖阻攔：雲端資料尚未同步完成，禁止覆蓋寫入。");
+                console.log("安全鎖攔截：雲端資料尚未同步完成，禁止覆蓋寫入以防歸零。");
                 return;
             }
 
@@ -1096,7 +1097,7 @@
             else studentGroups.push({ name: nameInput, seats: seats });
             document.getElementById('group-name-input').value = '';
             document.getElementById('group-seats-input').value = '';
-            isCloudLoaded = true; // 確保允許寫入
+            isCloudLoaded = true;
             saveDataToStorage();
             refreshAllViews();
             showAdminAlert("儲存成功", `✅ 群組「${nameInput}」已成功儲存！`, "👥");
@@ -1212,7 +1213,7 @@
                             sidebarOrder = data.sidebarOrder || [];
                             gachaLogs = data.gachaLogs || [];
                             studentGroups = data.studentGroups || [];
-                            isCloudLoaded = true; // 強制解鎖允許上傳
+                            isCloudLoaded = true; // 強制解鎖以允許上傳
                             saveDataToStorage();
                             refreshAllViews();
                             showAdminAlert("還原成功", "✅ 班級所有資料已成功還原並寫入雲端！", "💾");
@@ -1256,7 +1257,7 @@
 
         function batchUpdateBirthdays() {
             const text = document.getElementById('batch-birthdays-input').value.trim();
-            if (!text) return showAdminAlert("提示", "❌ 請在文字框中輸入資料！", "⚠️️");
+            if (!text) return showAdminAlert("提示", "❌ 請在文字框中輸入資料！", "⚠");
             let birthdays = text.split(/[\n,，\s]+/).map(b => b.trim()).filter(b => b !== '');
             if (birthdays.length === 0) return showAdminAlert("提示", "❌ 無效資料！", "⚠️");
             students.sort((a, b) => a.seat - b.seat);
@@ -1431,7 +1432,9 @@
             const pwd = document.getElementById('login-password-input').value;
             const student = students.find(s => s.seat === seat);
 
-            if (student && student.password === pwd) {
+            const correctPwd = student && student.password ? student.password : seat.toString();
+
+            if (student && pwd === correctPwd) {
                 const now = new Date();
                 student.lastLoginTime = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
                 saveDataToStorage();
@@ -2687,7 +2690,7 @@
             const deadline = document.getElementById('selected-task-deadline').value;
             if(!taskText) return showAdminAlert("提示", "請輸入任務內容！", "⚠️");
             const checkboxes = document.querySelectorAll('.student-checkbox:checked');
-            if(checkboxes.length === 0) return showAdminAlert("提示", "請勾選學生！", "⚠️");
+            if(checkboxes.length === 0) return showAdminAlert("提示", "請勾選學生！", "⚠️️");
             const today = getTodayDateStr();
             checkboxes.forEach(cb => {
                 const student = students.find(s => s.id === parseInt(cb.value));
