@@ -1084,13 +1084,62 @@
             if (selectedTaskInput && !selectedTaskInput.value) selectedTaskInput.value = `${y}-${m}-${d}T23:59`;
         }
 
+        // ==================== JSONBin.io 雲端同步設定 ====================
+        const JSONBIN_BIN_ID = "6abdbb2fac6210605a0780a6";
+        const JSONBIN_MASTER_KEY = "$2a$10$CVcW4JD58e9ZkflI0DKU/ek9Y/Aqmhi66WZO/Uo39wHLGdYFMfd.W";
+        let isCloudSyncing = false;
+
         function loadDataFromStorage() {
             const savedPlatformName = localStorage.getItem('class_platform_name');
             if (savedPlatformName) platformName = savedPlatformName;
 
-            const savedStudents = localStorage.getItem('class_students');
-            if (savedStudents) {
-                students = JSON.parse(savedStudents);
+            fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+                headers: {
+                    'X-Master-Key': JSONBIN_MASTER_KEY
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                const data = result.record;
+                if (data && data.students) {
+                    applyCloudData(data);
+                } else {
+                    saveDataToStorage(); // 若雲端無資料則初始化
+                }
+                refreshAllViews();
+            })
+            .catch(err => {
+                console.log("讀取雲端資料失敗，改用本機預設值", err);
+                if (students.length === 0) {
+                    students = JSON.parse(JSON.stringify(defaultStudents));
+                    announcements = JSON.parse(JSON.stringify(defaultAnnouncements));
+                    dutyStudents = JSON.parse(JSON.stringify(defaultDuty));
+                }
+            });
+
+            // 每隔 5 秒自動向雲端同步抓取最新狀態（實現多台裝置同步）
+            setInterval(() => {
+                if (isCloudSyncing) return;
+                fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+                })
+                .then(res => res.json())
+                .then(result => {
+                    const data = result.record;
+                    if (data && data.students) {
+                        isCloudSyncing = true;
+                        applyCloudData(data);
+                        refreshAllViews();
+                        setTimeout(() => { isCloudSyncing = false; }, 500);
+                    }
+                }).catch(e => {});
+            }, 5000);
+        }
+
+        function applyCloudData(data) {
+            if (data.platformName) platformName = data.platformName;
+            if (data.students) {
+                students = data.students;
                 students.forEach(s => {
                     if (s.photoUrl === undefined) s.photoUrl = '';
                     if (s.alligator === undefined) s.alligator = 0;
@@ -1108,54 +1157,46 @@
                     if (s.completedTasksForTree === undefined) s.completedTasksForTree = {};
                     s.tasks.forEach(t => { if (t.isClassTask === undefined) t.isClassTask = true; });
                 });
-            } else {
-                students = JSON.parse(JSON.stringify(defaultStudents));
             }
-
-            const savedAnnouncements = localStorage.getItem('class_announcements');
-            if (savedAnnouncements) {
-                announcements = JSON.parse(savedAnnouncements);
-                announcements = announcements.map(a => typeof a === 'string' ? { text: a, color: '#333333', weight: 'normal' } : a);
-            } else {
-                announcements = JSON.parse(JSON.stringify(defaultAnnouncements));
+            if (data.announcements) {
+                announcements = data.announcements.map(a => typeof a === 'string' ? { text: a, color: '#333333', weight: 'normal' } : a);
             }
-
-            const savedDuty = localStorage.getItem('class_duty_students');
-            if (savedDuty) dutyStudents = JSON.parse(savedDuty);
-            else dutyStudents = JSON.parse(JSON.stringify(defaultDuty));
-
-            const savedSidebarOrder = localStorage.getItem('class_sidebar_order');
-            if (savedSidebarOrder) {
-                sidebarOrder = JSON.parse(savedSidebarOrder);
-                applySidebarOrder();
-            }
-
-            const savedGachaLogs = localStorage.getItem('class_gacha_logs');
-            if (savedGachaLogs) gachaLogs = JSON.parse(savedGachaLogs);
-
-            const savedGroups = localStorage.getItem('class_student_groups');
-            if (savedGroups) studentGroups = JSON.parse(savedGroups);
+            if (data.dutyStudents) dutyStudents = data.dutyStudents;
+            if (data.sidebarOrder) sidebarOrder = data.sidebarOrder;
+            if (data.gachaLogs) gachaLogs = data.gachaLogs;
+            if (data.studentGroups) studentGroups = data.studentGroups;
         }
 
+        // 將資料儲存並更新至雲端
         function saveDataToStorage() {
-            try {
-                localStorage.setItem('class_platform_name', platformName);
-                localStorage.setItem('class_students', JSON.stringify(students));
-                localStorage.setItem('class_announcements', JSON.stringify(announcements));
-                localStorage.setItem('class_duty_students', JSON.stringify(dutyStudents));
-                localStorage.setItem('class_sidebar_order', JSON.stringify(sidebarOrder));
-                localStorage.setItem('class_gacha_logs', JSON.stringify(gachaLogs));
-                localStorage.setItem('class_student_groups', JSON.stringify(studentGroups));
-            } catch (e) {
-                showAdminAlert("儲存空間警告", "⚠️ 瀏覽器儲存空間已滿！圖片可能過大，請嘗試移除部分照片或重新上傳較小檔案的圖片。", "⚠️");
-            }
+            if (isCloudSyncing) return;
+            const backupData = {
+                platformName: platformName,
+                students: students,
+                announcements: announcements,
+                dutyStudents: dutyStudents,
+                sidebarOrder: sidebarOrder,
+                gachaLogs: gachaLogs,
+                studentGroups: studentGroups
+            };
+
+            fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': JSONBIN_MASTER_KEY
+                },
+                body: JSON.stringify(backupData)
+            }).catch(e => {
+                console.error("雲端同步失敗", e);
+            });
         }
 
         function saveGroup() {
             const nameInput = document.getElementById('group-name-input').value.trim();
             const seatsInput = document.getElementById('group-seats-input').value.trim();
             if (!nameInput || !seatsInput) {
-                showAdminAlert("提示", "❌ 請輸入組別名稱與組員座號！", "⚠️");
+                showAdminAlert("提示", "❌ 請輸入組別名稱與組員座號！", "⚠️️");
                 return;
             }
             let seats = seatsInput.split(/[\n,，\s]+/).map(s => parseInt(s.trim())).filter(s => !isNaN(s));
@@ -1736,7 +1777,7 @@
             { name: "第二階段 - 萌芽期", max: 700, icon: "🌿" },
             { name: "第三階段 - 成長期", max: 900, icon: "🌳" },
             { name: "第四階段 - 茁壯期", max: 1200, icon: "🌲" },
-            { name: "第五階段 - 豐收期", max: 1400, icon: "🍎" }
+            { name: "第五階段 - 丰收期", max: 1400, icon: "🍎" }
         ];
         const totalTreeStagesMax = 500 + 700 + 900 + 1200 + 1400;
 
@@ -2890,7 +2931,7 @@
             }
         }
         function clearAllTasks() {
-            if(confirm("⚠️ 警告：確定要清空「全班」目前所有任務嗎？此操作無法復原！")) {
+            if(confirm("⚠️️ 警告：確定要清空「全班」目前所有任務嗎？此操作無法復原！")) {
                 students.forEach(student => { student.tasks = []; student.shellRewardedToday = false; });
                 refreshAllViews(); 
                 showAdminAlert("清空成功", "全班任務已清空！", "🗑️");
