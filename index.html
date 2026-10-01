@@ -998,46 +998,27 @@
         // ==================== Firebase 雲端即時同步設定 ====================
         // 請將下方引號內的網址替換為您自己的 Firebase Realtime Database 網址
         const FIREBASE_URL = "https://class02-8cb8e-default-rtdb.firebaseio.com/";
-        let isCloudSyncing = false;
+        let isCloudLoaded = false; // 雲端載入鎖
 
         function loadDataFromStorage() {
             const savedPlatformName = localStorage.getItem('class_platform_name');
             if (savedPlatformName) platformName = savedPlatformName;
 
-            // 加上 cache: 'no-store' 避免瀏覽器抓到舊快取
             fetch(FIREBASE_URL + "classData.json", { cache: 'no-store' })
             .then(response => response.json())
             .then(data => {
                 if (data && data.students && data.students.length > 0) {
-                    // 只有當雲端確實有資料時，才覆蓋本地資料
                     applyCloudData(data);
+                    isCloudLoaded = true; // 鎖定：代表已經成功從雲端抓過資料了！
                     refreshAllViews();
+                    console.log("成功從 Firebase 載入雲端資料！");
                 } else {
-                    // 如果雲端是空的，才把當前本地預設資料推上去
-                    saveDataToStorage();
-                    refreshAllViews();
+                    console.log("雲端目前無資料，等待手動上傳備份檔...");
                 }
             })
             .catch(err => {
-                console.log("讀取 Firebase 失敗，使用本機狀態", err);
-                refreshAllViews();
-                }
+                console.log("讀取 Firebase 失敗", err);
             });
-
-            // 每隔 5 秒自動同步 Firebase 最新狀態
-            setInterval(() => {
-                if (isCloudSyncing) return;
-                fetch(FIREBASE_URL + "classData.json")
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.students) {
-                        isCloudSyncing = true;
-                        applyCloudData(data);
-                        refreshAllViews();
-                        setTimeout(() => { isCloudSyncing = false; }, 500);
-                    }
-                }).catch(e => {});
-            }, 5000);
         }
 
         function applyCloudData(data) {
