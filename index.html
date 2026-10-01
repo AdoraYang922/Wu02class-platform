@@ -886,7 +886,7 @@
 
     <div class="modal-overlay" id="student-login-modal">
         <div class="modal-content" style="max-width: 500px;">
-            <h2 style="font-size: 32px;">👨‍‍🎓 學生個人面板登入</h2>
+            <h2 style="font-size: 32px;">👨‍‍‍🎓 學生個人面板登入</h2>
             <input type="number" id="login-seat-input" placeholder="請輸入「座號」" style="width: 80%; text-align:center; font-size:22px; padding:15px; margin-bottom:18px;">
             <input type="password" id="login-password-input" placeholder="請輸入密碼 (預設為座號)" style="width: 80%; text-align:center; font-size:22px; padding:15px;">
             <br><br>
@@ -905,6 +905,7 @@
         let gachaLogs = [];
         let studentGroups = []; 
         let activeAdminStudentTaskId = null;
+        let isCloudLoaded = false; // 🔒 終極安全鎖：防止未載入時寫入覆蓋
 
         const taskTagColors = {
             '潔牙': '#E91E63', 'Ｔ－ＢＡＬＬ': '#9C27B0', '籃球隊': '#FF5722',
@@ -950,30 +951,18 @@
                         const deadlineDate = new Date(task.deadline);
                         const deadlineNightEnd = new Date(deadlineDate.getFullYear(), deadlineDate.getMonth(), deadlineDate.getDate(), 23, 59, 59);
 
-                        if (now > deadlineNightEnd) {
-                            return false; 
-                        }
+                        if (now > deadlineNightEnd) return false; 
                         return true;
                     });
-
-                    if (student.tasks.length !== originalLength) {
-                        changed = true;
-                    }
+                    if (student.tasks.length !== originalLength) changed = true;
                 }
             });
-
-            if (changed) {
-                saveDataToStorage();
-            }
+            if (changed && isCloudLoaded) saveDataToStorage();
         }
 
         function triggerConfetti() {
             if (typeof confetti === 'function') {
-                confetti({
-                    particleCount: 120,
-                    spread: 80,
-                    origin: { y: 0.6 }
-                });
+                confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
             }
         }
 
@@ -996,29 +985,45 @@
         }
 
         // ==================== Firebase 雲端即時同步設定 ====================
-        // 請將下方引號內的網址替換為您自己的 Firebase Realtime Database 網址
-        const FIREBASE_URL = "https://class02-8cb8e-default-rtdb.firebaseio.com/";
-        let isCloudLoaded = false; // 雲端載入鎖
+        const FIREBASE_URL = "請將您的Firebase資料庫網址貼在這裡";
+        let isCloudSyncing = false;
 
         function loadDataFromStorage() {
             const savedPlatformName = localStorage.getItem('class_platform_name');
             if (savedPlatformName) platformName = savedPlatformName;
 
+            // 加上 cache: 'no-store' 防止瀏覽器快取舊資料
             fetch(FIREBASE_URL + "classData.json", { cache: 'no-store' })
             .then(response => response.json())
             .then(data => {
                 if (data && data.students && data.students.length > 0) {
                     applyCloudData(data);
-                    isCloudLoaded = true; // 鎖定：代表已經成功從雲端抓過資料了！
+                    isCloudLoaded = true; // 🔒 成功從雲端抓到資料，解鎖寫入權限！
                     refreshAllViews();
-                    console.log("成功從 Firebase 載入雲端資料！");
+                    console.log("成功載入 Firebase 雲端資料庫");
                 } else {
-                    console.log("雲端目前無資料，等待手動上傳備份檔...");
+                    console.log("雲端目前尚無學生資料，等待手動上傳備份");
                 }
             })
             .catch(err => {
                 console.log("讀取 Firebase 失敗", err);
+                refreshAllViews();
             });
+
+            // 每隔 5 秒自動同步
+            setInterval(() => {
+                if (isCloudSyncing || !isCloudLoaded) return;
+                fetch(FIREBASE_URL + "classData.json", { cache: 'no-store' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.students && data.students.length > 0) {
+                        isCloudSyncing = true;
+                        applyCloudData(data);
+                        refreshAllViews();
+                        setTimeout(() => { isCloudSyncing = false; }, 500);
+                    }
+                }).catch(e => {});
+            }, 5000);
         }
 
         function applyCloudData(data) {
@@ -1054,6 +1059,13 @@
 
         function saveDataToStorage() {
             if (isCloudSyncing) return;
+            
+            // 🛑 終極安全防護：如果雲端資料還沒下載成功，絕對不能存檔覆蓋！
+            if (!isCloudLoaded) {
+                console.log("安全鎖阻攔：雲端資料尚未同步完成，禁止覆蓋寫入。");
+                return;
+            }
+
             const backupData = {
                 platformName: platformName,
                 students: students,
@@ -1076,23 +1088,15 @@
         function saveGroup() {
             const nameInput = document.getElementById('group-name-input').value.trim();
             const seatsInput = document.getElementById('group-seats-input').value.trim();
-            if (!nameInput || !seatsInput) {
-                showAdminAlert("提示", "❌ 請輸入組別名稱與組員座號！", "⚠");
-                return;
-            }
+            if (!nameInput || !seatsInput) return showAdminAlert("提示", "❌ 請輸入組別名稱與組員座號！", "⚠");
             let seats = seatsInput.split(/[\n,，\s]+/).map(s => parseInt(s.trim())).filter(s => !isNaN(s));
-            if (seats.length === 0) {
-                showAdminAlert("提示", "❌ 座號格式不正確！", "⚠️");
-                return;
-            }
+            if (seats.length === 0) return showAdminAlert("提示", "❌ 座號格式不正確！", "⚠️");
             let existing = studentGroups.find(g => g.name === nameInput);
-            if (existing) {
-                existing.seats = seats;
-            } else {
-                studentGroups.push({ name: nameInput, seats: seats });
-            }
+            if (existing) existing.seats = seats;
+            else studentGroups.push({ name: nameInput, seats: seats });
             document.getElementById('group-name-input').value = '';
             document.getElementById('group-seats-input').value = '';
+            isCloudLoaded = true; // 確保允許寫入
             saveDataToStorage();
             refreshAllViews();
             showAdminAlert("儲存成功", `✅ 群組「${nameInput}」已成功儲存！`, "👥");
@@ -1113,11 +1117,8 @@
             group.seats.forEach(seatNum => {
                 let student = students.find(s => s.seat === seatNum);
                 if (student) {
-                    if (amount === 0) {
-                        student.points = 0;
-                    } else {
-                        student.points = Math.max(0, student.points + amount);
-                    }
+                    if (amount === 0) student.points = 0;
+                    else student.points = Math.max(0, student.points + amount);
                 }
             });
             saveDataToStorage();
@@ -1145,9 +1146,7 @@
                     <tr>
                         <td><strong>${group.name}</strong></td>
                         <td>${membersDesc.join('、')}</td>
-                        <td>
-                            <button class="btn btn-danger" style="font-size:15px; padding:8px 14px;" onclick="deleteGroup(${index})">刪除群組</button>
-                        </td>
+                        <td><button class="btn btn-danger" style="font-size:15px; padding:8px 14px;" onclick="deleteGroup(${index})">刪除群組</button></td>
                         <td>
                             <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                                 <button class="btn btn-yellow" style="padding: 6px 12px; font-size: 16px;" onclick="modifyGroupPoints(${index}, 1)">+1</button>
@@ -1179,18 +1178,13 @@
                     }
                 }
             });
-            if (changed) saveDataToStorage();
+            if (changed && isCloudLoaded) saveDataToStorage();
         }
 
         function exportBackupData() {
             const backupData = {
-                platformName: platformName,
-                students: students,
-                announcements: announcements,
-                dutyStudents: dutyStudents,
-                sidebarOrder: sidebarOrder,
-                gachaLogs: gachaLogs,
-                studentGroups: studentGroups
+                platformName: platformName, students: students, announcements: announcements,
+                dutyStudents: dutyStudents, sidebarOrder: sidebarOrder, gachaLogs: gachaLogs, studentGroups: studentGroups
             };
             const dataStr = JSON.stringify(backupData);
             const blob = new Blob([dataStr], { type: "application/json" });
@@ -1198,9 +1192,7 @@
             const now = new Date();
             const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
             const a = document.createElement('a');
-            a.href = url;
-            a.download = `班級平台備份_${dateStr}.json`;
-            a.click();
+            a.href = url; a.download = `班級平台備份_${dateStr}.json`; a.click();
             URL.revokeObjectURL(url);
         }
 
@@ -1220,9 +1212,10 @@
                             sidebarOrder = data.sidebarOrder || [];
                             gachaLogs = data.gachaLogs || [];
                             studentGroups = data.studentGroups || [];
+                            isCloudLoaded = true; // 強制解鎖允許上傳
                             saveDataToStorage();
                             refreshAllViews();
-                            showAdminAlert("還原成功", "✅ 班級所有資料已成功還原並載入！", "💾");
+                            showAdminAlert("還原成功", "✅ 班級所有資料已成功還原並寫入雲端！", "💾");
                         }
                     } else {
                         showAdminAlert("格式錯誤", "❌ 檔案格式不正確！", "⚠️");
@@ -1263,7 +1256,7 @@
 
         function batchUpdateBirthdays() {
             const text = document.getElementById('batch-birthdays-input').value.trim();
-            if (!text) return showAdminAlert("提示", "❌ 請在文字框中輸入資料！", "⚠️");
+            if (!text) return showAdminAlert("提示", "❌ 請在文字框中輸入資料！", "⚠️️");
             let birthdays = text.split(/[\n,，\s]+/).map(b => b.trim()).filter(b => b !== '');
             if (birthdays.length === 0) return showAdminAlert("提示", "❌ 無效資料！", "⚠️");
             students.sort((a, b) => a.seat - b.seat);
@@ -1596,7 +1589,7 @@
                     changed = true;
                 }
             });
-            if (changed) saveDataToStorage();
+            if (changed && isCloudLoaded) saveDataToStorage();
             return changed;
         }
 
@@ -1706,15 +1699,11 @@
                     break;
                 }
                 tempSum += stageTarget;
-                if (i === treeStages.length - 1) {
-                    currentStageIndex = i;
-                }
+                if (i === treeStages.length - 1) currentStageIndex = i;
             }
 
             let stageCurrentPts = Math.min(stageTarget, totalPts - stageBase);
-            if (totalPts >= totalTreeStagesMax) {
-                stageCurrentPts = stageTarget;
-            }
+            if (totalPts >= totalTreeStagesMax) stageCurrentPts = stageTarget;
             let percentage = Math.round((stageCurrentPts / stageTarget) * 100);
 
             const stageInfo = treeStages[currentStageIndex];
@@ -1761,11 +1750,8 @@
             let hasBothNow = isClassTaskDone && isCheckInDone;
             let hadBothBefore = currentTaskStatus && currentCheckInStatus;
 
-            if (hasBothNow && !hadBothBefore) {
-                addedPoints += 1;
-            } else if (!hasBothNow && hadBothBefore) {
-                addedPoints -= 1;
-            }
+            if (hasBothNow && !hadBothBefore) addedPoints += 1;
+            else if (!hasBothNow && hadBothBefore) addedPoints -= 1;
 
             if (addedPoints !== 0) {
                 student.treeContribution = Math.max(0, (student.treeContribution || 0) + addedPoints);
@@ -1869,18 +1855,12 @@
                 const attendanceVal = student.attendanceLog[todayStr];
                 
                 let cardClass = 'student-card';
-                if (allDone) {
-                    cardClass += ' all-done';
-                } else if (hasPending) {
-                    cardClass += ' has-pending';
-                }
+                if (allDone) cardClass += ' all-done';
+                else if (hasPending) cardClass += ' has-pending';
                 card.className = cardClass;
                 
-                if (student.photoUrl && student.photoUrl.trim() !== '') {
-                    card.style.backgroundImage = `url('${student.photoUrl.trim()}')`;
-                } else {
-                    card.style.backgroundImage = 'none';
-                }
+                if (student.photoUrl && student.photoUrl.trim() !== '') card.style.backgroundImage = `url('${student.photoUrl.trim()}')`;
+                else card.style.backgroundImage = 'none';
 
                 card.onclick = () => openStudentModal(student.id);
 
@@ -1983,14 +1963,13 @@
                 const currentTime = new Date();
 
                 student.tasks.forEach((task, index) => {
-                    const li = document.createElement('li');
+                    const li = document.createElement('div');
+                    li.style.marginBottom = "15px";
                     
                     let isOverdue = false;
                     if (task.deadline) {
                         const deadlineDate = new Date(task.deadline);
-                        if (currentTime > deadlineDate) {
-                            isOverdue = true;
-                        }
+                        if (currentTime > deadlineDate) isOverdue = true;
                     }
 
                     let deadlineStr = task.deadline ? ` <span style="color: #d32f2f; font-size: 20px; font-weight: bold;">(期限：${task.deadline.replace('T', ' ')})</span>` : ' <span style="color: #666; font-size: 18px;">(無期限)</span>';
@@ -2023,7 +2002,6 @@
                                 })();
                                 addTreePoints(student, index, hasClassTaskDone, hasValidCheckIn);
                             }
-
                             openStudentModal(student.id); 
                             refreshAllViews(); 
                         };
@@ -2035,13 +2013,13 @@
                         doneBtn.className = isOverdue ? "btn btn-danger" : "btn btn-success";
                         doneBtn.style.fontSize = "18px";
                         doneBtn.style.padding = "8px 16px";
+                        doneBtn.style.marginLeft = "12px";
                         doneBtn.onclick = () => {
                             task.completed = true;
                             task.wasOverdueWhenCompleted = isOverdue;
 
                             if (!isOverdue) {
                                 triggerConfetti();
-                                
                                 if (task.isClassTask) {
                                     const allDone = isAllTasksCompleted(student);
                                     if (allDone && !student.shellRewardedToday) {
@@ -2060,12 +2038,11 @@
                                     })();
                                     addTreePoints(student, index, hasClassTaskDone, hasValidCheckIn);
                                 } else {
-                                    showAdminAlert("個人任務完成", `✅ ${student.name} 已完成個人指定任務！(個人任務不列入海螺與大樹加分)`, "👍");
+                                    showAdminAlert("個人任務完成", `✅ ${student.name} 已完成個人指定任務！`, "👍");
                                 }
                             } else {
                                 showAdminAlert("逾期完成提醒", `⚠️ ${student.name}，此任務已超過期限，故無法獲得海螺及大樹加分喔！`, "⏳");
                             }
-
                             openStudentModal(student.id);
                             refreshAllViews();
                         };
@@ -2126,7 +2103,7 @@
                 student.attendanceLog[todayStr] = statusVal;
                 let hasClassTaskDone = student.tasks.some(t => t.isClassTask && t.completed && !t.wasOverdueWhenCompleted);
                 addTreePoints(student, 'checkin', hasClassTaskDone, true);
-                showAdminAlert("出缺席更新", `✅ 已將 ${student.name} 設為「${statusVal}」！系統已自動完成打卡並給予大樹分 +2。`, "📌");
+                showAdminAlert("出缺席更新", `✅ 已將 ${student.name} 設為「${statusVal}」！`, "📌");
             }
             refreshAllViews();
         }
@@ -2314,7 +2291,7 @@
                     student.tasks.splice(taskIndex, 1);
                     saveDataToStorage();
                     refreshAllViews();
-                    showAdminAlert("收回成功", `✅ 已成功收回該學生的任務！`, "🗑️️");
+                    showAdminAlert("收回成功", `✅ 已成功收回該學生的任務！`, "🗑");
                 }
             }
         }
@@ -2532,15 +2509,9 @@
                     let height = img.height;
 
                     if (width > height) {
-                        if (width > MAX_WIDTH) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        }
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
                     } else {
-                        if (height > MAX_HEIGHT) {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
                     }
 
                     canvas.width = width;
@@ -2591,6 +2562,7 @@
             });
             document.getElementById('batch-names-input').value = '';
             document.getElementById('batch-start-seat').value = startSeat;
+            saveDataToStorage();
             refreshAllViews();
             showAdminAlert("新增成功", `成功批次新增 ${names.length} 位學生！`, "✨");
         }
@@ -2606,6 +2578,7 @@
             if(confirm(`確定要刪除勾選的 ${checkboxes.length} 位學生嗎？`)) {
                 const selectedIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
                 students = students.filter(s => !selectedIds.includes(s.id));
+                saveDataToStorage();
                 refreshAllViews(); 
                 showAdminAlert("刪除成功", "已成功刪除所選學生！", "🗑️");
             }
@@ -2613,11 +2586,21 @@
         function editStudent(id) {
             const student = students.find(s => s.id === id);
             const newName = prompt(`請輸入 ${student.seat}號 的新姓名：`, student.name);
-            if(newName && newName.trim() !== '') { student.name = newName.trim(); refreshAllViews(); showAdminAlert("修改成功", "學生姓名已更新！", "✏️"); }
+            if(newName && newName.trim() !== '') { 
+                student.name = newName.trim(); 
+                saveDataToStorage();
+                refreshAllViews(); 
+                showAdminAlert("修改成功", "學生姓名已更新！", "✏️"); 
+            }
         }
         function deleteStudent(id) {
             const student = students.find(s => s.id === id);
-            if(confirm(`確定要刪除 ${student.seat}號 ${student.name} 嗎？`)) { students = students.filter(s => s.id !== id); refreshAllViews(); showAdminAlert("刪除成功", "學生已刪除！", "🗑️"); }
+            if(confirm(`確定要刪除 ${student.seat}號 ${student.name} 嗎？`)) { 
+                students = students.filter(s => s.id !== id); 
+                saveDataToStorage();
+                refreshAllViews(); 
+                showAdminAlert("刪除成功", "學生已刪除！", "🗑️"); 
+            }
         }
 
         function renderStudentCheckboxes() {
@@ -2647,6 +2630,7 @@
 
             document.getElementById('class-task-input').value = ''; 
             setDefaultTaskDeadlines();
+            saveDataToStorage();
             showAdminAlert("派發成功", `已成功為全班派發 ${taskTexts.length} 項任務！`, "📢");
             refreshAllViews();
         }
@@ -2655,9 +2639,7 @@
             const tbody = document.getElementById('admin-class-task-list');
             tbody.innerHTML = '';
             let classTasks = [];
-            if (students.length > 0) {
-                classTasks = students[0].tasks.filter(t => t.isClassTask);
-            }
+            if (students.length > 0) classTasks = students[0].tasks.filter(t => t.isClassTask);
 
             if (classTasks.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" style="color:#666; text-align:center;">目前沒有任何全班派發任務。</td></tr>`;
@@ -2692,10 +2674,8 @@
         }
 
         function clearAllClassTasks() {
-            if (confirm("⚠️ 確定要收回「所有」全班派發的任務嗎？此操作將清除所有學生的全班任務紀錄！")) {
-                students.forEach(student => {
-                    student.tasks = student.tasks.filter(t => !t.isClassTask);
-                });
+            if (confirm("⚠️ 確定要收回「所有」全班派發的任務嗎？")) {
+                students.forEach(student => { student.tasks = student.tasks.filter(t => !t.isClassTask); });
                 saveDataToStorage();
                 refreshAllViews();
                 showAdminAlert("清空成功", "✅ 已成功收回所有全班任務！", "🗑️");
@@ -2716,6 +2696,7 @@
             });
             document.getElementById('selected-task-input').value = ''; 
             setDefaultTaskDeadlines();
+            saveDataToStorage();
             showAdminAlert("派發成功", "已發送指定任務！", "🎯");
             refreshAllViews();
         }
@@ -2742,6 +2723,7 @@
             });
 
             document.getElementById('batch-seats-input').value = '';
+            saveDataToStorage();
             refreshAllViews();
             showAdminAlert("批次加分成功", `✅ 成功為 ${successCount} 位學生發放了 ${pointNameLabel}！`, "✨");
         }
@@ -2794,6 +2776,7 @@
             if(student) {
                 if(type === 'points') student.points = Math.max(0, student.points + amount);
                 else if(type === 'alligator') student.alligator = Math.max(0, (student.alligator || 0) + amount);
+                saveDataToStorage();
                 refreshAllViews();
             }
         }
@@ -2804,24 +2787,27 @@
                     if(type === 'points') student.points += amount;
                     if(type === 'alligator') student.alligator = (student.alligator || 0) + amount;
                 });
+                saveDataToStorage();
                 refreshAllViews();
                 showAdminAlert("批量加分成功", `已成功為全班增加 ${label}！`, "🌟");
             }
         }
         function clearAllTasks() {
-            if(confirm("⚠ 警告：確定要清空「全班」目前所有任務嗎？此操作無法復原！")) {
+            if(confirm("⚠ 警告：確定要清空「全班」目前所有任務嗎？")) {
                 students.forEach(student => { student.tasks = []; student.shellRewardedToday = false; });
+                saveDataToStorage();
                 refreshAllViews(); 
                 showAdminAlert("清空成功", "全班任務已清空！", "🗑️");
             }
         }
         function resetAllPoints(type) {
             let label = type === 'points' ? '海螺 🐚' : '鱷魚 🐊';
-            if(confirm(`⚠️ 警告：確定要將「全班」的 ${label} 積分歸零嗎？此操作無法復原！`)) {
+            if(confirm(`⚠️ 警告：確定要將「全班」的 ${label} 積分歸零嗎？`)) {
                 students.forEach(student => {
                     if(type === 'points') student.points = 0;
                     if(type === 'alligator') student.alligator = 0;
                 });
+                saveDataToStorage();
                 refreshAllViews(); 
                 showAdminAlert("歸零成功", `全班 ${label} 已歸零！`, "⚠️");
             }
@@ -2829,7 +2815,12 @@
 
         function updatePlatformName() {
             const val = document.getElementById('platform-name-input').value.trim();
-            if(val) { platformName = val; refreshAllViews(); showAdminAlert("儲存成功", "平台名稱已更新！", "⚙️"); }
+            if(val) { 
+                platformName = val; 
+                saveDataToStorage();
+                refreshAllViews(); 
+                showAdminAlert("儲存成功", "平台名稱已更新！", "⚙️"); 
+            }
         }
         function setTheme(themeName) {
             let root = document.documentElement;
