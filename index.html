@@ -1011,19 +1011,19 @@
                 console.log("讀取 Firebase 失敗", err);
             });
 
-           // 每隔 5 秒自動與雲端同步（加入「正在輸入」與「正在勾選」的防護鎖）
+           // 每隔 5 秒自動與雲端同步（精準鎖定學生與值日生勾選框）
         setInterval(() => {
             if (isCloudSyncing || !isCloudLoaded) return;
             
-            // 🛑 防護鎖 1：如果老師或學生目前正在任何輸入框裡打字，絕對禁止自動更新覆蓋！
+            // 🛑 防護鎖 1：正在輸入中，禁止覆蓋
             const activeEl = document.activeElement;
             if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
                 return; 
             }
 
-            // 🛑 防護鎖 2：如果目前畫面上有任何「已勾選 (checked)」的勾選框，代表老師正在操作選取，絕對禁止重新整理覆蓋！
-            const anyChecked = document.querySelectorAll('input[type="checkbox"]:checked');
-            if (anyChecked && anyChecked.length > 0) {
+            // 🛑 防護鎖 2：只檢查「學生管理、派發任務、值日生」表格內的核取方塊是否有被勾選
+            const checkedStudentBoxes = document.querySelectorAll('#admin-students input[type="checkbox"]:checked, #admin-tasks input[type="checkbox"]:checked, #admin-duty input[type="checkbox"]:checked, .student-select-checkbox:checked, .student-checkbox:checked, .duty-checkbox:checked');
+            if (checkedStudentBoxes && checkedStudentBoxes.length > 0) {
                 return;
             }
 
