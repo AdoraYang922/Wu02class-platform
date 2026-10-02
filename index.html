@@ -342,7 +342,7 @@
 
         <div>
             <button class="btn btn-yellow" onclick="openGachaRankModal()" style="background-color: #ff9800; color: white;">🎁 海螺抽卡</button>
-            <button id="student-login-btn" class="btn btn-yellow" onclick="showStudentLoginModal()">👨‍🎓 學生登入</button>
+            <button id="student-login-btn" class="btn btn-yellow" onclick="showStudentLoginModal()">👨‍‍🎓 學生登入</button>
             <button id="student-logout-btn" class="btn btn-yellow" onclick="studentLogout()" style="display: none;">登出個人面板</button>
             <button id="login-btn" class="btn btn-yellow" onclick="showLoginModal()">👨‍🏫 老師登入</button>
             <button id="logout-btn" class="btn btn-yellow" onclick="logout()" style="display: none;">登出後台 (返回學生端)</button>
@@ -591,7 +591,7 @@
                 <div class="card" style="border-top: 5px solid var(--warning-color);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
                         <h3 style="margin: 0; color: #f57f17;">📋 目前全班已派發的任務清單</h3>
-                        <button class="btn btn-danger" onclick="clearAllClassTasks()">🗑️ 一鍵收回所有全班任務</button>
+                        <button class="btn btn-danger" onclick="clearAllClassTasks()">🗑️️ 一鍵收回所有全班任務</button>
                     </div>
                     <p style="font-size: 16px; color: #666; margin-top: 0;">💡 以下顯示目前所有全班性任務，您可以針對特定任務點擊「收回」來刪除它。</p>
                     <table>
@@ -886,7 +886,7 @@
 
     <div class="modal-overlay" id="student-login-modal">
         <div class="modal-content" style="max-width: 500px;">
-            <h2 style="font-size: 32px;">👨‍‍🎓 學生個人面板登入</h2>
+            <h2 style="font-size: 32px;">👨‍🎓 學生個人面板登入</h2>
             <input type="number" id="login-seat-input" placeholder="請輸入「座號」" style="width: 80%; text-align:center; font-size:22px; padding:15px; margin-bottom:18px;">
             <input type="password" id="login-password-input" placeholder="請輸入密碼 (預設為座號)" style="width: 80%; text-align:center; font-size:22px; padding:15px;">
             <br><br>
@@ -906,7 +906,7 @@
         let studentGroups = []; 
         let activeAdminStudentTaskId = null;
         
-        // 🔒 終極安全鎖：防止未從雲端成功抓取資料前覆蓋 Firebase
+        // 🔒 終極安全鎖：防止未從雲端成功抓取資料前覆蓋 Firebase 根目錄
         let isCloudLoaded = false; 
 
         const taskTagColors = {
@@ -986,7 +986,7 @@
             if (selectedTaskInput && !selectedTaskInput.value) selectedTaskInput.value = `${y}-${m}-${d}T23:59`;
         }
 
-        // ==================== Firebase 雲端即時同步設定 ====================
+        // ==================== Firebase 雲端即時同步設定 (全面對齊根目錄 .json) ====================
         const FIREBASE_URL = "https://class02-8cb8e-default-rtdb.firebaseio.com/";
         let isCloudSyncing = false;
 
@@ -994,7 +994,7 @@
             const savedPlatformName = localStorage.getItem('class_platform_name');
             if (savedPlatformName) platformName = savedPlatformName;
 
-            // 搭配 { cache: 'no-store' } 徹底強制瀏覽器繞過快取，向雲端拿最新資料
+            // 直接讀取根目錄的 .json，並加入 cache: 'no-store' 強制繞過瀏覽器快取
             fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
             .then(response => response.json())
             .then(data => {
@@ -1002,9 +1002,9 @@
                     applyCloudData(data);
                     isCloudLoaded = true; // 🔓 成功下載雲端資料，安全鎖解鎖！
                     refreshAllViews();
-                    console.log("成功從 Firebase 載入雲端資料庫並解鎖");
+                    console.log("✅ 成功從 Firebase 根目錄載入雲端資料庫並解鎖");
                 } else {
-                    console.log("雲端目前尚無學生資料，安全鎖維持中");
+                    console.log("⚠️ 雲端根目錄目前尚無學生資料，安全鎖維持中");
                 }
             })
             .catch(err => {
@@ -1061,13 +1061,14 @@
         function saveDataToStorage() {
             if (isCloudSyncing) return;
             
-            // 🛑 終極安全鎖攔截：若雲端資料未正式載入完成，絕對禁止覆蓋寫入！
+            // 🛑 終極安全鎖攔截：若雲端資料未正式載入完成，絕對禁止覆蓋寫入根目錄！
             if (!isCloudLoaded) {
-                console.log("安全鎖攔截：雲端資料尚未同步完成，禁止覆蓋寫入以防歸零。");
+                console.log("🛑 安全鎖攔截：雲端資料尚未同步完成，禁止覆蓋寫入以防歸零。");
                 return;
             }
 
-            const backupData = {
+            // 直接將所有資料平鋪在根目錄儲存，不包 classData 夾子！
+            const rootData = {
                 platformName: platformName,
                 students: students,
                 announcements: announcements,
@@ -1080,7 +1081,7 @@
             fetch(FIREBASE_URL + ".json", {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(backupData)
+                body: JSON.stringify(rootData)
             }).catch(e => {
                 console.error("Firebase 同步失敗", e);
             });
