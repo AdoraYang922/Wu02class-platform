@@ -995,7 +995,7 @@
             if (savedPlatformName) platformName = savedPlatformName;
 
             // 搭配 { cache: 'no-store' } 徹底強制瀏覽器繞過快取，向雲端拿最新資料
-            fetch(FIREBASE_URL + "classData.json", { cache: 'no-store' })
+            fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
             .then(response => response.json())
             .then(data => {
                 if (data && data.students && data.students.length > 0) {
@@ -1014,7 +1014,7 @@
             // 每隔 5 秒自動與雲端同步
             setInterval(() => {
                 if (isCloudSyncing || !isCloudLoaded) return;
-                fetch(FIREBASE_URL + "classData.json", { cache: 'no-store' })
+                fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.students && data.students.length > 0) {
@@ -1077,7 +1077,7 @@
                 studentGroups: studentGroups
             };
 
-            fetch(FIREBASE_URL + "classData.json", {
+            fetch(FIREBASE_URL + ".json", {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(backupData)
