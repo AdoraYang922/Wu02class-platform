@@ -299,35 +299,35 @@
         .task-list ul { margin: 18px 0 0 0; padding-left: 35px; }
         .task-list li { margin-bottom: 20px; line-height: 1.6; font-size: 26px; }
 
-        /* 🔮 方案三：奇幻魔法卡牌召喚陣與神聖光柱特效 CSS */
+        /* 🔮 強力特效：魔法卡牌召喚陣與神聖光柱 */
         .gacha-magic-arena {
             position: relative;
-            background: radial-gradient(circle, #1a103c 0%, #080417 100%);
+            background: radial-gradient(circle, #24144d 0%, #0b051f 100%);
             border-radius: 20px;
-            padding: 30px;
-            box-shadow: inset 0 0 40px rgba(255, 215, 0, 0.2), 0 15px 35px rgba(0,0,0,0.5);
+            padding: 35px 20px;
+            box-shadow: inset 0 0 50px rgba(255, 215, 0, 0.3), 0 15px 35px rgba(0,0,0,0.6);
             overflow: hidden;
             border: 4px solid #ffd700;
         }
         .magic-circle-bg {
             position: absolute;
             top: 50%; left: 50%;
-            width: 450px; height: 450px;
+            width: 500px; height: 500px;
             transform: translate(-50%, -50%);
-            border: 3px dashed rgba(255, 215, 0, 0.4);
+            border: 4px dashed rgba(255, 215, 0, 0.5);
             border-radius: 50%;
-            animation: rotateMagicCircle 20s linear infinite;
+            animation: rotateMagicCircle 15s linear infinite;
             pointer-events: none;
             z-index: 1;
         }
         .magic-circle-bg::before {
             content: '✨ 🌟 ✨ 🔮 ✨ 🌟 ✨';
             position: absolute;
-            top: -15px; left: 50%;
+            top: -18px; left: 50%;
             transform: translateX(-50%);
             color: #ffd700;
-            font-size: 20px;
-            letter-spacing: 15px;
+            font-size: 22px;
+            letter-spacing: 18px;
         }
         @keyframes rotateMagicCircle {
             0% { transform: translate(-50%, -50%) rotate(0deg); }
@@ -337,46 +337,51 @@
         .gacha-card-container { display: flex; justify-content: center; gap: 20px; margin: 25px 0; perspective: 1000px; flex-wrap: wrap; position: relative; z-index: 5; }
         .gacha-card {
             width: 170px; height: 260px; 
-            background: linear-gradient(135deg, #2c1654, #4a237a);
+            background: linear-gradient(135deg, #3d1c75, #5e2ca5);
             border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;
             cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.5); font-size: 22px; color: #ffd700;
             font-weight: bold; transition: 0.3s; position: relative; border: 3px solid #ffd700;
             user-select: none; gap: 12px; padding: 15px; box-sizing: border-box; text-align: center;
         }
-        .gacha-card:hover { transform: translateY(-12px) scale(1.05); box-shadow: 0 0 30px #ffd700, 0 15px 35px rgba(0,0,0,0.6); }
+        .gacha-card:hover { transform: translateY(-12px) scale(1.05); box-shadow: 0 0 35px #ffd700, 0 15px 35px rgba(0,0,0,0.7); }
         
-        /* 召喚光柱特效 */
+        /* 召喚光柱特效 (動態觸發) */
         .gacha-card.summoning {
-            animation: cardSummoningAnim 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            pointer-events: none; z-index: 100;
+            animation: cardSummoningAnim 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+            pointer-events: none; 
+            z-index: 100;
         }
         @keyframes cardSummoningAnim {
             0% { transform: scale(1) translateY(0); filter: brightness(1); }
-            40% { transform: scale(1.2) translateY(-40px); filter: brightness(2.5); box-shadow: 0 0 80px #fff, 0 0 120px #ffd700; }
-            70% { transform: scale(1.1) translateY(-20px) rotateY(720deg); filter: brightness(2); }
-            100% { transform: scale(1.05) translateY(0) rotateY(1440deg); filter: brightness(1.3); }
+            40% { transform: scale(1.25) translateY(-50px); filter: brightness(3); box-shadow: 0 0 90px #fff, 0 0 150px #ffd700; }
+            70% { transform: scale(1.15) translateY(-25px) rotateY(720deg); filter: brightness(2.5); }
+            100% { transform: scale(1.05) translateY(0) rotateY(1440deg); filter: brightness(1.5); }
         }
 
         /* 神聖光柱背景閃爍 */
         .divine-beam-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,215,0,0.4) 40%, transparent 80%);
+            background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,215,0,0.5) 40%, transparent 80%);
             opacity: 0;
             pointer-events: none;
             z-index: 50;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.3s ease;
         }
-        .divine-beam-overlay.active { opacity: 1; animation: beamPulse 0.7s infinite alternate; }
+        .divine-beam-overlay.active { opacity: 1; animation: beamPulse 0.6s infinite alternate; }
         @keyframes beamPulse {
-            0% { opacity: 0.7; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1.05); }
+            0% { opacity: 0.8; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1.08); }
         }
 
         .gacha-card.flipped {
-            background: linear-gradient(135deg, #134e5e, #71b280);
-            color: #ffffff; border-color: #00ffcc; font-size: 24px; text-align: center; line-height: 1.5;
-            box-shadow: 0 0 40px #00ffcc, inset 0 0 20px rgba(255,255,255,0.6);
+            background: linear-gradient(135deg, #004d40, #00b0ff);
+            color: #ffffff; 
+            border-color: #00ffcc; 
+            font-size: 24px; 
+            text-align: center; 
+            line-height: 1.5;
+            box-shadow: 0 0 50px #00ffcc, inset 0 0 25px rgba(255,255,255,0.7);
         }
 
         /* 關鍵修正：強制與頂部工具列對齊並佔滿剩餘高度 */
@@ -452,7 +457,7 @@
 
         <div>
             <button class="btn btn-yellow" onclick="openGachaRankModal()" style="background-color: #ff9800; color: white;">🎁 海螺抽卡</button>
-            <button id="student-login-btn" class="btn btn-yellow" onclick="showStudentLoginModal()">👨‍‍🎓 學生登入</button>
+            <button id="student-login-btn" class="btn btn-yellow" onclick="showStudentLoginModal()">👨‍🎓 學生登入</button>
             <button id="student-logout-btn" class="btn btn-yellow" onclick="studentLogout()" style="display: none;">登出個人面板</button>
             <button id="login-btn" class="btn btn-yellow" onclick="showLoginModal()">👨‍🏫 老師登入</button>
             <button id="logout-btn" class="btn btn-yellow" onclick="logout()" style="display: none;">登出後台 (返回學生端)</button>
@@ -959,7 +964,7 @@
         </div>
     </div>
 
-    <!-- 🔮 方案三：魔法卡牌召喚陣抽卡互動視窗 -->
+    <!-- 🔮 魔法陣抽卡互動視窗 -->
     <div class="modal-overlay" id="gacha-draw-modal">
         <div class="modal-content" style="max-width: 1050px; background: #0c081e; color: #fff; border: 3px solid #ffd700;">
             <div class="divine-beam-overlay" id="divine-beam"></div>
@@ -1052,7 +1057,6 @@
         let taskPieReportDate = new Date();
         let activePieStudentId = null;
 
-        // 獨立確保時鐘第一時間啟動
         function startLiveClock() {
             function updateClock() {
                 const now = new Date();
@@ -1075,7 +1079,7 @@
         }
 
         window.onload = function() {
-            startLiveClock(); // 強制最優先執行時鐘
+            startLiveClock();
             loadDataFromStorage();
             checkAndCleanupExpiredCompletedTasks();
             checkDailyResets();
@@ -1109,7 +1113,7 @@
 
         function triggerConfetti() {
             if (typeof confetti === 'function') {
-                confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+                confetti({ particleCount: 160, spread: 100, origin: { y: 0.6 } });
             }
         }
 
@@ -1682,6 +1686,9 @@
             const targetCard = document.getElementById(`card-${selectedCardIndex}`);
             const divineBeam = document.getElementById('divine-beam');
             
+            // 強制重設動畫類別確保每次點擊動畫都完整播放
+            targetCard.classList.remove('summoning', 'flipped');
+            void targetCard.offsetWidth; // 觸發瀏覽器重新排版
             targetCard.classList.add('summoning');
             divineBeam.classList.add('active');
             document.getElementById('gacha-hint').innerText = "⚡ 神聖光柱降臨！魔法卡牌正在凝聚力量...";
@@ -2730,7 +2737,7 @@
         }
         function deleteSelectedStudents() {
             const checkboxes = document.querySelectorAll('.student-select-checkbox:checked');
-            if(checkboxes.length === 0) return showAdminAlert("提示", "請至少勾選一位要刪除的學生！", "⚠️");
+            if(checkboxes.length === 0) return showAdminAlert("提示", "請至少勾選一位要刪除的學生！", "⚠️️");
             if(confirm(`確定要刪除勾選的 ${checkboxes.length} 位學生嗎？`)) {
                 const selectedIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
                 students = students.filter(s => !selectedIds.includes(s.id));
@@ -2834,7 +2841,7 @@
                 students.forEach(student => { student.tasks = student.tasks.filter(t => !t.isClassTask); });
                 saveDataToStorage();
                 refreshAllViews();
-                showAdminAlert("清空成功", `✅ 已成功收回所有全班任務！`, "🗑️");
+                showAdminAlert("清空成功", `✅ 已成功收回所有全班任務！`, "🗑️️");
             }
         }
 
