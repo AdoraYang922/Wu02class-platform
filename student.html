@@ -169,7 +169,7 @@
         };
 
         function loadCloudData() {
-            fetch(FIREBASE_URL + "classData.json", { cache: 'no-store' })
+            fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
                 if (data) {
@@ -202,7 +202,7 @@
             const passwordInput = document.getElementById('login-password-input').value;
             
             // 登入時向 Firebase 抓取最新資料
-            fetch(FIREBASE_URL + "classData.json", { cache: 'no-store' })
+            fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
                 if (data && data.students) {
@@ -242,7 +242,7 @@
                 return;
             }
 
-            fetch(FIREBASE_URL + "classData.json", { cache: 'no-store' })
+            fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
                 if (data && data.students) {
@@ -255,7 +255,7 @@
                     student.lastPasswordChangeTime = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
                     
                     // 學生端僅允許更新自己的密碼資料欄位
-                    fetch(FIREBASE_URL + "classData.json", {
+                    fetch(FIREBASE_URL + ".json", {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
