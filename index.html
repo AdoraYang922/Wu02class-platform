@@ -299,7 +299,7 @@
         .task-list ul { margin: 18px 0 0 0; padding-left: 35px; }
         .task-list li { margin-bottom: 20px; line-height: 1.6; font-size: 26px; }
 
-        /* 🔮 強力特效：魔法卡牌召喚陣與神聖光柱 (上 3 下 2、超大卡牌) */
+        /* 🔮 強力特效：魔法卡牌召喚陣與神聖光柱 (上 3 下 2、倒梯形完美對齊) */
         .gacha-magic-arena {
             position: relative;
             background: radial-gradient(circle, #24144d 0%, #0b051f 100%);
@@ -334,11 +334,11 @@
             100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-        /* 嚴格指定三欄網格，達成上 3 下 2 */
+        /* 透過 4 欄的精確網格配置，讓下方的 2 張牌剛好卡在上方第 1、2 張與第 2、3 張的中間正下方 */
         .gacha-card-container { 
             display: grid; 
-            grid-template-columns: repeat(3, 240px); 
-            gap: 25px; 
+            grid-template-columns: repeat(4, 150px); 
+            gap: 20px; 
             margin: 25px auto; 
             width: fit-content;
             perspective: 1000px; 
@@ -347,16 +347,25 @@
             justify-content: center;
         }
         
-        /* 第 4 和第 5 張牌透過 Grid 跨欄技巧置中對齊在第二排 */
-        .gacha-card:nth-child(4) {
-            grid-column: 1 / span 2;
-            justify-self: end;
-            margin-right: 12px;
+        /* 第一排：3 張牌 (分別佔據 1-2, 2-3, 3-4 欄位，形成上方 3 張) */
+        .gacha-card:nth-child(1) { grid-column: 1 / 3; justify-self: center; }
+        .gacha-card:nth-child(2) { grid-column: 2 / 4; justify-self: center; }
+        .gacha-card:nth-child(3) { grid-column: 3 / 5; justify-self: center; }
+
+        /* 第二排：2 張牌 (剛好落在上方第 1-2 張與第 2-3 張的正下方，形成倒梯形) */
+        .gacha-card:nth-child(4) { 
+            grid-column: 1.5 / 3.5; 
+            grid-row: 2; 
+            justify-self: end; 
+            margin-right: -10px;
+            margin-top: 10px; 
         }
-        .gacha-card:nth-child(5) {
-            grid-column: 2 / span 2;
-            justify-self: start;
-            margin-left: 12px;
+        .gacha-card:nth-child(5) { 
+            grid-column: 2.5 / 4.5; 
+            grid-row: 2; 
+            justify-self: start; 
+            margin-left: -10px;
+            margin-top: 10px; 
         }
 
         /* 加大卡牌尺寸 (寬 230px, 高 330px) */
