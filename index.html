@@ -1137,9 +1137,9 @@
                 const date = String(now.getDate()).padStart(2, '0');
                 let hours = now.getHours();
                 const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds = String(now.getSeconds老師不好意思！這是因為當學生點擊登出 (`studentLogout`) 回到首頁時，或是在重新整理畫面時，時鐘的顯示狀態沒有正確地被重新整理切換。
+                const seconds = String老師不好意思！剛剛程式碼在學生點擊登出 (`studentLogout`) 時沒有確實將時鐘隱藏狀態重設回來，並且在重新整理或切換面板時需要更嚴格地透過樣式直接隱藏。
 
-我們只要在 `studentLogout()` 以及網頁初始化時加上強制隱藏/顯示的邏輯就能完全解決這個問題。請直接將下方修正後的完整程式碼複製並覆蓋您的 `index.html`：
+我們直接將 CSS 加上一個 `.hide-clock` 隱藏類別，並在學生登入與登出時完美切換，請將以下**完整修正後的程式碼**整段複製並覆蓋您的 `index.html`：
 
 ```html
 <!DOCTYPE html>
@@ -1414,6 +1414,9 @@
             box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 255, 102, 0.2);
             z-index: 100; display: flex; flex-direction: column; align-items: center; pointer-events: none; 
         }
+        /* 專門用來強制隱藏時鐘的樣式 */
+        .digital-clock-container.hidden-clock { display: none !important; }
+
         .digital-clock-time { font-size: 58px; font-weight: bold; letter-spacing: 3px; text-shadow: 0 0 15px #00ff66, 0 0 30px rgba(0, 255, 102, 0.5); line-height: 1.1; }
         .digital-clock-date { font-size: 22px; color: #aaeebb; margin-top: 6px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; letter-spacing: 1px; text-shadow: none; font-weight: bold; }
 
@@ -1569,4 +1572,206 @@
             background: linear-gradient(135deg, #004d40, #00b0ff);
             color: #ffffff; 
             border-color: #00ffcc; 
-            font-size:
+            font-size: 22px; 
+            text-align: center; 
+            line-height: 1.4;
+            box-shadow: 0 0 50px #00ffcc, inset 0 0 25px rgba(255,255,255,0.7);
+        }
+
+        /* 🌟 雙鱷魚聚光燈特效 (Spotlight) */
+        .gacha-card.spotlight-active {
+            box-shadow: 0 0 90px #ffd700, 0 0 160px #fff, inset 0 0 40px #ffd700 !important;
+            transform: scale(1.08);
+            border-color: #fff !important;
+            animation: spotlightPulse 0.8s ease-in-out infinite alternate !important;
+            z-index: 120 !important;
+        }
+        @keyframes spotlightPulse {
+            0% { box-shadow: 0 0 70px #ffd700, 0 0 120px #fff; transform: scale(1.06); }
+            100% { box-shadow: 0 0 120px #ffd700, 0 0 200px #fff; transform: scale(1.12); }
+        }
+
+        /* 關鍵修正：強制與頂部工具列對齊並佔滿剩餘高度 */
+        #teacher-view { 
+            display: none; 
+            flex: 1; 
+            width: 100vw;
+            flex-direction: row; 
+            height: 100%;
+            overflow: hidden; 
+        }
+        .sidebar { 
+            width: 280px; 
+            background-color: var(--sidebar-bg); 
+            color: white; 
+            padding: 20px 0; 
+            display: flex; 
+            flex-direction: column; 
+            flex-shrink: 0; 
+            height: 100%; 
+            overflow-y: auto; 
+            box-sizing: border-box;
+        }
+        .sidebar h2 { text-align: center; color: var(--secondary-color); margin-bottom: 20px; font-size: 26px;}
+        .nav-item { padding: 16px 25px; cursor: pointer; border-left: 5px solid transparent; user-select: none; font-size: 18px; }
+        .nav-item:hover { background-color: rgba(255,255,255,0.1); }
+        .nav-item.active { background-color: var(--primary-color); border-left: 5px solid var(--secondary-color); font-weight: bold;}
+        .nav-item.dragging { opacity: 0.4; background: rgba(255,255,255,0.2); }
+        
+        .main-content { 
+            flex: 1; 
+            padding: 40px; 
+            height: 100%; 
+            overflow-y: auto; 
+            box-sizing: border-box;
+            background-color: var(--bg-color);
+        }
+        .admin-section { display: none; }
+        .admin-section.active { display: block; }
+        
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.06); border-top: 5px solid var(--primary-light); margin-bottom: 25px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { padding: 15px 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 18px; }
+        th { background-color: #F8FAFC; color: var(--sidebar-bg); font-weight: bold; }
+
+        .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; max-height: 180px; overflow-y: auto; padding: 18px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 18px; background-color: #f9f9f9; }
+        .checkbox-item { cursor: pointer; display: flex; align-items: center; font-size: 18px; }
+        .checkbox-item input { width: 20px; height: 20px; margin-right: 10px; cursor: pointer; }
+        
+        .point-btn-group button { margin-right: 6px; padding: 8px 12px; font-size: 15px; }
+        .badge-light { display: inline-block; width: 16px; height: 16px; border-radius: 50%; margin-right: 8px; }
+        .badge-green { background-color: var(--success-color); }
+        .badge-yellow { background-color: var(--warning-color); }
+        .badge-red { background-color: var(--danger-color); }
+        .badge-blue { background-color: #2196F3; }
+        .badge-gray { background-color: #ccc; }
+
+        .pie-chart-container { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 25px; margin: 25px 0; }
+        .pie-box { background: #f9f9f9; padding: 25px; border-radius: 12px; border: 1px solid #ddd; text-align: center; width: 320px; }
+        .pie-chart { width: 160px; height: 160px; border-radius: 50%; margin: 18px auto; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 22px; box-shadow: 0 6px 15px rgba(0,0,0,0.12); }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div><h1 id="platform-title">五年級班級平台</h1></div>
+        
+        <div class="top-center-area">
+            <div class="top-duty-badge">
+                <span>🌟 值日生：</span><span id="top-duty-names-display">載入中...</span>
+            </div>
+        </div>
+
+        <div>
+            <button class="btn btn-yellow" onclick="openGachaRankModal()" style="background-color: #ff9800; color: white;">🎁 海螺抽卡</button>
+            <button id="student-login-btn" class="btn btn-yellow" onclick="showStudentLoginModal()">👨‍‍🎓 學生登入</button>
+            <button id="student-logout-btn" class="btn btn-yellow" onclick="studentLogout()" style="display: none;">登出個人面板</button>
+            <button id="login-btn" class="btn btn-yellow" onclick="showLoginModal()">👨‍🏫 老師登入</button>
+            <button id="logout-btn" class="btn btn-yellow" onclick="logout()" style="display: none;">登出後台 (返回學生端)</button>
+        </div>
+    </div>
+
+    <!-- 科技時鐘 (右下角懸浮) -->
+    <div class="digital-clock-container" id="digital-clock-box">
+        <div class="digital-clock-time" id="digital-time">00:00:00</div>
+        <div class="digital-clock-date" id="digital-date">民國115年--月--日</div>
+    </div>
+
+    <!-- 學生端介面 (打卡站) -->
+    <div id="student-view">
+        <div class="sticky-header-container">
+            <h2 class="class-main-title">✨ 五乙打卡站 ✨</h2>
+            <div class="daily-routine-bar">
+                <span class="routine-tag">🗣 跟老師問早</span> <span class="routine-arrow">➔</span>
+                <span class="routine-tag">📥 交作業</span> <span class="routine-arrow">➔</span>
+                <span class="routine-tag">📖 抄聯絡簿</span> <span class="routine-arrow">➔</span>
+                <span class="routine-tag">📍 打卡</span> <span class="routine-arrow">➔</span>
+                <span class="routine-tag">📚 安靜閱讀與訂正作業</span>
+            </div>
+        </div>
+        <div class="student-main-layout">
+            <div class="student-grid-container">
+                <div class="student-grid" id="student-grid"></div>
+            </div>
+            
+            <div class="sidebar-right-container">
+                <div class="student-announcements">
+                    <h3>📢 班級最新公告</h3>
+                    <ul id="student-announcement-list"></ul>
+                </div>
+
+                <div class="tree-card">
+                    <h3>🌳 乙棵成長樹與圖鑑</h3>
+                    <div class="tree-visual-box" id="tree-visual">🌱</div>
+                    <div class="tree-stage-name" id="tree-stage-title">第一階段 - 種子期</div>
+                    <div class="tree-progress-bar-bg">
+                        <div class="tree-progress-bar-fill" id="tree-progress-fill"></div>
+                    </div>
+                    <div class="tree-stats-text" id="tree-stats-text">經驗值：0 / 500</div>
+                    
+                    <div class="tree-rank-box">
+                        <h4>🏆 貢獻排行榜 TOP 10</h4>
+                        <ul class="tree-rank-list" id="tree-rank-list"></ul>
+                    </div>
+
+                    <button class="btn btn-yellow" style="width: 100%; margin-top: 15px; font-size: 20px; padding: 12px 0;" onclick="openCampusCodexModal()">📖 查看校園植物圖鑑</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 學生專屬個人面板 -->
+    <div id="student-personal-view">
+        <h2 id="personal-welcome" style="text-align: center; font-size: 40px; color: var(--sidebar-bg); margin-bottom: 35px; font-weight: bold;"></h2>
+        <div class="personal-dashboard-grid">
+            <div class="personal-card">
+                <h3>🏆 專屬積分與老師稱讚</h3>
+                <div id="personal-points" style="margin-top:25px; text-align:center;"></div>
+            </div>
+            <div class="personal-card">
+                <h3>🔐 修改登入密碼</h3>
+                <p style="font-size:18px; color:#666;">預設密碼為座號。為保護隱私，建議登入後立即修改！</p>
+                <input type="password" id="new-password-input" placeholder="限輸入剛好 6 碼 (英文或數字)" style="width: 70%;">
+                <button class="btn btn-yellow" onclick="changeStudentPassword()">確認修改</button>
+                <p style="font-size:16px; color:var(--danger-color); margin-top:8px;">⚠️ 限制：密碼必須剛好 6 碼，且只能包含英文或數字。</p>
+            </div>
+            <div class="personal-card" style="grid-column: 1 / -1;">
+                <h3>📝 今日與近期任務紀錄</h3>
+                <ul class="personal-task-list" id="personal-tasks"></ul>
+            </div>
+            <div class="personal-card" style="grid-column: 1 / -1; border-top: 5px solid var(--warning-color);">
+                <h3>🎁 個人抽卡紀錄專區</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr><th>時間</th><th>消耗海螺</th><th>獲得鱷魚</th></tr>
+                        </thead>
+                        <tbody id="personal-gacha-logs"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="personal-card" style="grid-column: 1 / -1;">
+                <h3>📅 出缺席紀錄 (本月)</h3>
+                <div id="personal-attendance" style="margin-top:18px;"></div>
+            </div>
+            <div class="personal-card" style="grid-column: 1 / -1; border-top: 5px solid var(--secondary-color);">
+                <h3>📢 班級最新公告</h3>
+                <ul class="personal-task-list" id="personal-announcement-list" style="font-size: 26px; margin-top: 18px;"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 老師後台介面 -->
+    <div id="teacher-view">
+        <div class="sidebar" id="admin-sidebar" ondragover="allowDrop(event)">
+            <h2>管理後台</h2>
+            <div class="nav-item active" draggable="true" data-tab="admin-dashboard" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-dashboard')">公告與總覽</div>
+            <div class="nav-item" draggable="true" data-tab="admin-students" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-students')">學生管理 (新增/修改/照片/請假)</div>
+            <div class="nav-item" draggable="true" data-tab="admin-groups" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-groups')">👥 學生分組與海螺加扣分 🐚</div>
+            <div class="nav-item" draggable="true" data-tab="admin-account" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-account')">學生帳號管理 🔐</div>
+            <div class="nav-item" draggable="true" data-tab="admin-gacha-logs" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-gacha-logs')">🎁 學生抽卡紀錄總表</div>
+            <div class="nav-item" draggable="true" data-tab="admin-duty" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-duty')">本日值日生管理 🌟</div>
+            <div class="nav-item" draggable="true" data-tab="admin-tasks" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-tasks')">任務指派中心</div>
+            <div class="nav-item" draggable="true" data-tab="admin-attendance" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-attendance')">出缺席日曆報表 📊</div>
+            <div class="nav-item" draggable="true" data-tab="admin-task-report" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-task-report')">學生任務狀態報表 📝</div>
+            <div class="nav-item"
