@@ -3,226 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>五年級班級平台 - 五乙打卡站</title>
+    <title id="page-title">五年級班級平台</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
+        :root {
+            --primary-color: #1976D2; 
+            --primary-light: #42A5F5; 
+            --secondary-color: #FFC107; 
+            --sidebar-bg: #0D47A1; 
+            --bg-color: #F0F4F8; 
+            --text-color: #333333;
+            --white: #ffffff;
+            --danger-color: #d32f2f;
+            --warning-color: #ff9800;
+            --success-color: #4caf50;
+        }
+        * { box-sizing: border-box; }
+        html, body {
+            width: 100vw;
+            height: 100vh;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            overflow: hidden;
         }
         body {
-            background-color: #f0f4f8;
-            color: #333;
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             display: flex;
             flex-direction: column;
+            font-size: 20px;
         }
-        /* 頂部導覽列 */
-        header {
-            background-color: #2b7de9;
-            color: white;
-            padding: 12px 24px;
+        .top-bar {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            gap: 20px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+            z-index: 200;
+            width: 100%;
         }
-        .logo {
-            font-size: 1.25rem;
-            font-weight: bold;
-        }
-        .duty-badge {
-            background-color: #ffeb3b;
-            color: #333;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            border: 2px dashed #f57f17;
-        }
-        .nav-buttons button {
-            background-color: #ffc107;
-            border: none;
-            color: #333;
-            padding: 8px 16px;
-            margin-left: 8px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .nav-buttons button:hover {
-            background-color: #ffb300;
-        }
-
-        /* 主要內容區 */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-            text-align: center;
-        }
-        .title-container {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #1a365d;
-            margin-bottom: 20px;
+        .top-bar h1 { margin: 0; font-size: 36px; white-space: nowrap; font-weight: bold; }
+        .top-center-area { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .top-duty-badge {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px dashed var(--secondary-color);
+            padding: 8px 15px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-        .hint-text {
-            color: #666;
-            font-size: 1rem;
-        }
-
-        /* 右下角時鐘 */
-        #clock-box {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #0d1b2a;
-            color: #00ff66;
-            padding: 16px 24px;
-            border-radius: 12px;
-            border: 2px solid #00ff66;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            text-align: right;
-            transition: opacity 0.3s ease;
-        }
-        #clock-time {
-            font-size: 2rem;
+            color: white;
+            font-size: 22px;
             font-weight: bold;
-            font-family: monospace;
-            letter-spacing: 1px;
         }
-        #clock-date {
-            font-size: 0.9rem;
-            color: #b0bec5;
-            margin-top: 4px;
+        .top-duty-badge span { color: var(--secondary-color); font-weight: bold; font-size: 24px; }
+        .btn {
+            background-color: var(--primary-color); color: white;
+            border: none; padding: 12px 22px; border-radius: 8px;
+            cursor: pointer; transition: 0.2s; font-size: 18px; font-weight: bold;
         }
-
-        /* 學生面板彈窗 (預設隱藏) */
-        #student-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
+        .btn:hover { opacity: 0.9; }
+        .btn-yellow { background-color: var(--secondary-color); color: #333; font-weight: bold; }
+        .btn-yellow:hover { background-color: #e0a800; }
+        .btn-danger { background-color: var(--danger-color); color: white; }
+        
+        #student-view { 
+            padding: 20px 40px; 
+            flex: 1; 
             width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            overflow-y: auto; 
+            display: flex;
+            flex-direction: column;
+        }
+        .class-main-title {
+            text-align: center; color: var(--primary-color); font-size: 50px; margin: 0 0 15px 0; font-weight: bold;
+        }
+        .digital-clock-container {
+            position: fixed; bottom: 25px; right: 35px;
+            background: linear-gradient(135deg, #121212, #1e1e1e);
+            border: 4px solid #00ff66; border-radius: 18px; padding: 18px 32px;
+            color: #00ff66; font-family: 'Courier New', Courier, monospace; text-align: center;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+            z-index: 100; display: flex; flex-direction: column; align-items: center; pointer-events: none; 
+        }
+        .digital-clock-time { font-size: 58px; font-weight: bold; letter-spacing: 3px; }
+        .digital-clock-date { font-size: 22px; color: #aaeebb; margin-top: 6px; font-weight: bold; }
+
+        #student-personal-view, #teacher-view { display: none; flex: 1; width: 100%; overflow-y: auto; background-color: var(--bg-color); }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.55); display: none; justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            text-align: left;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-content h2 {
-            color: #2b7de9;
-            margin-bottom: 16px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 8px;
-        }
-        .info-group {
-            margin-bottom: 12px;
-            font-size: 0.95rem;
-        }
-        .info-group span {
-            font-weight: bold;
-            color: #555;
-        }
-        .close-btn {
-            background-color: #e53e3e;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            float: right;
-            margin-top: 15px;
-            font-weight: bold;
+            background: var(--white); padding: 40px; border-radius: 18px; width: 90%; max-width: 600px; text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
         }
     </style>
 </head>
 <body>
 
-    <!-- 頂部導覽列 -->
-    <header>
-        <div class="logo">五年級班級平台</div>
-        <div class="duty-badge">✨ 值日生：1號 王小明</div>
-        <div class="nav-buttons">
-            <button onclick="openStudentPanel()">學生登入</button>
-            <button onclick="alert('老師登入功能')">老師登入</button>
+    <div class="top-bar">
+        <div><h1 id="platform-title">五年級班級平台</h1></div>
+        <div class="top-center-area">
+            <div class="top-duty-badge">
+                <span>🌟 值日生：</span><span id="top-duty-names-display">1號 王小明</span>
+            </div>
         </div>
-    </header>
-
-    <!-- 主要內容 -->
-    <main>
-        <div class="title-container">
-            <span>✨</span> 五乙打卡站 <span>✨</span>
+        <div>
+            <button class="btn btn-yellow" onclick="showStudentLoginModal()" id="student-login-btn">👨‍🎓 學生登入</button>
+            <button class="btn btn-yellow" onclick="studentLogout()" id="student-logout-btn" style="display: none;">登出個人面板</button>
+            <button class="btn btn-yellow" onclick="showLoginModal()" id="login-btn">👨‍🏫 老師登入</button>
+            <button class="btn btn-yellow" onclick="logout()" id="logout-btn" style="display: none;">登出後台</button>
         </div>
-        <p class="hint-text">點擊右上角「學生登入」即可進入個人面板，時鐘將會自動隱藏！</p>
-    </main>
-
-    <!-- 右下角時鐘 -->
-    <div id="clock-box">
-        <div id="clock-time">07:10:15</div>
-        <div id="clock-date">民國115年10月03日</div>
     </div>
 
-    <!-- 學生個人面板彈窗 (還原蕭睿宏同學資料) -->
-    <div id="student-modal">
+    <!-- 科技時鐘 (右下角懸浮) -->
+    <div class="digital-clock-container" id="digital-clock-box">
+        <div class="digital-clock-time" id="digital-time">00:00:00</div>
+        <div class="digital-clock-date" id="digital-date">民國115年--月--日</div>
+    </div>
+
+    <!-- 學生端首頁 -->
+    <div id="student-view">
+        <h2 class="class-main-title">✨ 五乙打卡站 ✨</h2>
+        <div style="text-align: center; font-size: 24px; color: #555; margin-top: 50px;">
+            <p>點擊右上角「學生登入」即可進入個人面板，時鐘將會自動隱藏！</p>
+        </div>
+    </div>
+
+    <!-- 學生個人面板 -->
+    <div id="student-personal-view" style="padding: 40px;">
+        <h2 id="personal-welcome" style="text-align: center; font-size: 40px; color: var(--sidebar-bg);"></h2>
+        <div style="text-align: center; margin-top: 30px;">
+            <p style="font-size: 24px;">這裡是學生的個人專屬面板（時鐘已自動隱藏）。</p>
+        </div>
+    </div>
+
+    <!-- 老師後台 -->
+    <div id="teacher-view" style="padding: 40px;">
+        <h2 style="color: var(--primary-color);">老師管理後台</h2>
+        <p style="font-size: 24px;">這裡是老師管理後台（時鐘已自動隱藏）。</p>
+    </div>
+
+    <!-- 學生登入視窗 -->
+    <div class="modal-overlay" id="student-login-modal">
         <div class="modal-content">
-            <h2>學生個人面板 - 蕭睿宏</h2>
-            <div class="info-group"><span>學號 / ID：</span>1[cite: 5]</div>
-            <div class="info-group"><span>班級平台：</span>五乙這乙班[cite: 5]</div>
-            <div class="info-group"><span>生日：</span>10月10日[cite: 5]</div>
-            <div class="info-group"><span>當前任務標籤：</span>潔牙[cite: 5]</div>
-            <div class="info-group"><span>最後登入時間：</span>2026/10/2 09:33[cite: 5]</div>
-            <div class="info-group"><span>今日樹木簽到：</span>未簽到[cite: 5]</div>
-            <div class="info-group"><span>其他數據：</span>鱷魚數 = 3、GachaAura = 0[cite: 5]</div>
-            <div class="info-group"><span>近期出勤紀錄：</span>已載入 9月至10月共 11 筆出勤紀錄[cite: 5]</div>
-            <button class="close-btn" onclick="closeStudentPanel()">關閉面板</button>
+            <h2>👨‍🎓 學生登入</h2>
+            <input type="number" id="login-seat-input" placeholder="請輸入座號 (例如: 1)" style="font-size:20px; padding:10px; width:80%; margin:15px 0;"><br>
+            <input type="password" id="login-password-input" placeholder="請輸入密碼 (預設為座號)" style="font-size:20px; padding:10px; width:80%; margin-bottom:20px;"><br>
+            <button class="btn btn-yellow" onclick="checkStudentLogin()" style="font-size:20px; padding:10px 20px;">確認登入</button>
+            <button class="btn" onclick="closeModal('student-login-modal')" style="font-size:20px; padding:10px 20px;">取消</button>
+        </div>
+    </div>
+
+    <!-- 老師登入視窗 -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal-content">
+            <h2>老師登入</h2>
+            <input type="password" id="password-input" placeholder="請輸入管理員密碼" style="font-size:20px; padding:10px; width:80%; margin:20px 0;"><br>
+            <button class="btn btn-yellow" onclick="checkLogin()" style="font-size:20px; padding:10px 20px;">登入</button>
+            <button class="btn" onclick="closeModal('login-modal')" style="font-size:20px; padding:10px 20px;">取消</button>
         </div>
     </div>
 
     <script>
-        // 即時時鐘與日期更新 (鎖定在 2026年10月3日)
-        function updateClock() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock-time').textContent = `${hours}:${minutes}:${seconds}`;
-        }
-        setInterval(updateClock, 1000);
+        let students = [
+            { id: 1, seat: 1, name: "王小明", password: "1" }
+        ];
 
-        // 學生登入互動：開啟面板並隱藏時鐘
-        function openStudentPanel() {
-            document.getElementById('student-modal').style.display = 'flex';
-            document.getElementById('clock-box').style.opacity = '0';
-            document.getElementById('clock-boxstyle').pointerEvents = 'none';
+        function startLiveClock() {
+            function updateClock() {
+                const now = new Date();
+                const year = now.getFullYear() - 1911;
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const date = String(now.getDate()).padStart(2, '0');
+                let hours = now.getHours();
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                
+                const timeEl = document.getElementById('digital-time');
+                const dateEl = document.getElementById('digital-date');
+                if (timeEl) timeEl.innerText = `${String(hours).padStart(2, '0')}:${minutes}:${seconds}`;
+                if (dateEl) dateEl.innerText = `民國${year}年${month}月${date}日`;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
         }
 
-        // 關閉面板並恢復時鐘
-        function closeStudentPanel() {
-            document.getElementById('student-modal').style.display = 'none';
-            document.getElementById('clock-box').style.opacity = '1';
+        function hideClockForStudent() {
+            const clock = document.getElementById('digital-clock-box');
+            if (clock) clock.style.display = 'none';
         }
+
+        function showClockForHome() {
+            const clock = document.getElementById('digital-clock-box');
+            if (clock) clock.style.display = 'flex';
+        }
+
+        function showStudentLoginModal() {
+            document.getElementById('student-login-modal').style.display = 'flex';
+        }
+
+        function showLoginModal() {
+            document.getElementById('login-modal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function checkStudentLogin() {
+            const seat = parseInt(document.getElementById('login-seat-input').value);
+            const pass = document.getElementById('login-password-input').value.trim();
+            const student = students.find(s => s.seat === seat);
+
+            if (!student || pass !== (student.password || String(student.seat))) {
+                alert("座號或密碼錯誤！預設密碼為座號。");
+                return;
+            }
+
+            closeModal('student-login-modal');
+            document.getElementById('student-view').style.display = 'none';
+            document.getElementById('student-personal-view').style.display = 'block';
+            document.getElementById('student-login-btn').style.display = 'none';
+            document.getElementById('student-logout-btn').style.display = 'inline-block';
+            
+            document.getElementById('personal-welcome').innerText = `歡迎回來，${student.seat}號 ${student.name}同學！`;
+            hideClockForStudent(); // 學生登入後隱藏時鐘
+        }
+
+        function studentLogout() {
+            document.getElementById('student-personal-view').style.display = 'none';
+            document.getElementById('student-view').style.display = 'flex';
+            document.getElementById('student-login-btn').style.display = 'inline-block';
+            document.getElementById('student-logout-btn').style.display = 'none';
+            showClockForHome(); // 登出返回首頁顯示時鐘
+        }
+
+        function checkLogin() {
+            const pass = document.getElementById('password-input').value;
+            if (pass === "1234" || pass === "admin") {
+                closeModal('login-modal');
+                document.getElementById('student-view').style.display = 'none';
+                document.getElementById('teacher-view').style.display = 'block';
+                document.getElementById('login-btn').style.display = 'none';
+                document.getElementById('logout-btn').style.display = 'inline-block';
+                hideClockForStudent(); // 老師進入後台隱藏時鐘
+            } else {
+                alert("管理員密碼錯誤！");
+            }
+        }
+
+        function logout() {
+            document.getElementById('teacher-view').style.display = 'none';
+            document.getElementById('student-view').style.display = 'flex';
+            document.getElementById('login-btn').style.display = 'inline-block';
+            document.getElementById('logout-btn').style.display = 'none';
+            showClockForHome(); // 返回首頁顯示時鐘
+        }
+
+        window.onload = function() {
+            startLiveClock();
+            showClockForHome();
+        };
     </script>
 </body>
 </html>
-```[cite: 5, 6]
