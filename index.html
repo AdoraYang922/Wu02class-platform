@@ -153,30 +153,15 @@
         .student-card.all-done { border-color: var(--success-color); border-width: 5px; }
         .student-card.has-pending { border-color: var(--danger-color); border-width: 5px; }
 
-        .student-card > * {
-            position: relative;
-            z-index: 2;
-        }
+        .student-card > * { position: relative; z-index: 2; }
 
         .student-name-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
+            display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap;
         }
 
         .student-name { 
-            font-size: 46px; 
-            font-weight: bold; 
-            color: var(--primary-color); 
-            text-shadow: 
-                -2px -2px 0 #fff,  
-                 2px -2px 0 #fff, 
-                -2px  2px 0 #fff, 
-                 2px  2px 0 #fff,
-                 0 1px 3px rgba(0,0,0,0.3); 
+            font-size: 46px; font-weight: bold; color: var(--primary-color); 
+            text-shadow: -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff, 0 1px 3px rgba(0,0,0,0.3); 
         }
         .student-card.all-done .student-name { color: #2e7d32; }
         .student-card.has-pending .student-name { color: #c62828; }
@@ -192,11 +177,7 @@
         .alligator-score { font-size: 24px; font-weight: bold; color: #2e7d32; background-color: #e8f5e9; border-radius: 20px; padding: 6px 18px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
         .sidebar-right-container {
-            width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-            flex-shrink: 0;
+            width: 420px; display: flex; flex-direction: column; gap: 25px; flex-shrink: 0;
         }
 
         .student-announcements {
@@ -205,7 +186,6 @@
             border-left: 6px solid var(--secondary-color);
         }
         .student-announcements h3 { margin-top: 0; color: var(--sidebar-bg); border-bottom: 2px solid var(--bg-color); padding-bottom: 12px; font-size: 26px; text-align: center; }
-        
         .student-announcements ul {
             list-style-type: none; padding-left: 0; margin-bottom: 0; font-size: 22px; line-height: 1.8;
             display: flex; flex-direction: column; gap: 14px;
@@ -213,12 +193,8 @@
         .student-announcements li { padding: 8px 0; border-bottom: 1px dashed #eee; word-break: break-all; }
 
         .tree-card {
-            background: var(--white);
-            padding: 25px 20px;
-            border-radius: 14px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.06);
-            border-top: 6px solid var(--success-color);
-            text-align: center;
+            background: var(--white); padding: 25px 20px; border-radius: 14px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.06); border-top: 6px solid var(--success-color); text-align: center;
         }
         .tree-card h3 { margin-top: 0; color: #2e7d32; font-size: 28px; margin-bottom: 12px; border-bottom: 2px solid var(--bg-color); padding-bottom: 10px; }
         
@@ -227,6 +203,11 @@
         .tree-progress-bar-bg { background-color: #e0e0e0; border-radius: 10px; height: 18px; width: 100%; overflow: hidden; margin: 12px 0 8px 0; }
         .tree-progress-bar-fill { background-color: var(--success-color); height: 100%; width: 0%; transition: width 0.4s ease; }
         .tree-stats-text { font-size: 18px; color: #555; font-weight: bold; }
+
+        .codex-badge-box { margin-top: 15px; background: #e8f5e9; border: 2px dashed #81c784; border-radius: 10px; padding: 12px; text-align: left; }
+        .codex-badge-box h4 { margin: 0 0 8px 0; color: #2e7d32; font-size: 18px; text-align: center; }
+        .codex-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .codex-tag { background: #2e7d32; color: white; padding: 6px 12px; border-radius: 20px; font-size: 16px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
         .tree-rank-box { margin-top: 15px; text-align: left; background: #f9f9f9; padding: 12px; border-radius: 8px; max-height: 180px; overflow-y: auto; }
         .tree-rank-box h4 { margin: 0 0 8px 0; font-size: 18px; color: var(--sidebar-bg); text-align: center; }
@@ -342,7 +323,7 @@
 
         <div>
             <button class="btn btn-yellow" onclick="openGachaRankModal()" style="background-color: #ff9800; color: white;">🎁 海螺抽卡</button>
-            <button id="student-login-btn" class="btn btn-yellow" onclick="showStudentLoginModal()">👨‍‍🎓 學生登入</button>
+            <button id="student-login-btn" class="btn btn-yellow" onclick="showStudentLoginModal()">👨‍🎓 學生登入</button>
             <button id="student-logout-btn" class="btn btn-yellow" onclick="studentLogout()" style="display: none;">登出個人面板</button>
             <button id="login-btn" class="btn btn-yellow" onclick="showLoginModal()">👨‍🏫 老師登入</button>
             <button id="logout-btn" class="btn btn-yellow" onclick="logout()" style="display: none;">登出後台 (返回學生端)</button>
@@ -378,7 +359,7 @@
                 </div>
 
                 <div class="tree-card">
-                    <h3>🌳 乙棵成長樹</h3>
+                    <h3>🌳 乙棵成長樹與圖鑑</h3>
                     <div class="tree-visual-box" id="tree-visual">🌱</div>
                     <div class="tree-stage-name" id="tree-stage-title">第一階段 - 種子期</div>
                     <div class="tree-progress-bar-bg">
@@ -386,6 +367,13 @@
                     </div>
                     <div class="tree-stats-text" id="tree-stats-text">經驗值：0 / 500</div>
                     
+                    <div class="codex-badge-box">
+                        <h4>🌿 校園傳奇植物圖鑑</h4>
+                        <div class="codex-tags" id="codex-tags-list">
+                            <span style="color:#666; font-size:16px;">尚無解鎖樹種，努力加油！</span>
+                        </div>
+                    </div>
+
                     <div class="tree-rank-box">
                         <h4>🏆 貢獻排行榜 TOP 10</h4>
                         <ul class="tree-rank-list" id="tree-rank-list"></ul>
@@ -591,7 +579,7 @@
                 <div class="card" style="border-top: 5px solid var(--warning-color);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
                         <h3 style="margin: 0; color: #f57f17;">📋 目前全班已派發的任務清單</h3>
-                        <button class="btn btn-danger" onclick="clearAllClassTasks()">🗑️️ 一鍵收回所有全班任務</button>
+                        <button class="btn btn-danger" onclick="clearAllClassTasks()">🗑️ 一鍵收回所有全班任務</button>
                     </div>
                     <p style="font-size: 16px; color: #666; margin-top: 0;">💡 以下顯示目前所有全班性任務，您可以針對特定任務點擊「收回」來刪除它。</p>
                     <table>
@@ -904,9 +892,8 @@
         let sidebarOrder = [];
         let gachaLogs = [];
         let studentGroups = []; 
-        let activeAdminStudentTaskId = null;
+        let unlockedTrees = []; // 🌿 校園植物圖鑑解鎖清單
         
-        // 🔒 終極安全鎖：防止未從雲端成功抓取資料前覆蓋 Firebase 根目錄
         let isCloudLoaded = false; 
 
         const taskTagColors = {
@@ -915,13 +902,6 @@
             '童軍團': '#FF9800', '科展': '#795548', '任務': '#607D8B',
             '會議': '#00897B', '旗手': '#D32F2F', '科學': '#388E3C', '榮譽下午茶': '#C2185B'
         };
-
-        const defaultAnnouncements = [{ text: "五年級戶外教學回條，請於下週三前繳交。", color: "#333333", weight: "normal" }];
-        const defaultStudents = [
-            { id: 1, seat: 1, name: '王小明', photoUrl: '', birthday: '', tasks: [], points: 8, alligator: 1, praiseComment: '', praiseTimestamp: null, attendanceLog: {}, currentTaskTag: '', lastAlligatorRewardDate: '', shellRewardedToday: false, lastResetDate: '', password: '1', lastLoginTime: '未曾登入', lastPasswordChangeTime: '未曾修改', treeContribution: 0, checkedInTodayForTree: false, completedTasksForTree: {} },
-            { id: 2, seat: 2, name: '李小華', photoUrl: '', birthday: '', tasks: [], points: 4, alligator: 2, praiseComment: '', praiseTimestamp: null, attendanceLog: {}, currentTaskTag: '潔牙', lastAlligatorRewardDate: '', shellRewardedToday: false, lastResetDate: '', password: '2', lastLoginTime: '未曾登入', lastPasswordChangeTime: '未曾修改', treeContribution: 0, checkedInTodayForTree: false, completedTasksForTree: {} }
-        ];
-        const defaultDuty = [1, 2];
 
         let currentStudentId = null;
         let activeGachaStudentId = null;
@@ -986,7 +966,7 @@
             if (selectedTaskInput && !selectedTaskInput.value) selectedTaskInput.value = `${y}-${m}-${d}T23:59`;
         }
 
-        // ==================== Firebase 雲端即時同步設定 (全面對齊根目錄 .json) ====================
+        // ==================== Firebase 雲端即時同步設定 ====================
         const FIREBASE_URL = "https://class02-8cb8e-default-rtdb.firebaseio.com/";
         let isCloudSyncing = false;
 
@@ -994,13 +974,12 @@
             const savedPlatformName = localStorage.getItem('class_platform_name');
             if (savedPlatformName) platformName = savedPlatformName;
 
-            // 直接讀取根目錄的 .json，並加入 cache: 'no-store' 強制繞過瀏覽器快取
             fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
             .then(response => response.json())
             .then(data => {
                 if (data && data.students && data.students.length > 0) {
                     applyCloudData(data);
-                    isCloudLoaded = true; // 🔓 成功下載雲端資料，安全鎖解鎖！
+                    isCloudLoaded = true; 
                     refreshAllViews();
                     console.log("✅ 成功從 Firebase 根目錄載入雲端資料庫並解鎖");
                 } else {
@@ -1011,33 +990,31 @@
                 console.log("讀取 Firebase 失敗", err);
             });
 
-           // 每隔 5 秒自動與雲端同步（精準鎖定學生與值日生勾選框）
-        setInterval(() => {
-            if (isCloudSyncing || !isCloudLoaded) return;
-            
-            // 🛑 防護鎖 1：正在輸入中，禁止覆蓋
-            const activeEl = document.activeElement;
-            if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
-                return; 
-            }
-
-            // 🛑 防護鎖 2：只檢查「學生管理、派發任務、值日生」表格內的核取方塊是否有被勾選
-            const checkedStudentBoxes = document.querySelectorAll('#admin-students input[type="checkbox"]:checked, #admin-tasks input[type="checkbox"]:checked, #admin-duty input[type="checkbox"]:checked, .student-select-checkbox:checked, .student-checkbox:checked, .duty-checkbox:checked');
-            if (checkedStudentBoxes && checkedStudentBoxes.length > 0) {
-                return;
-            }
-
-            fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.students && data.students.length > 0) {
-                    isCloudSyncing = true;
-                    applyCloudData(data);
-                    refreshAllViews();
-                    setTimeout(() => { isCloudSyncing = false; }, 500);
+            // 每隔 5 秒自動與雲端同步（具備防護鎖）
+            setInterval(() => {
+                if (isCloudSyncing || !isCloudLoaded) return;
+                
+                const activeEl = document.activeElement;
+                if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
+                    return; 
                 }
-            }).catch(e => {});
-        }, 5000);
+
+                const checkedStudentBoxes = document.querySelectorAll('#admin-students input[type="checkbox"]:checked, #admin-tasks input[type="checkbox"]:checked, #admin-duty input[type="checkbox"]:checked, .student-select-checkbox:checked, .student-checkbox:checked, .duty-checkbox:checked');
+                if (checkedStudentBoxes && checkedStudentBoxes.length > 0) {
+                    return;
+                }
+
+                fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.students && data.students.length > 0) {
+                        isCloudSyncing = true;
+                        applyCloudData(data);
+                        refreshAllViews();
+                        setTimeout(() => { isCloudSyncing = false; }, 500);
+                    }
+                }).catch(e => {});
+            }, 5000);
         }
 
         function applyCloudData(data) {
@@ -1069,18 +1046,17 @@
             if (data.sidebarOrder) sidebarOrder = data.sidebarOrder;
             if (data.gachaLogs) gachaLogs = data.gachaLogs;
             if (data.studentGroups) studentGroups = data.studentGroups;
+            if (data.unlockedTrees) unlockedTrees = data.unlockedTrees;
         }
 
         function saveDataToStorage() {
             if (isCloudSyncing) return;
             
-            // 🛑 終極安全鎖攔截：若雲端資料未正式載入完成，絕對禁止覆蓋寫入根目錄！
             if (!isCloudLoaded) {
                 console.log("🛑 安全鎖攔截：雲端資料尚未同步完成，禁止覆蓋寫入以防歸零。");
                 return;
             }
 
-            // 直接將所有資料平鋪在根目錄儲存，不包 classData 夾子！
             const rootData = {
                 platformName: platformName,
                 students: students,
@@ -1088,7 +1064,8 @@
                 dutyStudents: dutyStudents,
                 sidebarOrder: sidebarOrder,
                 gachaLogs: gachaLogs,
-                studentGroups: studentGroups
+                studentGroups: studentGroups,
+                unlockedTrees: unlockedTrees
             };
 
             fetch(FIREBASE_URL + ".json", {
@@ -1100,6 +1077,169 @@
             });
         }
 
+        // 🌿 成長樹階段定義與校園植物循環圖鑑
+        const treeStages = [
+            { name: "第一階段 - 種子期", max: 500, icon: "🌱" },
+            { name: "第二階段 - 萌芽期", max: 700, icon: "🌿" },
+            { name: "第三階段 - 成長期", max: 900, icon: "🌳" },
+            { name: "第四階段 - 茁壯期", max: 1200, icon: "🌲" },
+            { name: "第五階段 - 豐收期", max: 1400, icon: "🍎" }
+        ];
+        const totalTreeStagesMax = 500 + 700 + 900 + 1200 + 1400; // 4700 點滿等
+        const campusLegendaryTrees = ["🌴 大王椰子樹", "🌳 百年老榕樹", "🌲 肯氏南洋杉", "🌸 雞蛋花", "🍃 金龜樹", "🌺 炮仗花"];
+
+        function getGlobalTreeTotalPoints() {
+            let sum = 0;
+            students.forEach(s => { sum += (s.treeContribution || 0); });
+            return sum;
+        }
+
+        function checkAndTriggerHarvest(currentTotal) {
+            let cycleIndex = Math.floor(currentTotal / totalTreeStagesMax);
+            let harvestedKey = `tree_harvest_cycle_${cycleIndex}`;
+            
+            if (currentTotal >= totalTreeStagesMax && !localStorage.getItem(harvestedKey)) {
+                localStorage.setItem(harvestedKey, "true");
+                
+                // 依據循環次數解鎖圖鑑中的校園代表樹種 (預設第一個解鎖大王椰子樹)
+                let treeToUnlock = campusLegendaryTrees[Math.min(cycleIndex - 1, campusLegendaryTrees.length - 1)];
+                if (!unlockedTrees.includes(treeToUnlock)) {
+                    unlockedTrees.push(treeToUnlock);
+                }
+
+                let multiplier = Math.floor(Math.random() * (100 - 80 + 1)) + 80;
+                let totalShellsToDistribute = 28 * multiplier;
+                let sharePerStudent = Math.floor(totalShellsToDistribute / students.length);
+                let remainder = totalShellsToDistribute % students.length;
+
+                students.forEach((s, idx) => {
+                    s.points += sharePerStudent + (idx < remainder ? 1 : 0);
+                });
+
+                triggerConfetti();
+                showAdminAlert("🍎 校園傳奇植物解鎖！", `🎉 太厲害了！全班成功將成長樹養育至滿等，解鎖了校園傳奇植物：【${treeToUnlock}】！\n神秘果實掉落：全班共獲得 ${totalShellsToDistribute} 個海螺，每人分得 ${sharePerStudent} 個 🐚！\n成長樹已自動開啟下一輪植物挑戰！`, "🌴");
+                saveDataToStorage();
+            }
+        }
+
+        function renderTreeSystem() {
+            let totalPts = getGlobalTreeTotalPoints();
+            checkAndTriggerHarvest(totalPts);
+
+            let currentCyclePoints = totalPts % totalTreeStagesMax;
+            let currentStageIndex = 0;
+            let stageBase = 0;
+            let stageTarget = 500;
+
+            let tempSum = 0;
+            for (let i = 0; i < treeStages.length; i++) {
+                stageBase = tempSum;
+                stageTarget = treeStages[i].max;
+                if (currentCyclePoints >= tempSum && currentCyclePoints < tempSum + stageTarget) {
+                    currentStageIndex = i;
+                    break;
+                }
+                tempSum += stageTarget;
+                if (i === treeStages.length - 1) currentStageIndex = i;
+            }
+
+            let stageCurrentPts = Math.min(stageTarget, currentCyclePoints - stageBase);
+            if (totalPts >= totalTreeStagesMax && currentCyclePoints === 0) stageCurrentPts = stageTarget;
+            let percentage = Math.round((stageCurrentPts / stageTarget) * 100);
+
+            const stageInfo = treeStages[currentStageIndex];
+            document.getElementById('tree-visual').innerText = totalPts >= totalTreeStagesMax && currentCyclePoints === 0 ? "🌴" : stageInfo.icon;
+            document.getElementById('tree-stage-title').innerText = stageInfo.name;
+            document.getElementById('tree-progress-fill').style.width = `${percentage}%`;
+            document.getElementById('tree-stats-text').innerText = `總經驗值：${totalPts} (${stageCurrentPts}/${stageTarget} - ${percentage}%)`;
+
+            // 渲染校園植物圖鑑
+            const codexBox = document.getElementById('codex-tags-list');
+            codexBox.innerHTML = '';
+            if (unlockedTrees.length === 0) {
+                codexBox.innerHTML = '<span style="color:#666; font-size:16px;">尚無解鎖樹種，快加油集滿解鎖「大王椰子樹」！</span>';
+            } else {
+                unlockedTrees.forEach(treeName => {
+                    codexBox.innerHTML += `<span class="codex-tag">${treeName}</span>`;
+                });
+            }
+
+            let sortedStudents = [...students].sort((a, b) => (b.treeContribution || 0) - (a.treeContribution || 0));
+            let top10 = sortedStudents.slice(0, 10);
+            const rankUl = document.getElementById('tree-rank-list');
+            rankUl.innerHTML = '';
+            
+            top10.forEach((s, idx) => {
+                let rankIcon = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `${idx + 1}.`));
+                rankUl.innerHTML += `<li><span>${rankIcon} ${s.seat}號 ${s.name}</span><strong>+${s.treeContribution || 0}分</strong></li>`;
+            });
+            if (top10.length === 0 || top10.every(s => (s.treeContribution || 0) === 0)) {
+                rankUl.innerHTML = '<li style="color:#666; text-align:center;">尚無貢獻紀錄，快來打卡與完成任務吧！</li>';
+            }
+        }
+
+        function addTreePoints(student, taskKey, isClassTaskDone, isCheckInDone) {
+            let addedPoints = 0;
+            let currentTaskStatus = student.completedTasksForTree[taskKey] || false;
+            let currentCheckInStatus = student.checkedInTodayForTree || false;
+
+            if (isClassTaskDone && !currentTaskStatus) {
+                addedPoints += 1;
+                student.completedTasksForTree[taskKey] = true;
+            } else if (!isClassTaskDone && currentTaskStatus) {
+                addedPoints -= 1;
+                student.completedTasksForTree[taskKey] = false;
+            }
+
+            if (isCheckInDone && !currentCheckInStatus) {
+                addedPoints += 2;
+                student.checkedInTodayForTree = true;
+            } else if (!isCheckInDone && currentCheckInStatus) {
+                addedPoints -= 2;
+                student.checkedInTodayForTree = false;
+            }
+
+            let hasBothNow = isClassTaskDone && isCheckInDone;
+            let hadBothBefore = currentTaskStatus && currentCheckInStatus;
+
+            if (hasBothNow && !hadBothBefore) addedPoints += 1;
+            else if (!hasBothNow && hadBothBefore) addedPoints -= 1;
+
+            if (addedPoints !== 0) {
+                student.treeContribution = Math.max(0, (student.treeContribution || 0) + addedPoints);
+            }
+        }
+
+        function renderAdminTreePointsTable() {
+            const tbody = document.getElementById('admin-tree-points-list');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            students.forEach(student => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${student.seat}</td>
+                        <td><strong>${student.name}</strong></td>
+                        <td style="color:#2e7d32; font-weight:bold; font-size:22px;">+${student.treeContribution || 0} 分</td>
+                        <td>
+                            <button class="btn btn-success" style="padding:6px 14px; font-size:16px; margin-right:6px;" onclick="modifyStudentTreePoints(${student.id}, 1)">+1分</button>
+                            <button class="btn btn-success" style="padding:6px 14px; font-size:16px; margin-right:6px;" onclick="modifyStudentTreePoints(${student.id}, 5)">+5分</button>
+                            <button class="btn btn-danger" style="padding:6px 14px; font-size:16px; margin-right:6px;" onclick="modifyStudentTreePoints(${student.id}, -1)">-1分</button>
+                            <button class="btn btn-danger" style="padding:6px 14px; font-size:16px;" onclick="modifyStudentTreePoints(${student.id}, -5)">-5分</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function modifyStudentTreePoints(studentId, amount) {
+            const student = students.find(s => s.id === studentId);
+            if(student) {
+                student.treeContribution = Math.max(0, (student.treeContribution || 0) + amount);
+                refreshAllViews();
+            }
+        }
+
+        // 其他基礎函式保持完整
         function saveGroup() {
             const nameInput = document.getElementById('group-name-input').value.trim();
             const seatsInput = document.getElementById('group-seats-input').value.trim();
@@ -1199,7 +1339,7 @@
         function exportBackupData() {
             const backupData = {
                 platformName: platformName, students: students, announcements: announcements,
-                dutyStudents: dutyStudents, sidebarOrder: sidebarOrder, gachaLogs: gachaLogs, studentGroups: studentGroups
+                dutyStudents: dutyStudents, sidebarOrder: sidebarOrder, gachaLogs: gachaLogs, studentGroups: studentGroups, unlockedTrees: unlockedTrees
             };
             const dataStr = JSON.stringify(backupData);
             const blob = new Blob([dataStr], { type: "application/json" });
@@ -1227,7 +1367,8 @@
                             sidebarOrder = data.sidebarOrder || [];
                             gachaLogs = data.gachaLogs || [];
                             studentGroups = data.studentGroups || [];
-                            isCloudLoaded = true; // 強制解鎖以允許上傳
+                            unlockedTrees = data.unlockedTrees || [];
+                            isCloudLoaded = true; 
                             saveDataToStorage();
                             refreshAllViews();
                             showAdminAlert("還原成功", "✅ 班級所有資料已成功還原並寫入雲端！", "💾");
@@ -1662,148 +1803,6 @@
             saveDataToStorage();
         }
 
-        const treeStages = [
-            { name: "第一階段 - 種子期", max: 500, icon: "🌱" },
-            { name: "第二階段 - 萌芽期", max: 700, icon: "🌿" },
-            { name: "第三階段 - 成長期", max: 900, icon: "🌳" },
-            { name: "第四階段 - 茁壯期", max: 1200, icon: "🌲" },
-            { name: "第五階段 - 丰收期", max: 1400, icon: "🍎" }
-        ];
-        const totalTreeStagesMax = 500 + 700 + 900 + 1200 + 1400;
-
-        function getGlobalTreeTotalPoints() {
-            let sum = 0;
-            students.forEach(s => { sum += (s.treeContribution || 0); });
-            return sum;
-        }
-
-        function checkAndTriggerHarvest(currentTotal) {
-            let harvestFlagKey = "tree_harvest_triggered_v1";
-            if (currentTotal >= totalTreeStagesMax && !localStorage.getItem(harvestFlagKey)) {
-                localStorage.setItem(harvestFlagKey, "true");
-                
-                let multiplier = Math.floor(Math.random() * (100 - 80 + 1)) + 80;
-                let totalShellsToDistribute = 28 * multiplier;
-                let sharePerStudent = Math.floor(totalShellsToDistribute / students.length);
-                let remainder = totalShellsToDistribute % students.length;
-
-                students.forEach((s, idx) => {
-                    s.points += sharePerStudent + (idx < remainder ? 1 : 0);
-                });
-
-                triggerConfetti();
-                showAdminAlert("🍎 乙棵成長樹豐收啦！", `🎉 太厲害了！全班共同努力將「乙棵成長樹」養育至第五階段滿分！\n神秘果實掉落：總共獲得 28 × ${multiplier} = ${totalShellsToDistribute} 個海螺！\n平均分給全班每位同學，每人獲得約 ${sharePerStudent} 個海螺 🐚！`, "🍎");
-                saveDataToStorage();
-            } else if (currentTotal < totalTreeStagesMax) {
-                localStorage.removeItem(harvestFlagKey);
-            }
-        }
-
-        function renderTreeSystem() {
-            let totalPts = getGlobalTreeTotalPoints();
-            checkAndTriggerHarvest(totalPts);
-
-            let currentStageIndex = 0;
-            let stageBase = 0;
-            let stageTarget = 500;
-
-            let tempSum = 0;
-            for (let i = 0; i < treeStages.length; i++) {
-                stageBase = tempSum;
-                stageTarget = treeStages[i].max;
-                if (totalPts >= tempSum && totalPts < tempSum + stageTarget) {
-                    currentStageIndex = i;
-                    break;
-                }
-                tempSum += stageTarget;
-                if (i === treeStages.length - 1) currentStageIndex = i;
-            }
-
-            let stageCurrentPts = Math.min(stageTarget, totalPts - stageBase);
-            if (totalPts >= totalTreeStagesMax) stageCurrentPts = stageTarget;
-            let percentage = Math.round((stageCurrentPts / stageTarget) * 100);
-
-            const stageInfo = treeStages[currentStageIndex];
-            document.getElementById('tree-visual').innerText = stageInfo.icon;
-            document.getElementById('tree-stage-title').innerText = stageInfo.name;
-            document.getElementById('tree-progress-fill').style.width = `${percentage}%`;
-            document.getElementById('tree-stats-text').innerText = `總經驗值：${totalPts} (${stageCurrentPts}/${stageTarget} - ${percentage}%)`;
-
-            let sortedStudents = [...students].sort((a, b) => (b.treeContribution || 0) - (a.treeContribution || 0));
-            let top10 = sortedStudents.slice(0, 10);
-            const rankUl = document.getElementById('tree-rank-list');
-            rankUl.innerHTML = '';
-            
-            top10.forEach((s, idx) => {
-                let rankIcon = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `${idx + 1}.`));
-                rankUl.innerHTML += `<li><span>${rankIcon} ${s.seat}號 ${s.name}</span><strong>+${s.treeContribution || 0}分</strong></li>`;
-            });
-            if (top10.length === 0 || top10.every(s => (s.treeContribution || 0) === 0)) {
-                rankUl.innerHTML = '<li style="color:#666; text-align:center;">尚無貢獻紀錄，快來打卡與完成任務吧！</li>';
-            }
-        }
-
-        function addTreePoints(student, taskKey, isClassTaskDone, isCheckInDone) {
-            let addedPoints = 0;
-            let currentTaskStatus = student.completedTasksForTree[taskKey] || false;
-            let currentCheckInStatus = student.checkedInTodayForTree || false;
-
-            if (isClassTaskDone && !currentTaskStatus) {
-                addedPoints += 1;
-                student.completedTasksForTree[taskKey] = true;
-            } else if (!isClassTaskDone && currentTaskStatus) {
-                addedPoints -= 1;
-                student.completedTasksForTree[taskKey] = false;
-            }
-
-            if (isCheckInDone && !currentCheckInStatus) {
-                addedPoints += 2;
-                student.checkedInTodayForTree = true;
-            } else if (!isCheckInDone && currentCheckInStatus) {
-                addedPoints -= 2;
-                student.checkedInTodayForTree = false;
-            }
-
-            let hasBothNow = isClassTaskDone && isCheckInDone;
-            let hadBothBefore = currentTaskStatus && currentCheckInStatus;
-
-            if (hasBothNow && !hadBothBefore) addedPoints += 1;
-            else if (!hasBothNow && hadBothBefore) addedPoints -= 1;
-
-            if (addedPoints !== 0) {
-                student.treeContribution = Math.max(0, (student.treeContribution || 0) + addedPoints);
-            }
-        }
-
-        function renderAdminTreePointsTable() {
-            const tbody = document.getElementById('admin-tree-points-list');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-            students.forEach(student => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${student.seat}</td>
-                        <td><strong>${student.name}</strong></td>
-                        <td style="color:#2e7d32; font-weight:bold; font-size:22px;">+${student.treeContribution || 0} 分</td>
-                        <td>
-                            <button class="btn btn-success" style="padding:6px 14px; font-size:16px; margin-right:6px;" onclick="modifyStudentTreePoints(${student.id}, 1)">+1分</button>
-                            <button class="btn btn-success" style="padding:6px 14px; font-size:16px; margin-right:6px;" onclick="modifyStudentTreePoints(${student.id}, 5)">+5分</button>
-                            <button class="btn btn-danger" style="padding:6px 14px; font-size:16px; margin-right:6px;" onclick="modifyStudentTreePoints(${student.id}, -1)">-1分</button>
-                            <button class="btn btn-danger" style="padding:6px 14px; font-size:16px;" onclick="modifyStudentTreePoints(${student.id}, -5)">-5分</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function modifyStudentTreePoints(studentId, amount) {
-            const student = students.find(s => s.id === studentId);
-            if(student) {
-                student.treeContribution = Math.max(0, (student.treeContribution || 0) + amount);
-                refreshAllViews();
-            }
-        }
-
         function renderAdminAccountList() {
             const tbody = document.getElementById('admin-account-list');
             tbody.innerHTML = '';
@@ -1830,7 +1829,7 @@
 
         function resetStudentPassword(id) {
             const student = students.find(s => s.id === id);
-            if (confirm(`⚠️ 確定要將 ${student.name} 的密碼強制重設為座號嗎？`)) {
+            if (confirm(`⚠️️ 確定要將 ${student.name} 的密碼強制重設為座號嗎？`)) {
                 student.password = student.seat.toString();
                 student.lastPasswordChangeTime = '老師強制重設';
                 saveDataToStorage();
@@ -2685,7 +2684,7 @@
                     });
                     saveDataToStorage();
                     refreshAllViews();
-                    showAdminAlert("收回成功", `✅ 已成功收回全班任務：「${targetText}」`, "🗑️");
+                    showAdminAlert("收回成功", `✅ 已成功收回全班任務：「${targetText}」`, "🗑️️");
                 }
             }
         }
@@ -2695,7 +2694,7 @@
                 students.forEach(student => { student.tasks = student.tasks.filter(t => !t.isClassTask); });
                 saveDataToStorage();
                 refreshAllViews();
-                showAdminAlert("清空成功", "✅ 已成功收回所有全班任務！", "🗑️");
+                showAdminAlert("清空成功", `✅ 已成功收回所有全班任務！`, "🗑️");
             }
         }
 
@@ -2704,7 +2703,7 @@
             const deadline = document.getElementById('selected-task-deadline').value;
             if(!taskText) return showAdminAlert("提示", "請輸入任務內容！", "⚠️");
             const checkboxes = document.querySelectorAll('.student-checkbox:checked');
-            if(checkboxes.length === 0) return showAdminAlert("提示", "請勾選學生！", "⚠️️");
+            if(checkboxes.length === 0) return showAdminAlert("提示", "請勾選學生！", "⚠");
             const today = getTodayDateStr();
             checkboxes.forEach(cb => {
                 const student = students.find(s => s.id === parseInt(cb.value));
