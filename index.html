@@ -299,12 +299,12 @@
         .task-list ul { margin: 18px 0 0 0; padding-left: 35px; }
         .task-list li { margin-bottom: 20px; line-height: 1.6; font-size: 26px; }
 
-        /* 🔮 強力特效：魔法卡牌召喚陣與神聖光柱 (上 3 下 2、倒梯形完美對齊) */
+        /* 🔮 強力特效：魔法卡牌召喚陣與 6 張卡牌排版 (上 3 下 3) */
         .gacha-magic-arena {
             position: relative;
             background: radial-gradient(circle, #24144d 0%, #0b051f 100%);
             border-radius: 20px;
-            padding: 35px 20px;
+            padding: 30px 20px;
             box-shadow: inset 0 0 50px rgba(255, 215, 0, 0.3), 0 15px 35px rgba(0,0,0,0.6);
             overflow: hidden;
             border: 4px solid #ffd700;
@@ -334,50 +334,63 @@
             100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-        /* 透過 4 欄的精確網格配置，讓下方的 2 張牌剛好卡在上方第 1、2 張與第 2、3 張的中間正下方 */
+        /* 能量條樣式 */
+        .aura-bar-container {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #ffd700;
+            border-radius: 14px;
+            padding: 12px 20px;
+            max-width: 600px;
+            margin: 15px auto 25px auto;
+            position: relative;
+            z-index: 5;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+        }
+        .aura-bar-title {
+            font-size: 20px;
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .aura-progress-bg {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            height: 18px;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+        }
+        .aura-progress-fill {
+            background: linear-gradient(90deg, #ff9800, #ffeb3b, #00ffcc);
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* 6 張卡牌網格排版 (上 3 下 3) */
         .gacha-card-container { 
             display: grid; 
-            grid-template-columns: repeat(4, 150px); 
+            grid-template-columns: repeat(3, 1fr); 
             gap: 20px; 
-            margin: 25px auto; 
-            width: fit-content;
+            margin: 15px auto; 
+            max-width: 780px;
             perspective: 1000px; 
             position: relative; 
             z-index: 5; 
-            justify-content: center;
-        }
-        
-        /* 第一排：3 張牌 (分別佔據 1-2, 2-3, 3-4 欄位，形成上方 3 張) */
-        .gacha-card:nth-child(1) { grid-column: 1 / 3; justify-self: center; }
-        .gacha-card:nth-child(2) { grid-column: 2 / 4; justify-self: center; }
-        .gacha-card:nth-child(3) { grid-column: 3 / 5; justify-self: center; }
-
-        /* 第二排：2 張牌 (剛好落在上方第 1-2 張與第 2-3 張的正下方，形成倒梯形) */
-        .gacha-card:nth-child(4) { 
-            grid-column: 1.5 / 3.5; 
-            grid-row: 2; 
-            justify-self: end; 
-            margin-right: -10px;
-            margin-top: 10px; 
-        }
-        .gacha-card:nth-child(5) { 
-            grid-column: 2.5 / 4.5; 
-            grid-row: 2; 
-            justify-self: start; 
-            margin-left: -10px;
-            margin-top: 10px; 
+            justify-items: center;
         }
 
-        /* 加大卡牌尺寸 (寬 230px, 高 330px) */
         .gacha-card {
-            width: 230px; height: 330px; 
+            width: 210px; height: 300px; 
             background: linear-gradient(135deg, #3d1c75, #5e2ca5);
             border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.6); font-size: 24px; color: #ffd700;
+            cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.6); font-size: 22px; color: #ffd700;
             font-weight: bold; transition: 0.3s; position: relative; border: 4px solid #ffd700;
-            user-select: none; gap: 15px; padding: 20px; box-sizing: border-box; text-align: center;
+            user-select: none; gap: 12px; padding: 15px; box-sizing: border-box; text-align: center;
         }
-        .gacha-card:hover { transform: translateY(-12px) scale(1.05); box-shadow: 0 0 45px #ffd700, 0 20px 40px rgba(0,0,0,0.8); }
+        .gacha-card:hover { transform: translateY(-10px) scale(1.04); box-shadow: 0 0 40px #ffd700, 0 15px 30px rgba(0,0,0,0.8); }
         
         /* 召喚光柱特效 (動態觸發) */
         .gacha-card.summoning {
@@ -387,8 +400,8 @@
         }
         @keyframes cardSummoningAnim {
             0% { transform: scale(1) translateY(0); filter: brightness(1); }
-            40% { transform: scale(1.25) translateY(-50px); filter: brightness(3); box-shadow: 0 0 90px #fff, 0 0 150px #ffd700; }
-            70% { transform: scale(1.15) translateY(-25px) rotateY(720deg); filter: brightness(2.5); }
+            40% { transform: scale(1.25) translateY(-40px); filter: brightness(3); box-shadow: 0 0 90px #fff, 0 0 150px #ffd700; }
+            70% { transform: scale(1.15) translateY(-20px) rotateY(720deg); filter: brightness(2.5); }
             100% { transform: scale(1.05) translateY(0) rotateY(1440deg); filter: brightness(1.5); }
         }
 
@@ -412,9 +425,9 @@
             background: linear-gradient(135deg, #004d40, #00b0ff);
             color: #ffffff; 
             border-color: #00ffcc; 
-            font-size: 26px; 
+            font-size: 24px; 
             text-align: center; 
-            line-height: 1.5;
+            line-height: 1.4;
             box-shadow: 0 0 60px #00ffcc, inset 0 0 30px rgba(255,255,255,0.7);
         }
 
@@ -998,23 +1011,34 @@
         </div>
     </div>
 
-    <!-- 🔮 魔法陣抽卡互動視窗 (上3下2超大卡牌) -->
+    <!-- 🔮 魔法陣抽卡互動視窗 (6張卡牌：上3下3 + 能量條在標題下方) -->
     <div class="modal-overlay" id="gacha-draw-modal">
-        <div class="modal-content" style="max-width: 1100px; background: #0c081e; color: #fff; border: 3px solid #ffd700;">
+        <div class="modal-content" style="max-width: 1000px; background: #0c081e; color: #fff; border: 3px solid #ffd700;">
             <div class="divine-beam-overlay" id="divine-beam"></div>
-            <h2 id="gacha-draw-title" style="color: #ffd700; font-size: 36px; text-shadow: 0 0 10px rgba(255,215,0,0.6);"></h2>
-            <p id="gacha-shell-status" style="font-size: 22px; font-weight: bold; color: #ffeb3b;"></p>
+            <h2 id="gacha-draw-title" style="color: #ffd700; font-size: 34px; text-shadow: 0 0 10px rgba(255,215,0,0.6); margin-bottom: 8px;"></h2>
+            <p id="gacha-shell-status" style="font-size: 20px; font-weight: bold; color: #ffeb3b; margin-top: 0;"></p>
             
+            <!-- 能量條放置在標題下方 -->
+            <div class="aura-bar-container">
+                <div class="aura-bar-title">
+                    <span>✨ 光芒能量條 (集滿 10 個 100% 抽中 2 隻鱷魚)</span>
+                    <span id="aura-count-text">0 / 10</span>
+                </div>
+                <div class="aura-progress-bg">
+                    <div class="aura-progress-fill" id="aura-progress-fill"></div>
+                </div>
+            </div>
+
             <div class="gacha-magic-arena">
                 <div class="magic-circle-bg"></div>
-                <p id="gacha-hint" style="font-size: 22px; color: #e1bee7; position: relative; z-index: 5; margin-bottom: 20px; font-weight: bold;">🔮 魔法陣已啟動！請從下方 5 張神秘卡牌中挑選 1 張召喚 (每次消耗 5 🐚)</p>
+                <p id="gacha-hint" style="font-size: 20px; color: #e1bee7; position: relative; z-index: 5; margin-bottom: 15px; font-weight: bold;">🔮 魔法陣已啟動！請從下方 6 張神秘卡牌中挑選 1 張召喚 (每次消耗 5 🐚)</p>
                 <div class="gacha-card-container" id="gacha-cards-box"></div>
             </div>
 
             <br>
-            <button class="btn btn-yellow" id="gacha-redraw-btn" style="display: none; font-size: 22px; padding: 14px 30px;" onclick="startGachaDraw()">再抽一次 (消耗 5 海螺)</button>
+            <button class="btn btn-yellow" id="gacha-redraw-btn" style="display: none; font-size: 20px; padding: 12px 25px;" onclick="startGachaDraw()">再抽一次 (消耗 5 海螺)</button>
             <br><br>
-            <button class="btn" onclick="closeModal('gacha-draw-modal'); openGachaRankModal();" style="font-size: 20px; padding: 12px 25px; background: #4a237a;">返回排行榜</button>
+            <button class="btn" onclick="closeModal('gacha-draw-modal'); openGachaRankModal();" style="font-size: 20px; padding: 10px 22px; background: #4a237a;">返回排行榜</button>
         </div>
     </div>
 
@@ -1220,6 +1244,7 @@
                 students.forEach(s => {
                     if (s.photoUrl === undefined) s.photoUrl = '';
                     if (s.alligator === undefined) s.alligator = 0;
+                    if (s.gachaAura === undefined) s.gachaAura = 0; // 光芒能量初始化
                     if (s.birthday === undefined) s.birthday = '';
                     if (s.praiseComment === undefined) s.praiseComment = '';
                     if (s.praiseTimestamp === undefined) s.praiseTimestamp = null;
@@ -1676,22 +1701,32 @@
 
         function setupGachaDrawUI() {
             const student = students.find(s => s.id === activeGachaStudentId);
+            if (student.gachaAura === undefined) student.gachaAura = 0;
+            
             document.getElementById('gacha-draw-title').innerText = `🔮 ${student.seat}號 ${student.name} 的魔法召喚陣`;
-            document.getElementById('gacha-shell-status').innerHTML = `目前剩餘海螺：🐚 <span style="font-size:28px;">${student.points}</span> 個`;
+            document.getElementById('gacha-shell-status').innerHTML = `目前剩餘海螺：🐚 <span style="font-size:26px;">${student.points}</span> 個`;
+            
+            // 更新能量條顯示
+            const auraCount = student.gachaAura;
+            document.getElementById('aura-count-text').innerText = `${auraCount} / 10`;
+            const auraPercent = Math.min(100, (auraCount / 10) * 100);
+            document.getElementById('aura-progress-fill').style.width = `${auraPercent}%`;
+
             const hint = document.getElementById('gacha-hint');
             const cardsBox = document.getElementById('gacha-cards-box');
             const divineBeam = document.getElementById('divine-beam');
             divineBeam.classList.remove('active');
             document.getElementById('gacha-redraw-btn').style.display = 'none';
             hint.style.display = 'block';
-            hint.innerText = "🔮 魔法陣已啟動！請從下方 5 張神秘卡牌中挑選 1 張召喚 (每次消耗 5 🐚)";
+            hint.innerText = auraCount >= 10 ? "⭐ 光芒能量已集滿 10 個！本次抽卡 100% 保證獲得 2 隻鱷魚！" : "🔮 魔法陣已啟動！請從下方 6 張神秘卡牌中挑選 1 張召喚 (每次消耗 5 🐚)";
+            
             cardsBox.innerHTML = '';
-            for (let i = 1; i <= 5; i++) {
+            for (let i = 1; i <= 6; i++) {
                 cardsBox.innerHTML += `
                     <div class="gacha-card" id="card-${i}" onclick="executeGachaDraw(${i})">
-                        <div style="font-size: 44px;">✨🐚✨</div>
-                        <div style="font-size:20px;">神秘符文卡 #${i}</div>
-                        <div style="font-size: 15px; opacity: 0.7; font-weight: normal;">點擊召喚</div>
+                        <div style="font-size: 38px;">✨🐚✨</div>
+                        <div style="font-size:18px;">神秘符文卡 #${i}</div>
+                        <div style="font-size: 14px; opacity: 0.7; font-weight: normal;">點擊召喚</div>
                     </div>
                 `;
             }
@@ -1700,9 +1735,25 @@
         function executeGachaDraw(selectedCardIndex) {
             const student = students.find(s => s.id === activeGachaStudentId);
             if (student.points < 5) return showAdminAlert("提示", "❌ 您的海螺數量不足 5 個！", "⚠️");
+            
             student.points -= 5;
-            let rand = Math.random();
-            let alligatorWon = rand < 0.90 ? 1 : 2;
+            if (student.gachaAura === undefined) student.gachaAura = 0;
+
+            let alligatorWon = 1;
+            let isPurityGuaranteed = false;
+
+            // 檢查是否集滿 10 個光芒
+            if (student.gachaAura >= 9) {
+                // 第 10 個光芒觸發保底
+                alligatorWon = 2;
+                student.gachaAura = 0; // 歸零
+                isPurityGuaranteed = true;
+            } else {
+                student.gachaAura += 1; // 累積 1 個光芒
+                let rand = Math.random();
+                alligatorWon = rand < 0.90 ? 1 : 2;
+            }
+
             student.alligator = (student.alligator || 0) + alligatorWon;
 
             const now = new Date();
@@ -1712,7 +1763,7 @@
             saveDataToStorage();
             refreshAllViews();
 
-            for (let i = 1; i <= 5; i++) {
+            for (let i = 1; i <= 6; i++) {
                 const cardEl = document.getElementById(`card-${i}`);
                 if (cardEl) cardEl.onclick = null;
             }
@@ -1732,14 +1783,23 @@
                 targetCard.classList.add('flipped');
                 triggerConfetti();
                 
+                let guaranteedText = isPurityGuaranteed ? '<div style="font-size:14px; color:#ffeb3b;">🌟 保底光芒爆發！</div>' : '';
                 targetCard.innerHTML = `
-                    <div style="font-size: 38px;">🌟✨🌟</div>
-                    <div style="font-size: 24px; color: #ffeb3b; font-weight: bold; margin: 4px 0;">召喚成功！</div>
-                    <div style="font-size: 34px; color: #00ffcc; font-weight: bold;">🐊 +${alligatorWon} 隻</div>
-                    <div style="font-size: 15px; color: #fff; opacity: 0.9; margin-top: 8px;">(消耗 5 🐚)</div>
+                    <div style="font-size: 32px;">🌟✨🌟</div>
+                    <div style="font-size: 20px; color: #ffeb3b; font-weight: bold; margin: 2px 0;">召喚成功！</div>
+                    <div style="font-size: 30px; color: #00ffcc; font-weight: bold;">🐊 +${alligatorWon} 隻</div>
+                    ${guaranteedText}
+                    <div style="font-size: 13px; color: #fff; opacity: 0.9; margin-top: 4px;">(消耗 5 🐚 | 光芒 +1)</div>
                 `;
-                document.getElementById('gacha-hint').innerText = `🎉 太神啦！成功召喚出 ${alligatorWon} 隻鱷魚積分！`;
-                document.getElementById('gacha-shell-status').innerHTML = `目前剩餘海螺：🐚 <span style="font-size:28px;">${student.points}</span> 個`;
+                
+                document.getElementById('gacha-hint').innerText = isPurityGuaranteed ? `🎉 保底爆發！成功獲得 2 隻鱷魚，光芒能量已重新計算！` : `🎉 太神啦！成功召喚出 ${alligatorWon} 隻鱷魚積分！`;
+                document.getElementById('gacha-shell-status').innerHTML = `目前剩餘海螺：🐚 <span style="font-size:26px;">${student.points}</span> 個`;
+                
+                // 更新能量條
+                const auraCount = student.gachaAura;
+                document.getElementById('aura-count-text').innerText = `${auraCount} / 10`;
+                document.getElementById('aura-progress-fill').style.width = `${Math.min(100, (auraCount / 10) * 100)}%`;
+
                 if (student.points >= 5) document.getElementById('gacha-redraw-btn').style.display = 'inline-block';
             }, 1400);
         }
@@ -2629,7 +2689,7 @@
                 const newWeight = confirm("是否設為粗體？(點擊「確定」設為粗體，點擊「取消」設為一般)") ? "bold" : "normal";
                 announcements[index] = { text: newText.trim(), color: newColor, weight: newWeight };
                 refreshAllViews();
-                showAdminAlert("更新成功", "公告已成功更新！", "✏️️");
+                showAdminAlert("更新成功", "公告已成功更新！", "✏");
             }
         }
 
@@ -2735,7 +2795,7 @@
                 student.photoUrl = '';
                 saveDataToStorage();
                 refreshAllViews();
-                showAdminAlert("已移除", `✅ ${student.name} 的個人照片已移除。`, "🗑️️");
+                showAdminAlert("已移除", `✅ ${student.name} 的個人照片已移除。`, "🗑");
             }
         }
 
@@ -2749,7 +2809,7 @@
             let currentId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
             names.forEach(name => {
                 students.push({
-                    id: currentId++, seat: startSeat, name: name, photoUrl: '', birthday: '', tasks: [], points: 0, alligator: 0,
+                    id: currentId++, seat: startSeat, name: name, photoUrl: '', birthday: '', tasks: [], points: 0, alligator: 0, gachaAura: 0,
                     praiseComment: '', praiseTimestamp: null, attendanceLog: {}, currentTaskTag: '', lastAlligatorRewardDate: '',
                     shellRewardedToday: false, lastResetDate: '', password: startSeat.toString(), lastLoginTime: '未曾登入', lastPasswordChangeTime: '未曾修改',
                     treeContribution: 0, checkedInTodayForTree: false, completedTasksForTree: {}
@@ -3013,7 +3073,7 @@
                 platformName = val; 
                 saveDataToStorage();
                 refreshAllViews(); 
-                showAdminAlert("儲存成功", "平台名稱已更新！", "⚙️️"); 
+                showAdminAlert("儲存成功", "平台名稱已更新！", "⚙"); 
             }
         }
         function setTheme(themeName) {
