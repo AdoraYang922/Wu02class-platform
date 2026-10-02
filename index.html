@@ -204,15 +204,52 @@
         .tree-progress-bar-fill { background-color: var(--success-color); height: 100%; width: 0%; transition: width 0.4s ease; }
         .tree-stats-text { font-size: 18px; color: #555; font-weight: bold; }
 
-        .codex-badge-box { margin-top: 15px; background: #e8f5e9; border: 2px dashed #81c784; border-radius: 10px; padding: 12px; text-align: left; }
-        .codex-badge-box h4 { margin: 0 0 8px 0; color: #2e7d32; font-size: 18px; text-align: center; }
-        .codex-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-        .codex-tag { background: #2e7d32; color: white; padding: 6px 12px; border-radius: 20px; font-size: 16px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-
         .tree-rank-box { margin-top: 15px; text-align: left; background: #f9f9f9; padding: 12px; border-radius: 8px; max-height: 180px; overflow-y: auto; }
         .tree-rank-box h4 { margin: 0 0 8px 0; font-size: 18px; color: var(--sidebar-bg); text-align: center; }
         .tree-rank-list { list-style: none; padding: 0; margin: 0; font-size: 16px; }
         .tree-rank-list li { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #eee; }
+
+        /* 圖鑑網格樣式 */
+        .codex-grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .codex-item {
+            background: #f9f9f9;
+            border: 3px dashed #ccc;
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 110px;
+            position: relative;
+        }
+        .codex-item.unlocked {
+            background: #e8f5e9;
+            border: 3px solid #4caf50;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
+        }
+        .codex-item-icon {
+            font-size: 42px;
+            margin-bottom: 6px;
+            filter: grayscale(100%) opacity(0.3);
+        }
+        .codex-item.unlocked .codex-item-icon {
+            filter: none;
+        }
+        .codex-item-name {
+            font-size: 15px;
+            font-weight: bold;
+            color: #777;
+        }
+        .codex-item.unlocked .codex-item-name {
+            color: #2e7d32;
+        }
 
         .digital-clock-container {
             position: fixed; bottom: 25px; right: 35px;
@@ -367,17 +404,13 @@
                     </div>
                     <div class="tree-stats-text" id="tree-stats-text">經驗值：0 / 500</div>
                     
-                    <div class="codex-badge-box">
-                        <h4>🌿 校園傳奇植物圖鑑</h4>
-                        <div class="codex-tags" id="codex-tags-list">
-                            <span style="color:#666; font-size:16px;">尚無解鎖樹種，努力加油！</span>
-                        </div>
-                    </div>
-
                     <div class="tree-rank-box">
                         <h4>🏆 貢獻排行榜 TOP 10</h4>
                         <ul class="tree-rank-list" id="tree-rank-list"></ul>
                     </div>
+
+                    <!-- 🌿 點擊開啟校園植物圖鑑按鈕 -->
+                    <button class="btn btn-yellow" style="width: 100%; margin-top: 15px; font-size: 20px; padding: 12px 0;" onclick="openCampusCodexModal()">📖 查看校園植物圖鑑</button>
                 </div>
             </div>
         </div>
@@ -579,7 +612,7 @@
                 <div class="card" style="border-top: 5px solid var(--warning-color);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
                         <h3 style="margin: 0; color: #f57f17;">📋 目前全班已派發的任務清單</h3>
-                        <button class="btn btn-danger" onclick="clearAllClassTasks()">🗑️ 一鍵收回所有全班任務</button>
+                        <button class="btn btn-danger" onclick="clearAllClassTasks()">🗑️️ 一鍵收回所有全班任務</button>
                     </div>
                     <p style="font-size: 16px; color: #666; margin-top: 0;">💡 以下顯示目前所有全班性任務，您可以針對特定任務點擊「收回」來刪除它。</p>
                     <table>
@@ -732,6 +765,17 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- 📖 校園植物圖鑑彈出視窗 -->
+    <div class="modal-overlay" id="campus-codex-modal" style="z-index: 1150;">
+        <div class="modal-content" style="max-width: 900px;">
+            <h2 style="color: #2e7d32; font-size: 36px; margin-bottom: 10px;">🌿 校園傳奇植物圖鑑榮譽榜</h2>
+            <p style="font-size: 18px; color: #666; margin-top: 0;">全班同心協力將成長樹養滿等，即可依序解鎖神秘的校園代表植物！未解鎖的樹種會以挖空問號顯示，累積集氣挑戰吧！</p>
+            <div class="codex-grid-container" id="campus-codex-grid"></div>
+            <br>
+            <button class="btn" onclick="closeModal('campus-codex-modal')" style="font-size: 20px; padding: 12px 30px;">關閉視窗</button>
         </div>
     </div>
 
@@ -1077,7 +1121,7 @@
             });
         }
 
-        // 🌿 成長樹階段定義與校園植物循環圖鑑
+        // 🌿 成長樹階段定義與 8 種校園傳奇植物循環圖鑑清單
         const treeStages = [
             { name: "第一階段 - 種子期", max: 500, icon: "🌱" },
             { name: "第二階段 - 萌芽期", max: 700, icon: "🌿" },
@@ -1086,7 +1130,18 @@
             { name: "第五階段 - 豐收期", max: 1400, icon: "🍎" }
         ];
         const totalTreeStagesMax = 500 + 700 + 900 + 1200 + 1400; // 4700 點滿等
-        const campusLegendaryTrees = ["🌴 大王椰子樹", "🌳 百年老榕樹", "🌲 肯氏南洋杉", "🌸 雞蛋花", "🍃 金龜樹", "🌺 炮仗花"];
+
+        // 完美湊足 8 種校園傳奇樹種與對應圖示
+        const campusLegendaryTrees = [
+            { name: "大王椰子樹", icon: "🌴" },
+            { name: "百年老榕樹", icon: "🌳" },
+            { name: "肯氏南洋杉", icon: "🌲" },
+            { name: "鳳凰樹", icon: "🔥" },
+            { name: "麵包樹", icon: "🍞" },
+            { name: "雞蛋花", icon: "🌸" },
+            { name: "金龜樹", icon: "🍃" },
+            { name: "炮仗花", icon: "🌺" }
+        ];
 
         function getGlobalTreeTotalPoints() {
             let sum = 0;
@@ -1101,8 +1156,10 @@
             if (currentTotal >= totalTreeStagesMax && !localStorage.getItem(harvestedKey)) {
                 localStorage.setItem(harvestedKey, "true");
                 
-                // 依據循環次數解鎖圖鑑中的校園代表樹種 (預設第一個解鎖大王椰子樹)
-                let treeToUnlock = campusLegendaryTrees[Math.min(cycleIndex - 1, campusLegendaryTrees.length - 1)];
+                // 依據循環次數解鎖圖鑑中的校園代表樹種 (循環解鎖 8 種)
+                let treeObj = campusLegendaryTrees[(cycleIndex - 1) % campusLegendaryTrees.length];
+                let treeToUnlock = treeObj.name;
+                
                 if (!unlockedTrees.includes(treeToUnlock)) {
                     unlockedTrees.push(treeToUnlock);
                 }
@@ -1117,7 +1174,7 @@
                 });
 
                 triggerConfetti();
-                showAdminAlert("🍎 校園傳奇植物解鎖！", `🎉 太厲害了！全班成功將成長樹養育至滿等，解鎖了校園傳奇植物：【${treeToUnlock}】！\n神秘果實掉落：全班共獲得 ${totalShellsToDistribute} 個海螺，每人分得 ${sharePerStudent} 個 🐚！\n成長樹已自動開啟下一輪植物挑戰！`, "🌴");
+                showAdminAlert("🍎 校園傳奇植物解鎖！", `🎉 太厲害了！全班成功將成長樹養育至滿等，解鎖了校園傳奇植物：【${treeObj.icon} ${treeToUnlock}】！\n神秘果實掉落：全班共獲得 ${totalShellsToDistribute} 個海螺，每人分得 ${sharePerStudent} 個 🐚！\n成長樹已自動開啟下一輪植物挑戰！`, treeObj.icon);
                 saveDataToStorage();
             }
         }
@@ -1153,17 +1210,6 @@
             document.getElementById('tree-progress-fill').style.width = `${percentage}%`;
             document.getElementById('tree-stats-text').innerText = `總經驗值：${totalPts} (${stageCurrentPts}/${stageTarget} - ${percentage}%)`;
 
-            // 渲染校園植物圖鑑
-            const codexBox = document.getElementById('codex-tags-list');
-            codexBox.innerHTML = '';
-            if (unlockedTrees.length === 0) {
-                codexBox.innerHTML = '<span style="color:#666; font-size:16px;">尚無解鎖樹種，快加油集滿解鎖「大王椰子樹」！</span>';
-            } else {
-                unlockedTrees.forEach(treeName => {
-                    codexBox.innerHTML += `<span class="codex-tag">${treeName}</span>`;
-                });
-            }
-
             let sortedStudents = [...students].sort((a, b) => (b.treeContribution || 0) - (a.treeContribution || 0));
             let top10 = sortedStudents.slice(0, 10);
             const rankUl = document.getElementById('tree-rank-list');
@@ -1176,6 +1222,28 @@
             if (top10.length === 0 || top10.every(s => (s.treeContribution || 0) === 0)) {
                 rankUl.innerHTML = '<li style="color:#666; text-align:center;">尚無貢獻紀錄，快來打卡與完成任務吧！</li>';
             }
+        }
+
+        // 開啟校園植物圖鑑彈出視窗 (挖空驚喜模式)
+        function openCampusCodexModal() {
+            const gridContainer = document.getElementById('campus-codex-grid');
+            gridContainer.innerHTML = '';
+
+            campusLegendaryTrees.forEach((tree, index) => {
+                const isUnlocked = unlockedTrees.includes(tree.name);
+                let cardClass = isUnlocked ? "codex-item unlocked" : "codex-item";
+                let iconDisplay = isUnlocked ? tree.icon : "❓";
+                let nameDisplay = isUnlocked ? tree.name : `神秘樹種 #${index + 1}`;
+
+                gridContainer.innerHTML += `
+                    <div class="${cardClass}">
+                        <div class="codex-item-icon">${iconDisplay}</div>
+                        <div class="codex-item-name">${nameDisplay}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('campus-codex-modal').style.display = 'flex';
         }
 
         function addTreePoints(student, taskKey, isClassTaskDone, isCheckInDone) {
@@ -1829,7 +1897,7 @@
 
         function resetStudentPassword(id) {
             const student = students.find(s => s.id === id);
-            if (confirm(`⚠️️ 確定要將 ${student.name} 的密碼強制重設為座號嗎？`)) {
+            if (confirm(`⚠ 確定要將 ${student.name} 的密碼強制重設為座號嗎？`)) {
                 student.password = student.seat.toString();
                 student.lastPasswordChangeTime = '老師強制重設';
                 saveDataToStorage();
@@ -2684,7 +2752,7 @@
                     });
                     saveDataToStorage();
                     refreshAllViews();
-                    showAdminAlert("收回成功", `✅ 已成功收回全班任務：「${targetText}」`, "🗑️️");
+                    showAdminAlert("收回成功", `✅ 已成功收回全班任務：「${targetText}」`, "🗑");
                 }
             }
         }
@@ -2835,7 +2903,7 @@
                 platformName = val; 
                 saveDataToStorage();
                 refreshAllViews(); 
-                showAdminAlert("儲存成功", "平台名稱已更新！", "⚙️"); 
+                showAdminAlert("儲存成功", "平台名稱已更新！", "⚙️️"); 
             }
         }
         function setTheme(themeName) {
