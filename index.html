@@ -1103,8 +1103,11 @@
 
     <script>
         let platformName = "五年級班級平台";
-        let students = [];
-        let announcements = [];
+        let students = [
+            { id: 1, seat: 1, name: "王小明", points: 5, alligator: 2, tasks: [], attendance: {}, password: "1" },
+            { id: 2, seat: 2, name: "李小華", points: 3, alligator: 1, tasks: [], attendance: {}, password: "2" }
+        ];
+        let announcements = ["歡迎來到五年級班級平台！"];
         let dutyStudents = [];
         let loggedInStudentId = null;
         let sidebarOrder = [];
@@ -1139,8 +1142,10 @@
                 const minutes = String(now.getMinutes()).padStart(2, '0');
                 const seconds = String(now.getSeconds()).padStart(2, '0');
                 
-                document.getElementById('digital-time').innerText = `${String(hours).padStart(2, '0')}:${minutes}:${seconds}`;
-                document.getElementById('digital-date').innerText = `民國${year}年${month}月${date}日`;
+                const timeEl = document.getElementById('digital-time');
+                const dateEl = document.getElementById('digital-date');
+                if (timeEl) timeEl.innerText = `${String(hours).padStart(2, '0')}:${minutes}:${seconds}`;
+                if (dateEl) dateEl.innerText = `民國${year}年${month}月${date}日`;
             }
             updateClock();
             setInterval(updateClock, 1000);
@@ -1152,14 +1157,13 @@
             if (clock) clock.style.display = 'none';
         }
 
-        // 學生登出或返回時呼叫此函式，重新顯示時鐘
+        // 學生登出或返回首頁時呼叫此函式，重新顯示時鐘
         function showClockForHome() {
             const clock = document.getElementById('digital-clock-box');
             if (clock) clock.style.display = 'flex';
         }
 
-        // 擴充 studentLogout 函式，確保登出時時鐘恢復顯示
-        function originalStudentLogout() {
+        function studentLogout() {
             loggedInStudentId = null;
             document.getElementById('student-personal-view').style.display = 'none';
             document.getElementById('student-view').style.display = 'flex';
@@ -1167,14 +1171,18 @@
             document.getElementById('student-logout-btn').style.display = 'none';
             showClockForHome(); // 恢復顯示時鐘
         }
-        window.studentLogout = originalStudentLogout;
 
-        // 擴充 checkStudentLogin 登入驗證，成功登入時隱藏時鐘
         function checkStudentLogin() {
-            const seat = parseInt(document.getElementById('login-seat-input').value);
+            const seatInput = document.getElementById('login-seat-input').value;
             const pass = document.getElementById('login-password-input').value.trim();
-            const student = students.find(s => s.seat === seat);
+            const seat = parseInt(seatInput);
+            
+            if (!seatInput) {
+                alert("請輸入座號！");
+                return;
+            }
 
+            const student = students.find(s => s.seat === seat);
             if (!student) {
                 alert("找不到此座號的學生！");
                 return;
@@ -1197,16 +1205,163 @@
             renderStudentPersonalView();
         }
 
-        // 初始化載入
-        window.onload = function() {
-            startLiveClock();
-            showClockForHome(); // 初始化確保首頁有時鐘
-            // 其他初始化可依需求串接您的資料載入
-        };
+        function showStudentLoginModal() {
+            document.getElementById('login-seat-input').value = '';
+            document.getElementById('login-password-input').value = '';
+            document.getElementById('student-login-modal').style.display = 'flex';
+        }
+
+        function showLoginModal() {
+            document.getElementById('password-input').value = '';
+            document.getElementById('login-modal').style.display = 'flex';
+        }
+
+        function checkLogin() {
+            const pass = document.getElementById('password-input').value;
+            if (pass === "1234" || pass === "admin") { // 預設老師密碼
+                closeModal('login-modal');
+                document.getElementById('student-view').style.display = 'none';
+                document.getElementById('student-personal-view').style.display = 'none';
+                document.getElementById('teacher-view').style.display = 'flex';
+                document.getElementById('login-btn').style.display = 'none';
+                document.getElementById('logout-btn').style.display = 'inline-block';
+                hideClockForStudent(); // 老師進入後台也隱藏右下角時鐘
+            } else {
+                alert("管理員密碼錯誤！");
+            }
+        }
+
+        function logout() {
+            document.getElementById('teacher-view').style.display = 'none';
+            document.getElementById('student-view').style.display = 'flex';
+            document.getElementById('login-btn').style.display = 'inline-block';
+            document.getElementById('logout-btn').style.display = 'none';
+            showClockForHome(); // 返回學生端首頁時恢復顯示時鐘
+        }
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
+
+        function renderStudentPersonalView() {
+            const student = students.find(s => s.id === loggedInStudentId);
+            if (!student) return;
+            document.getElementById('personal-welcome').innerText = `歡迎回來，${student.seat}號 ${student.name}同學！`;
+            document.getElementById('personal-points').innerHTML = `<span class="shell-score">海螺 🐚：${student.points}</span> &nbsp;&nbsp; <span class="alligator-score">鱷魚 🐊：${student.alligator || 0}</span>`;
+            
+            // 渲染公告
+            const annList = document.getElementById('personal-announcement-list');
+            if (annList) {
+                annList.innerHTML = announcements.map(a => `<li>${a}</li>`).join('') || '<li>目前沒有新公告</li>';
+            }
+        }
+
+        function changeStudentPassword() {
+            const newPass = document.getElementById('new-password-input').value.trim();
+            if (newPass.length !== 6 || !/^[A-Za-z0-9]+$/.test(newPass)) {
+                alert("密碼格式不符！必須剛好 6 碼且只能包含英文或數字。");
+                return;
+            }
+            const student = students.find(s => s.id === loggedInStudentId);
+            if (student) {
+                student.password = newPass;
+                alert("密碼修改成功！");
+                document.getElementById('new-password-input').value = '';
+            }
+        }
+
+        function openGachaRankModal() {
+            const tbody = document.getElementById('gacha-rank-list');
+            tbody.innerHTML = students.map((s, idx) => `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td>${s.seat} 號 - ${s.name}</td>
+                    <td>🐚 ${s.points}</td>
+                    <td><button class="btn btn-yellow" ${s.points < 5 ? 'disabled style="opacity:0.5"' : ''} onclick="openGachaDraw(${s.id})">抽卡 (消耗5海螺)</button></td>
+                </tr>
+            `).join('');
+            document.getElementById('gacha-rank-modal').style.display = 'flex';
+        }
+
+        function openGachaDraw(studentId) {
+            closeModal('gacha-rank-modal');
+            activeGachaStudentId = studentId;
+            const student = students.find(s => s.id === studentId);
+            document.getElementById('gacha-draw-title').innerText = `🔮 ${student.name} 的海螺抽卡召喚陣`;
+            document.getElementById('gacha-shell-status').innerText = `目前擁有海螺：${student.points} 🐚`;
+            document.getElementById('gacha-redraw-btn').style.display = 'none';
+            document.getElementById('gacha-draw-modal').style.display = 'flex';
+            renderGachaCards();
+        }
+
+        function renderGachaCards() {
+            const box = document.getElementById('gacha-cards-box');
+            box.innerHTML = '';
+            for (let i = 0; i < 6; i++) {
+                const card = document.createElement('div');
+                card.className = 'gacha-card';
+                card.innerHTML = `<span>✨ 神秘卡牌 #${i+1}</span><span style="font-size:14px; color:#bbb;">點擊翻開</span>`;
+                card.onclick = () => flipGachaCard(card);
+                box.appendChild(card);
+            }
+        }
+
+        function flipGachaCard(card) {
+            const student = students.find(s => s.id === activeGachaStudentId);
+            if (!student || student.points < 5) {
+                alert("海螺數量不足 5 個！");
+                return;
+            }
+            student.points -= 5;
+            card.classList.add('summoning');
+            setTimeout(() => {
+                card.classList.remove('summoning');
+                card.classList.add('flipped');
+                const gotAlligator = Math.random() < 0.3 ? 2 : 1;
+                student.alligator = (student.alligator || 0) + gotAlligator;
+                card.innerHTML = `🎉 恭喜獲得！<br><span style="font-size:26px; color:#ffeb3b;">${gotAlligator} 隻鱷魚 🐊</span>`;
+                document.getElementById('gacha-shell-status').innerText = `目前擁有海螺：${student.points} 🐚`;
+                document.getElementById('gacha-redraw-btn').style.display = 'inline-block';
+            }, 1400);
+        }
+
+        function startGachaDraw() {
+            openGachaDraw(activeGachaStudentId);
+        }
+
+        function openCampusCodexModal() {
+            const grid = document.getElementById('campus-codex-grid');
+            grid.innerHTML = '';
+            const plants = ['🌱 小草', '🌿 蕨類', '🌷 鬱金香', '🌻 向日葵', '🌳 榕樹', '🌸 櫻花', '🍁 楓樹', '🌴 椰子樹'];
+            plants.forEach((p, idx) => {
+                const item = document.createElement('div');
+                item.className = `codex-item ${idx < 2 ? 'unlocked' : ''}`;
+                item.innerHTML = `<div class="codex-item-icon">${idx < 2 ? p.split(' ')[0] : '❓'}</div><div class="codex-item-name">${p}</div>`;
+                grid.appendChild(item);
+            });
+            document.getElementById('campus-codex-modal').style.display = 'flex';
+        }
+
+        function switchAdminTab(tabId) {
+            document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.sidebar .nav-item').forEach(item => item.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // 初始化載入
+        window.onload = function() {
+            startLiveClock();
+            showClockForHome(); // 確保剛進網頁時時鐘顯示正常
+            
+            // 簡易初始化首頁公告
+            const annList = document.getElementById('student-announcement-list');
+            if (annList) {
+                annList.innerHTML = announcements.map(a => `<li>${a}</li>`).join('');
+            }
+            const topDuty = document.getElementById('top-duty-names-display');
+            if (topDuty) topDuty.innerText = "1號 王小明、2號 李小華";
+        };
     </script>
 </body>
 </html>
