@@ -431,6 +431,19 @@
             box-shadow: 0 0 50px #00ffcc, inset 0 0 25px rgba(255,255,255,0.7);
         }
 
+        /* 🌟 雙鱷魚聚光燈特效 (Spotlight) */
+        .gacha-card.spotlight-active {
+            box-shadow: 0 0 90px #ffd700, 0 0 160px #fff, inset 0 0 40px #ffd700 !important;
+            transform: scale(1.08);
+            border-color: #fff !important;
+            animation: spotlightPulse 0.8s ease-in-out infinite alternate !important;
+            z-index: 120 !important;
+        }
+        @keyframes spotlightPulse {
+            0% { box-shadow: 0 0 70px #ffd700, 0 0 120px #fff; transform: scale(1.06); }
+            100% { box-shadow: 0 0 120px #ffd700, 0 0 200px #fff; transform: scale(1.12); }
+        }
+
         /* 關鍵修正：強制與頂部工具列對齊並佔滿剩餘高度 */
         #teacher-view { 
             display: none; 
@@ -522,7 +535,7 @@
         <div class="sticky-header-container">
             <h2 class="class-main-title">✨ 五乙打卡站 ✨</h2>
             <div class="daily-routine-bar">
-                <span class="routine-tag">🗣️ 跟老師問早</span> <span class="routine-arrow">➔</span>
+                <span class="routine-tag">🗣️️ 跟老師問早</span> <span class="routine-arrow">➔</span>
                 <span class="routine-tag">📥 交作業</span> <span class="routine-arrow">➔</span>
                 <span class="routine-tag">📖 抄聯絡簿</span> <span class="routine-arrow">➔</span>
                 <span class="routine-tag">📍 打卡</span> <span class="routine-arrow">➔</span>
@@ -1145,7 +1158,54 @@
             checkPraiseExpirations();
             setDefaultTaskDeadlines();
             refreshAllViews();
+
+            // 🌟 點擊解鎖全域音訊 (支援電子白板觸碰與滑鼠點擊)
+            window.addEventListener('pointerdown', unlockAudioContext, { once: true });
         };
+
+        function unlockAudioContext() {
+            if (!globalAudioCtx) {
+                try {
+                    globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {}
+            }
+            if (globalAudioCtx && globalAudioCtx.state === 'suspended') {
+                globalAudioCtx.resume();
+            }
+        }
+
+        // 🎵 播放點擊/觸碰音效 (支援電子白板互動)
+        function playTouchSound() {
+            try {
+                if (!globalAudioCtx) {
+                    globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (globalAudioCtx.state === 'suspended') {
+                    globalAudioCtx.resume();
+                }
+                const now = globalAudioCtx.currentTime;
+                const osc = globalAudioCtx.createOscillator();
+                const gain = globalAudioCtx.createGain();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(587.33, now); // D5
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.08); // A5
+
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+
+                osc.connect(gain);
+                gain.connect(globalAudioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.12);
+            } catch (e) {}
+        }
+
+        // 監聽全域點擊與觸碰，讓電子白板操作都有聲音
+        window.addEventListener('pointerdown', (e) => {
+            playTouchSound();
+        });
 
         function checkAndCleanupExpiredCompletedTasks() {
             const now = new Date();
@@ -1173,6 +1233,19 @@
         function triggerConfetti() {
             if (typeof confetti === 'function') {
                 confetti({ particleCount: 160, spread: 100, origin: { y: 0.6 } });
+            }
+        }
+
+        // 🌟 雙鱷魚左右夾擊灑花特效
+        function triggerDoubleAlligatorConfetti() {
+            if (typeof confetti === 'function') {
+                // 左側灑花
+                confetti({ particleCount: 80, angle: 60, spread: 70, origin: { x: 0.1, y: 0.6 } });
+                // 右側灑花
+                confetti({ particleCount: 80, angle: 120, spread: 70, origin: { x: 0.9, y: 0.6 } });
+                setTimeout(() => {
+                    confetti({ particleCount: 100, spread: 120, origin: { y: 0.5 } });
+                }, 300);
             }
         }
 
@@ -1701,15 +1774,7 @@
         }
 
         function setupGachaDrawUI() {
-            // 初始化或解鎖全域音訊 Context (解決瀏覽器自動阻擋靜音)
-            if (!globalAudioCtx) {
-                try {
-                    globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                } catch (e) {}
-            }
-            if (globalAudioCtx && globalAudioCtx.state === 'suspended') {
-                globalAudioCtx.resume();
-            }
+            unlockAudioContext();
 
             const student = students.find(s => s.id === activeGachaStudentId);
             if (student.gachaAura === undefined) student.gachaAura = 0;
@@ -1773,9 +1838,7 @@
                     osc.start(now + index * 0.08);
                     osc.stop(now + index * 0.08 + 0.35);
                 });
-            } catch (e) {
-                console.log("音效播放錯誤", e);
-            }
+            } catch (e) {}
         }
 
         function executeGachaDraw(selectedCardIndex) {
@@ -1815,7 +1878,7 @@
             const targetCard = document.getElementById(`card-${selectedCardIndex}`);
             const divineBeam = document.getElementById('divine-beam');
             
-            targetCard.classList.remove('summoning', 'flipped');
+            targetCard.classList.remove('summoning', 'flipped', 'spotlight-active');
             void targetCard.offsetWidth; 
             targetCard.classList.add('summoning');
             divineBeam.classList.add('active');
@@ -1828,7 +1891,14 @@
                 divineBeam.classList.remove('active');
                 targetCard.classList.remove('summoning');
                 targetCard.classList.add('flipped');
-                triggerConfetti();
+
+                // 🌟 如果抽中 2 隻鱷魚，額外觸發聚光燈與左右灑花特效！
+                if (alligatorWon === 2) {
+                    targetCard.classList.add('spotlight-active');
+                    triggerDoubleAlligatorConfetti();
+                } else {
+                    triggerConfetti();
+                }
                 
                 let guaranteedText = isPurityGuaranteed ? '<div style="font-size:13px; color:#ffeb3b;">🌟 保底光芒爆發！</div>' : '';
                 targetCard.innerHTML = `
@@ -1839,7 +1909,7 @@
                     <div style="font-size: 12px; color: #fff; opacity: 0.9; margin-top: 4px;">(消耗 5 🐚 | 光芒 +1)</div>
                 `;
                 
-                document.getElementById('gacha-hint').innerText = isPurityGuaranteed ? `🎉 保底爆發！成功獲得 2 隻鱷魚，光芒能量已重新計算！` : `🎉 太神啦！成功召喚出 ${alligatorWon} 隻鱷魚積分！`;
+                document.getElementById('gacha-hint').innerText = isPurityGuaranteed ? `🎉 保底爆發！成功獲得 2 隻鱷魚，光芒能量已重新計算！` : (alligatorWon === 2 ? `🎉 太神啦！雙倍鱷魚降臨！成功獲得 2 隻鱷魚積分！` : `🎉 太神啦！成功召喚出 ${alligatorWon} 隻鱷魚積分！`);
                 document.getElementById('gacha-shell-status').innerHTML = `目前剩餘海螺：🐚 <span style="font-size:24px;">${student.points}</span> 個`;
                 
                 const auraCount = student.gachaAura;
@@ -1917,7 +1987,7 @@
 
         function changeStudentPassword() {
             const newPwd = document.getElementById('new-password-input').value;
-            if (!/^[A-Za-z0-9]{6}$/.test(newPwd)) return showAdminAlert("格式錯誤", "❌ 密碼必須為「剛好 6 碼」的英文或數字。", "⚠️️");
+            if (!/^[A-Za-z0-9]{6}$/.test(newPwd)) return showAdminAlert("格式錯誤", "❌ 密碼必須為「剛好 6 碼」的英文或數字。", "⚠");
             const student = students.find(s => s.id === loggedInStudentId);
             student.password = newPwd;
             const now = new Date();
@@ -3109,7 +3179,7 @@
                 });
                 saveDataToStorage();
                 refreshAllViews(); 
-                showAdminAlert("歸零成功", `全班 ${label} 已歸零！`, "⚠️");
+                showAdminAlert("歸零成功", `全班 ${label} 已歸零！`, "⚠️️");
             }
         }
 
