@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>學生專屬學習入口 - 班級平台</title>
+    <title id="page-title">五年級班級平台 - 學生專屬面板</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --primary-color: #1976D2; 
             --primary-light: #42A5F5; 
             --secondary-color: #FFC107; 
+            --sidebar-bg: #0D47A1; 
             --bg-color: #F0F4F8; 
             --text-color: #333333;
             --white: #ffffff;
@@ -26,7 +28,6 @@
             flex-direction: column;
             font-size: 20px;
         }
-        
         .top-bar {
             background-color: var(--primary-color);
             color: var(--white);
@@ -37,7 +38,6 @@
             box-shadow: 0 3px 8px rgba(0,0,0,0.15);
         }
         .top-bar h1 { margin: 0; font-size: 36px; font-weight: bold; }
-
         .btn {
             background-color: var(--primary-color); color: white;
             border: none; padding: 14px 24px; border-radius: 8px;
@@ -48,64 +48,79 @@
         .btn-yellow:hover { background-color: #e0a800; }
         .btn-danger { background-color: var(--danger-color); color: white; }
 
-        input[type="text"], input[type="password"], input[type="number"] {
+        input[type="number"], input[type="password"], input[type="text"] {
             padding: 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 20px;
             margin-right: 12px; margin-bottom: 12px; font-family: inherit;
         }
 
-        /* 登入畫面 */
+        /* 登入中介面 */
         #login-container {
-            flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            padding: 40px;
         }
         .login-card {
-            background: var(--white); padding: 50px; border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center;
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
             border-top: 8px solid var(--primary-color);
         }
-        .login-card h2 { margin-top: 0; font-size: 34px; color: var(--primary-color); }
+        .login-card h2 { font-size: 34px; color: var(--primary-color); margin-top: 0; margin-bottom: 25px; }
 
-        /* 學生個人面板 */
-        #student-personal-view { display: none; padding: 40px; flex: 1; max-width: 1300px; margin: 0 auto; width: 100%; box-sizing: border-box; }
-        .personal-dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        /* 學生個人面板介面 */
+        #student-personal-view { display: none; padding: 40px; flex: 1; }
+        .personal-dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; max-width: 1300px; margin: 0 auto; }
         .personal-card { background: white; padding: 30px; border-radius: 14px; box-shadow: 0 6px 15px rgba(0,0,0,0.06); border-top: 5px solid var(--primary-light); }
         .personal-card h3 { color: var(--primary-color); margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 12px; font-size: 26px; }
         .personal-task-list { list-style: none; padding: 0; margin: 0; font-size: 20px; }
-        .personal-task-list li { padding: 12px 0; border-bottom: 1px dashed #ccc; }
+        .personal-task-list li { padding: 12px 0; border-bottom: 1px dashed #ccc; word-break: break-all; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-        th, td { padding: 15px 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 18px; }
-        th { background-color: #F8FAFC; color: #333; font-weight: bold; }
+        th, td { padding: 14px 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 18px; }
+        th { background-color: #F8FAFC; color: var(--sidebar-bg); font-weight: bold; }
 
+        .shell-score { font-size: 24px; font-weight: bold; color: #d89e00; background-color: #fffde7; border-radius: 20px; padding: 6px 18px; display: inline-block; }
+        .alligator-score { font-size: 24px; font-weight: bold; color: #2e7d32; background-color: #e8f5e9; border-radius: 20px; padding: 6px 18px; display: inline-block; }
+
+        /* 彈出提示窗 */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.55); display: none; justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-content {
-            background: var(--white); padding: 40px; border-radius: 18px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+            background: var(--white); padding: 40px; border-radius: 18px; width: 90%; max-width: 550px; text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.3);
         }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        <h1 id="platform-title">👨‍‍🎓 學生專屬學習入口</h1>
-        <button id="student-logout-btn" class="btn btn-yellow" onclick="studentLogout()" style="display: none;">登出</button>
+        <div><h1 id="platform-title">五年級班級平台 - 學生專屬</h1></div>
+        <div>
+            <button id="logout-btn" class="btn btn-yellow" onclick="studentLogout()" style="display: none;">登出面板</button>
+        </div>
     </div>
 
     <!-- 學生登入區塊 -->
     <div id="login-container">
         <div class="login-card">
-            <h2>✨ 學生個人面板登入 ✨</h2>
-            <p style="font-size: 18px; color: #666; margin-bottom: 25px;">請輸入您的座號與密碼 (預設為座號)</p>
-            <input type="number" id="login-seat-input" placeholder="請輸入座號" style="width: 85%; text-align:center; font-size:22px; padding:15px; margin-bottom:18px; box-sizing: border-box;"><br>
-            <input type="password" id="login-password-input" placeholder="請輸入密碼" style="width: 85%; text-align:center; font-size:22px; padding:15px; margin-bottom:25px; box-sizing: border-box;"><br>
-            <button class="btn btn-yellow" onclick="checkStudentLogin()" style="width: 85%; font-size: 22px; padding: 16px 0; border-radius: 12px;">確認登入</button>
+            <h2>👨‍🎓 學生個人面板登入</h2>
+            <p style="color: #666; font-size: 18px; margin-bottom: 25px;">請輸入您的座號與密碼 (預設密碼為座號)</p>
+            <input type="number" id="login-seat-input" placeholder="請輸入座號" style="width: 85%; text-align:center; font-size:24px; padding:15px; box-sizing: border-box;"><br>
+            <input type="password" id="login-password-input" placeholder="請輸入密碼" style="width: 85%; text-align:center; font-size:24px; padding:15px; box-sizing: border-box; margin-bottom: 25px;"><br>
+            <button class="btn btn-yellow" style="width: 85%; font-size: 24px; padding: 16px 0;" onclick="checkStudentLogin()">確認登入</button>
         </div>
     </div>
 
-    <!-- 學生個人面板 -->
+    <!-- 學生個人面板區塊 -->
     <div id="student-personal-view">
-        <h2 id="personal-welcome" style="text-align: center; font-size: 40px; color: var(--primary-color); margin-bottom: 35px; font-weight: bold;"></h2>
+        <h2 id="personal-welcome" style="text-align: center; font-size: 40px; color: var(--sidebar-bg); margin-bottom: 35px; font-weight: bold;"></h2>
         <div class="personal-dashboard-grid">
             <div class="personal-card">
                 <h3>🏆 專屬積分與老師稱讚</h3>
@@ -114,9 +129,9 @@
             <div class="personal-card">
                 <h3>🔐 修改登入密碼</h3>
                 <p style="font-size:18px; color:#666;">預設密碼為座號。為保護隱私，建議登入後立即修改！</p>
-                <input type="password" id="new-password-input" placeholder="限輸入剛好 6 碼 (英文或數字)" style="width: 60%;">
+                <input type="password" id="new-password-input" placeholder="剛好 6 碼 (英文或數字)" style="width: 65%;">
                 <button class="btn btn-yellow" onclick="changeStudentPassword()">確認修改</button>
-                <p style="font-size:16px; color:var(--danger-color); margin-top:8px;">⚠️ 限制：密碼必須剛好 6 碼，且只能包含英文或數字。</p>
+                <p style="font-size:16px; color:var(--danger-color); margin-top:6px;">⚠️ 限制：密碼必須剛好 6 碼。</p>
             </div>
             <div class="personal-card" style="grid-column: 1 / -1;">
                 <h3>📝 今日與近期任務紀錄</h3>
@@ -139,23 +154,23 @@
             </div>
             <div class="personal-card" style="grid-column: 1 / -1; border-top: 5px solid var(--secondary-color);">
                 <h3>📢 班級最新公告</h3>
-                <ul class="personal-task-list" id="personal-announcement-list" style="font-size: 22px; margin-top: 18px;"></ul>
+                <ul class="personal-task-list" id="personal-announcement-list" style="font-size: 24px; margin-top: 18px;"></ul>
             </div>
         </div>
     </div>
 
-    <!-- 彈出通知視窗 -->
+    <!-- 訊息提示彈窗 -->
     <div class="modal-overlay" id="alert-modal">
         <div class="modal-content">
             <div style="font-size: 60px; margin-bottom: 15px;" id="alert-icon">✨</div>
             <h2 id="alert-title" style="font-size: 28px; color: var(--primary-color); margin-bottom: 15px;"></h2>
             <p id="alert-text" style="font-size: 20px; color: #555; margin-bottom: 25px; line-height: 1.5;"></p>
-            <button class="btn btn-yellow" style="font-size: 20px; padding: 12px 30px; width: 100%; border-radius: 10px;" onclick="closeModal()">確定</button>
+            <button class="btn btn-yellow" style="font-size: 20px; padding: 12px 30px; width: 100%;" onclick="closeModal()">確定</button>
         </div>
     </div>
 
     <script>
-        // ==================== Firebase 雲端即時同步設定 ====================
+        // ⚠️ 請確保這裡的網址與您後台的 FIREBASE_URL 完全一致（指向根目錄）
         const FIREBASE_URL = "https://class02-8cb8e-default-rtdb.firebaseio.com/";
 
         let students = [];
@@ -168,23 +183,6 @@
             loadCloudData();
         };
 
-        function loadCloudData() {
-            fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
-            .then(res => res.json())
-            .then(data => {
-                if (data) {
-                    if (data.platformName) platformName = data.platformName;
-                    if (data.students) students = data.students;
-                    if (data.announcements) announcements = data.announcements;
-                    if (data.gachaLogs) gachaLogs = data.gachaLogs;
-                    document.getElementById('platform-title').innerText = `👨‍🎓 ${platformName} - 學生專屬入口`;
-                }
-            })
-            .catch(err => {
-                console.log("連線至雲端失敗", err);
-            });
-        }
-
         function showAlert(title, text, icon = '🎉') {
             document.getElementById('alert-icon').innerText = icon;
             document.getElementById('alert-title').innerText = title;
@@ -196,33 +194,70 @@
             document.getElementById('alert-modal').style.display = 'none';
         }
 
+        function loadCloudData() {
+            fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
+            .then(res => res.json())
+            .then(data => {
+                if (data) {
+                    if (data.platformName) {
+                        platformName = data.platformName;
+                        document.getElementById('platform-title').innerText = platformName + " - 學生專屬";
+                        document.title = platformName + " - 學生專屬面板";
+                    }
+                    if (data.students) students = data.students;
+                    if (data.announcements) {
+                        announcements = data.announcements.map(a => typeof a === 'string' ? { text: a, color: '#333333', weight: 'normal' } : a);
+                    }
+                    if (data.gachaLogs) gachaLogs = data.gachaLogs;
+                }
+            })
+            .catch(err => {
+                console.log("連線 Firebase 失敗", err);
+            });
+        }
+
         function checkStudentLogin() {
-            const seat = parseInt(document.getElementById('login-seat-input').value);
-            const pwd = document.getElementById('login-password-input.value');
-            const passwordInput = document.getElementById('login-password-input').value;
+            const seatVal = document.getElementById('login-seat-input').value.trim();
+            const pwdVal = document.getElementById('login-password-input').value;
             
-            // 登入時向 Firebase 抓取最新資料
+            if (!seatVal) {
+                showAlert("提示", "❌ 請輸入座號！", "⚠️️");
+                return;
+            }
+
+            const seatNum = parseInt(seatVal);
+            
+            // 重新向雲端拉取最新資料確保密碼與積分正確
             fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
                 if (data && data.students) {
                     students = data.students;
-                    announcements = data.announcements || [];
-                    gachaLogs = data.gachaLogs || [];
+                    if (data.announcements) announcements = data.announcements;
+                    if (data.gachaLogs) gachaLogs = data.gachaLogs;
                 }
-                
-                const student = students.find(s => s.seat === seat);
-                const correctPwd = student && student.password ? student.password : seat.toString();
 
-                if (student && passwordInput === correctPwd) {
+                const student = students.find(s => s.seat === seatNum);
+                const correctPwd = student && student.password ? student.password : seatNum.toString();
+
+                if (student && pwdVal === correctPwd) {
+                    const now = new Date();
+                    student.lastLoginTime = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+                    
+                    // 同步更新登入時間回雲端
+                    updateStudentCloudData(student);
+
                     loggedInStudentId = student.id;
                     document.getElementById('login-container').style.display = 'none';
                     document.getElementById('student-personal-view').style.display = 'block';
-                    document.getElementById('student-logout-btn').style.display = 'inline-block';
+                    document.getElementById('logout-btn').style.display = 'inline-block';
                     renderStudentPersonalDashboard();
                 } else {
                     showAlert("登入失敗", "❌ 座號或密碼錯誤！請重新輸入。", "⚠️");
                 }
+            })
+            .catch(err => {
+                showAlert("連線錯誤", "❌ 無法連線至雲端資料庫，請檢查網路。", "⚠️");
             });
         }
 
@@ -230,7 +265,7 @@
             loggedInStudentId = null;
             document.getElementById('student-personal-view').style.display = 'none';
             document.getElementById('login-container').style.display = 'flex';
-            document.getElementById('student-logout-btn').style.display = 'none';
+            document.getElementById('logout-btn').style.display = 'none';
             document.getElementById('login-seat-input').value = '';
             document.getElementById('login-password-input').value = '';
         }
@@ -242,26 +277,33 @@
                 return;
             }
 
+            const student = students.find(s => s.id === loggedInStudentId);
+            student.password = newPwd;
+            const now = new Date();
+            student.lastPasswordChangeTime = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            
+            updateStudentCloudData(student);
+            showAlert("修改成功", "✅ 密碼修改成功！下次請使用新密碼登入。", "🔒");
+            document.getElementById('new-password-input').value = '';
+        }
+
+        function updateStudentCloudData(updatedStudent) {
+            // 抓取最新根目錄資料後替換該學生，再完整寫回根目錄
             fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
                 if (data && data.students) {
-                    students = data.students;
-                }
-                const student = students.find(s => s.id === loggedInStudentId);
-                if (student) {
-                    student.password = newPwd;
-                    const now = new Date();
-                    student.lastPasswordChangeTime = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-                    
-                    // 學生端僅允許更新自己的密碼資料欄位
+                    let cloudStudents = data.students;
+                    let index = cloudStudents.findIndex(s => s.id === updatedStudent.id);
+                    if (index !== -1) {
+                        cloudStudents[index] = updatedStudent;
+                    }
+                    data.students = cloudStudents;
+
                     fetch(FIREBASE_URL + ".json", {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
-                    }).then(() => {
-                        showAlert("修改成功", "✅ 密碼修改成功！下次請使用新密碼登入。", "🔒");
-                        document.getElementById('new-password-input').value = '';
                     });
                 }
             });
@@ -270,19 +312,17 @@
         function renderStudentPersonalDashboard() {
             if (!loggedInStudentId) return;
             const student = students.find(s => s.id === loggedInStudentId);
-            if (!student) return;
-
             document.getElementById('personal-welcome').innerText = `🎉 歡迎，${student.seat}號 ${student.name}！`;
             
             let praiseHtml = '';
             if (student.praiseComment && student.praiseComment.trim() !== '') {
-                praiseHtml = `<div style="margin-top:15px; background:#fff3e0; border:2px dashed #ffb74d; border-radius:10px; padding:12px; font-size:32px; color:#e65100; font-weight:bold; text-align:left;">老師稱讚：${student.praiseComment}</div>`;
+                praiseHtml = `<div style="margin-top:15px; background:#fff3e0; border:2px dashed #ffb74d; border-radius:10px; padding:12px; font-size:30px; color:#e65100; font-weight:bold; text-align:left;">💬 老師稱讚：${student.praiseComment}</div>`;
             }
 
             document.getElementById('personal-points').innerHTML = `
                 <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
-                    <span style="font-size:28px; color:#d89e00; font-weight:bold;">🐚 海螺：${student.points}</span> 
-                    <span style="font-size:28px; color:#2e7d32; font-weight:bold;">🐊 鱷魚：${student.alligator || 0}</span>
+                    <span class="shell-score">🐚 海螺：${student.points} 個</span> 
+                    <span class="alligator-score">🐊 鱷魚：${student.alligator || 0} 隻</span>
                 </div>
                 ${praiseHtml}
             `;
@@ -310,6 +350,20 @@
                 });
             }
 
+            // 渲染公告
+            const annUl = document.getElementById('personal-announcement-list');
+            annUl.innerHTML = '';
+            if (announcements.length === 0) {
+                annUl.innerHTML = '<li style="color:#666;">目前沒有最新公告。</li>';
+            } else {
+                announcements.forEach((ann, index) => {
+                    let prefix = announcements.length >= 2 ? `${index + 1}. ` : '➤ ';
+                    let styleAttr = `color: ${ann.color || '#333333'}; font-weight: ${ann.weight || 'normal'};`;
+                    annUl.innerHTML += `<li style="padding: 10px 0; border-bottom: 1px dashed #ccc;"><span style="${styleAttr}"><strong>${prefix}</strong>${ann.text}</span></li>`;
+                });
+            }
+
+            // 渲染本月出缺席
             const attDiv = document.getElementById('personal-attendance');
             const today = new Date();
             const y = today.getFullYear();
@@ -342,18 +396,6 @@
             attHtml += '</ul>';
             if (!hasRecord) attHtml = '<p style="color:#666;">本月尚無任何出缺席紀錄。</p>';
             attDiv.innerHTML = attHtml;
-
-            const annList = document.getElementById('personal-announcement-list');
-            annList.innerHTML = '';
-            if (!announcements || announcements.length === 0) {
-                annList.innerHTML = '<li style="color:#666;">目前沒有最新公告。</li>';
-            } else {
-                announcements.forEach((ann, index) => {
-                    let prefix = announcements.length >= 2 ? `${index + 1}. ` : '➤ ';
-                    let styleAttr = `color: ${ann.color || '#333333'}; font-weight: ${ann.weight || 'normal'};`;
-                    annList.innerHTML += `<li style="padding: 10px 0; border-bottom: 1px dashed #ccc;"><span style="${styleAttr}"><strong>${prefix}</strong>${ann.text}</span></li>`;
-                });
-            }
         }
     </script>
 </body>
