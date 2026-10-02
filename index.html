@@ -19,8 +19,12 @@
             --warning-color: #ff9800;
             --success-color: #4caf50;
         }
+        
+        /* 強制鎖定全螢幕，防止雙重捲軸 */
+        * { box-sizing: border-box; }
         html, body {
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             margin: 0;
             padding: 0;
             overflow: hidden;
@@ -37,43 +41,44 @@
         .top-bar {
             background-color: var(--primary-color);
             color: var(--white);
-            padding: 20px 40px;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-            gap: 25px;
+            gap: 20px;
             flex-wrap: wrap;
             flex-shrink: 0;
             z-index: 200;
+            width: 100%;
         }
-        .top-bar h1 { margin: 0; font-size: 38px; white-space: nowrap; font-weight: bold; }
+        .top-bar h1 { margin: 0; font-size: 36px; white-space: nowrap; font-weight: bold; }
         
         .top-center-area {
             display: flex;
             align-items: center;
-            gap: 25px;
+            gap: 20px;
             flex-wrap: wrap;
         }
 
         .top-duty-badge {
             background: rgba(255, 255, 255, 0.2);
             border: 2px dashed var(--secondary-color);
-            padding: 10px 18px;
+            padding: 8px 15px;
             border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             color: white;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
         }
-        .top-duty-badge span { color: var(--secondary-color); font-weight: bold; font-size: 26px; }
+        .top-duty-badge span { color: var(--secondary-color); font-weight: bold; font-size: 24px; }
 
         .btn {
             background-color: var(--primary-color); color: white;
-            border: none; padding: 16px 26px; border-radius: 8px;
-            cursor: pointer; transition: 0.2s; font-size: 20px; font-weight: bold;
+            border: none; padding: 12px 22px; border-radius: 8px;
+            cursor: pointer; transition: 0.2s; font-size: 18px; font-weight: bold;
         }
         .btn:hover { opacity: 0.9; }
         .btn-yellow { background-color: var(--secondary-color); color: #333; font-weight: bold; }
@@ -83,13 +88,14 @@
         .btn-success { background-color: var(--success-color); color: white; }
         
         input[type="text"], input[type="number"], input[type="password"], input[type="datetime-local"], input[type="color"], textarea, select {
-            padding: 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 20px;
-            margin-right: 12px; margin-bottom: 12px; font-family: inherit;
+            padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 18px;
+            margin-right: 10px; margin-bottom: 10px; font-family: inherit;
         }
 
         #student-view { 
             padding: 0 40px 40px 40px; 
             flex: 1; 
+            width: 100%;
             overflow-y: auto; 
             display: flex;
             flex-direction: column;
@@ -100,8 +106,8 @@
             top: 0;
             background-color: var(--bg-color);
             z-index: 50;
-            padding-top: 10px;
-            padding-bottom: 10px;
+            padding-top: 15px;
+            padding-bottom: 15px;
             box-shadow: 0 6px 6px -6px rgba(0,0,0,0.15);
             margin-bottom: 25px;
         }
@@ -109,7 +115,7 @@
         .class-main-title {
             text-align: center; 
             color: var(--primary-color); 
-            font-size: 60px; 
+            font-size: 55px; 
             margin: 0; 
             padding: 0;
             font-weight: bold;
@@ -122,16 +128,16 @@
             align-items: center;
             flex-wrap: wrap; 
             gap: 14px; 
-            margin: 5px 0 0 0; 
+            margin: 10px 0 0 0; 
             padding: 0;
         }
 
         .routine-tag {
             background-color: var(--white); border: 3px dashed var(--primary-color);
-            color: var(--primary-color); padding: 12px 22px; border-radius: 30px;
-            font-size: 24px; font-weight: bold; box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+            color: var(--primary-color); padding: 10px 20px; border-radius: 30px;
+            font-size: 22px; font-weight: bold; box-shadow: 0 3px 8px rgba(0,0,0,0.06);
         }
-        .routine-arrow { font-size: 28px; color: var(--primary-color); font-weight: bold; }
+        .routine-arrow { font-size: 26px; color: var(--primary-color); font-weight: bold; }
 
         .student-main-layout { display: flex; gap: 35px; max-width: 1700px; margin: 0 auto; width: 100%; flex: 1; align-items: flex-start; }
         .student-grid-container { flex: 1; }
@@ -267,7 +273,7 @@
         .digital-clock-time { font-size: 58px; font-weight: bold; letter-spacing: 3px; text-shadow: 0 0 15px #00ff66, 0 0 30px rgba(0, 255, 102, 0.5); line-height: 1.1; }
         .digital-clock-date { font-size: 22px; color: #aaeebb; margin-top: 6px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; letter-spacing: 1px; text-shadow: none; font-weight: bold; }
 
-        #student-personal-view { display: none; padding: 40px; flex: 1; overflow-y: auto; background-color: var(--bg-color); }
+        #student-personal-view { display: none; padding: 40px; flex: 1; width: 100%; overflow-y: auto; background-color: var(--bg-color); }
         .personal-dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; max-width: 1300px; margin: 0 auto; }
         .personal-card { background: white; padding: 30px; border-radius: 14px; box-shadow: 0 6px 15px rgba(0,0,0,0.06); border-top: 5px solid var(--primary-light); }
         .personal-card h3 { color: var(--primary-color); margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 12px; font-size: 26px; }
@@ -275,7 +281,7 @@
         .personal-task-list li { padding: 12px 0; border-bottom: 1px dashed #ccc; }
 
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0,0,0,0.55); display: none; justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-content {
@@ -318,11 +324,13 @@
             color: #2e7d32; border-color: #4caf50; font-size: 30px; text-align: center; line-height: 1.6;
         }
 
+        /* 關鍵修正：強制與頂部工具列對齊並佔滿剩餘高度 */
         #teacher-view { 
             display: none; 
             flex: 1; 
+            width: 100vw;
             flex-direction: row; 
-            height: calc(100vh - 81px); 
+            height: 100%;
             overflow: hidden; 
         }
         .sidebar { 
@@ -337,8 +345,8 @@
             overflow-y: auto; 
             box-sizing: border-box;
         }
-        .sidebar h2 { text-align: center; color: var(--secondary-color); margin-bottom: 20px; font-size: 28px;}
-        .nav-item { padding: 18px 30px; cursor: pointer; border-left: 5px solid transparent; user-select: none; font-size: 20px; }
+        .sidebar h2 { text-align: center; color: var(--secondary-color); margin-bottom: 20px; font-size: 26px;}
+        .nav-item { padding: 16px 25px; cursor: pointer; border-left: 5px solid transparent; user-select: none; font-size: 18px; }
         .nav-item:hover { background-color: rgba(255,255,255,0.1); }
         .nav-item.active { background-color: var(--primary-color); border-left: 5px solid var(--secondary-color); font-weight: bold;}
         .nav-item.dragging { opacity: 0.4; background: rgba(255,255,255,0.2); }
@@ -389,7 +397,7 @@
 
         <div>
             <button class="btn btn-yellow" onclick="openGachaRankModal()" style="background-color: #ff9800; color: white;">🎁 海螺抽卡</button>
-            <button id="student-login-btn" class="btn btn-yellow" onclick="showStudentLoginModal()">👨‍🎓 學生登入</button>
+            <button id="student-login-btn" class="btn btn-yellow" onclick="showStudentLoginModal()">👨‍‍🎓 學生登入</button>
             <button id="student-logout-btn" class="btn btn-yellow" onclick="studentLogout()" style="display: none;">登出個人面板</button>
             <button id="login-btn" class="btn btn-yellow" onclick="showLoginModal()">👨‍🏫 老師登入</button>
             <button id="logout-btn" class="btn btn-yellow" onclick="logout()" style="display: none;">登出後台 (返回學生端)</button>
@@ -671,7 +679,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
                         <h3 style="margin: 0; color: var(--primary-color);">📅 出席狀態月曆與報表</h3>
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <button class="btn" onclick="changeAttendanceMonth(-1)">⬅️️ 上個月</button>
+                            <button class="btn" onclick="changeAttendanceMonth(-1)">⬅ 上個月</button>
                             <span id="current-report-month-label" style="font-size: 22px; font-weight: bold; color: var(--sidebar-bg);"></span>
                             <button class="btn" onclick="changeAttendanceMonth(1)">下個月 ➡️</button>
                         </div>
@@ -916,7 +924,7 @@
             <div style="display: flex; justify-content: center; align-items: center; gap: 18px; margin-bottom: 25px;">
                 <button class="btn" onclick="changeTaskPieMonth(-1)" style="font-size: 18px;">⬅️ 上個月</button>
                 <span id="pie-month-label" style="font-size: 24px; font-weight: bold; color: var(--sidebar-bg);"></span>
-                <button class="btn" onclick="changeTaskPieMonth(1)" style="font-size: 18px;">下個月 ➡️️</button>
+                <button class="btn" onclick="changeTaskPieMonth(1)" style="font-size: 18px;">下個月 ➡</button>
             </div>
             <div class="pie-chart-container">
                 <div class="pie-box">
@@ -2120,7 +2128,7 @@
                                     showAdminAlert("個人任務完成", `✅ ${student.name} 已完成個人指定任務！`, "👍");
                                 }
                             } else {
-                                showAdminAlert("逾期完成提醒", `⚠️️ ${student.name}，此任務已超過期限，故無法獲得海螺及大樹加分喔！`, "⏳");
+                                showAdminAlert("逾期完成提醒", `⚠ ${student.name}，此任務已超過期限，故無法獲得海螺及大樹加分喔！`, "⏳");
                             }
                             openStudentModal(student.id);
                             refreshAllViews();
@@ -2500,7 +2508,7 @@
                 refreshAllViews();
                 showAdminAlert("發布成功", "公告已成功發布！", "📢");
             } else {
-                showAdminAlert("提示", "請輸入公告內容！", "⚠️");
+                showAdminAlert("提示", "請輸入公告內容！", "⚠️️");
             }
         }
 
@@ -2669,7 +2677,7 @@
                 student.name = newName.trim(); 
                 saveDataToStorage();
                 refreshAllViews(); 
-                showAdminAlert("修改成功", "學生姓名已更新！", "✏️️"); 
+                showAdminAlert("修改成功", "學生姓名已更新！", "✏"); 
             }
         }
         function deleteStudent(id) {
@@ -2747,7 +2755,7 @@
                     });
                     saveDataToStorage();
                     refreshAllViews();
-                    showAdminAlert("收回成功", `✅ 已成功收回全班任務：「${targetText}」`, "🗑️");
+                    showAdminAlert("收回成功", `✅ 已成功收回全班任務：「${targetText}」`, "🗑️️");
                 }
             }
         }
