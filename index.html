@@ -209,7 +209,6 @@
         .tree-rank-list { list-style: none; padding: 0; margin: 0; font-size: 16px; }
         .tree-rank-list li { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #eee; }
 
-        /* 圖鑑網格樣式 */
         .codex-grid-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -368,8 +367,8 @@
     </div>
 
     <div class="digital-clock-container" id="digital-clock-box">
-        <div class="digital-clock-time" id="digital-time">--:--:--</div>
-        <div class="digital-clock-date" id="digital-date">載入中...</div>
+        <div class="digital-clock-time" id="digital-time">00:00:00</div>
+        <div class="digital-clock-date" id="digital-date">民國115年--月--日</div>
     </div>
 
     <!-- 學生端介面 (打卡站) -->
@@ -409,7 +408,6 @@
                         <ul class="tree-rank-list" id="tree-rank-list"></ul>
                     </div>
 
-                    <!-- 🌿 點擊開啟校園植物圖鑑按鈕 -->
                     <button class="btn btn-yellow" style="width: 100%; margin-top: 15px; font-size: 20px; padding: 12px 0;" onclick="openCampusCodexModal()">📖 查看校園植物圖鑑</button>
                 </div>
             </div>
@@ -644,7 +642,7 @@
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <button class="btn" onclick="changeAttendanceMonth(-1)">⬅️ 上個月</button>
                             <span id="current-report-month-label" style="font-size: 22px; font-weight: bold; color: var(--sidebar-bg);"></span>
-                            <button class="btn" onclick="changeAttendanceMonth(1)">下個月 ➡️</button>
+                            <button class="btn" onclick="changeAttendanceMonth(1)">下個月 ➡️️</button>
                         </div>
                         <button class="btn btn-success" onclick="exportAttendanceCSV()">📥 匯出出席狀況 Excel</button>
                     </div>
@@ -822,7 +820,7 @@
             <p id="modal-status" style="font-size: 22px; margin-top: 15px;"></p>
             <button id="clock-in-btn" class="btn btn-yellow" style="width: 100%; margin-bottom: 25px; font-size: 48px; padding: 28px 0; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.25);">📍 點我出席打卡</button>
             <div style="margin: 20px 0;">
-                <p style="font-weight: bold; font-size: 22px; margin-bottom: 12px; color: var(--sidebar-bg);">🏷️ 點擊設定目前任務去向：</p>
+                <p style="font-weight: bold; font-size: 22px; margin-bottom: 12px; color: var(--sidebar-bg);">🏷️️ 點擊設定目前任務去向：</p>
                 <div class="student-action-btn-group" id="student-task-buttons-container">
                     <button class="task-option-btn" style="background-color: #E91E63;" onclick="setStudentTaskTag('潔牙')">潔牙</button>
                     <button class="task-option-btn" style="background-color: #9C27B0;" onclick="setStudentTaskTag('Ｔ－ＢＡＬＬ')">Ｔ－ＢＡＬＬ</button>
@@ -2635,7 +2633,7 @@
                 students = students.filter(s => !selectedIds.includes(s.id));
                 saveDataToStorage();
                 refreshAllViews(); 
-                showAdminAlert("刪除成功", "已成功刪除所選學生！", "🗑️");
+                showAdminAlert("刪除成功", "已成功刪除所選學生！", "🗑️️");
             }
         }
         function editStudent(id) {
@@ -2758,7 +2756,7 @@
 
         function executeBatchSeatPoints() {
             const text = document.getElementById('batch-seats-input').value.trim();
-            if (!text) return showAdminAlert("提示", "❌ 請輸入或貼上要加分的學生座號！", "⚠️");
+            if (!text) return showAdminAlert("提示", "❌ 請輸入或貼上要加分的學生座號！", "⚠️️");
             
             let seatTokens = text.split(/[\n,，\s]+/).map(s => parseInt(s.trim())).filter(s => !isNaN(s));
             if (seatTokens.length === 0) return showAdminAlert("提示", "❌ 沒有解析到有效的座號！", "⚠️");
