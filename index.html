@@ -524,7 +524,7 @@
         </div>
     </div>
 
-    <!-- 科技時鐘 (右下角懸浮) - 僅在首頁顯示 -->
+    <!-- 科技時鐘 (右下角懸浮) -->
     <div class="digital-clock-container" id="digital-clock-box">
         <div class="digital-clock-time" id="digital-time">00:00:00</div>
         <div class="digital-clock-date" id="digital-date">民國115年--月--日</div>
@@ -1137,1152 +1137,6 @@
                 const date = String(now.getDate()).padStart(2, '0');
                 let hours = now.getHours();
                 const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds老師過獎了！很高興能幫上忙！
-
-已經為您修正完成了，當學生登入個人面板後，右下角的懸浮科技時鐘會自動隱藏，返回首頁時才會再次顯示。
-
-請直接將下方**完整更新後的程式碼**複製並覆蓋您的 `index.html`：
-
-```html
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">五年級班級平台</title>
-    <!-- 引入畫布灑花特效套件 (Canvas Confetti) -->
-    <script src="[https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js](https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js)"></script>
-    <style>
-        :root {
-            --primary-color: #1976D2; 
-            --primary-light: #42A5F5; 
-            --secondary-color: #FFC107; 
-            --sidebar-bg: #0D47A1; 
-            --bg-color: #F0F4F8; 
-            --text-color: #333333;
-            --white: #ffffff;
-            --danger-color: #d32f2f;
-            --warning-color: #ff9800;
-            --success-color: #4caf50;
-        }
-        
-        /* 強制鎖定全螢幕，防止雙重捲軸 */
-        * { box-sizing: border-box; }
-        html, body {
-            width: 100vw;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            font-size: 20px;
-        }
-        
-        .top-bar {
-            background-color: var(--primary-color);
-            color: var(--white);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-            gap: 20px;
-            flex-wrap: wrap;
-            flex-shrink: 0;
-            z-index: 200;
-            width: 100%;
-        }
-        .top-bar h1 { margin: 0; font-size: 36px; white-space: nowrap; font-weight: bold; }
-        
-        .top-center-area {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .top-duty-badge {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px dashed var(--secondary-color);
-            padding: 8px 15px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-            font-size: 22px;
-            font-weight: bold;
-        }
-        .top-duty-badge span { color: var(--secondary-color); font-weight: bold; font-size: 24px; }
-
-        .btn {
-            background-color: var(--primary-color); color: white;
-            border: none; padding: 12px 22px; border-radius: 8px;
-            cursor: pointer; transition: 0.2s; font-size: 18px; font-weight: bold;
-        }
-        .btn:hover { opacity: 0.9; }
-        .btn-yellow { background-color: var(--secondary-color); color: #333; font-weight: bold; }
-        .btn-yellow:hover { background-color: #e0a800; }
-        .btn-danger { background-color: var(--danger-color); color: white; }
-        .btn-danger:hover { background-color: #b71c1c; }
-        .btn-success { background-color: var(--success-color); color: white; }
-        
-        input[type="text"], input[type="number"], input[type="password"], input[type="datetime-local"], input[type="color"], textarea, select {
-            padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 18px;
-            margin-right: 10px; margin-bottom: 10px; font-family: inherit;
-        }
-
-        #student-view { 
-            padding: 0 40px 40px 40px; 
-            flex: 1; 
-            width: 100%;
-            overflow-y: auto; 
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sticky-header-container {
-            position: sticky;
-            top: 0;
-            background-color: var(--bg-color);
-            z-index: 50;
-            padding-top: 15px;
-            padding-bottom: 15px;
-            box-shadow: 0 6px 6px -6px rgba(0,0,0,0.15);
-            margin-bottom: 25px;
-        }
-
-        .class-main-title {
-            text-align: center; 
-            color: var(--primary-color); 
-            font-size: 55px; 
-            margin: 0; 
-            padding: 0;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-
-        .daily-routine-bar {
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-            flex-wrap: wrap; 
-            gap: 14px; 
-            margin: 10px 0 0 0; 
-            padding: 0;
-        }
-
-        .routine-tag {
-            background-color: var(--white); border: 3px dashed var(--primary-color);
-            color: var(--primary-color); padding: 10px 20px; border-radius: 30px;
-            font-size: 22px; font-weight: bold; box-shadow: 0 3px 8px rgba(0,0,0,0.06);
-        }
-        .routine-arrow { font-size: 26px; color: var(--primary-color); font-weight: bold; }
-
-        .student-main-layout { display: flex; gap: 35px; max-width: 1700px; margin: 0 auto; width: 100%; flex: 1; align-items: flex-start; }
-        .student-grid-container { flex: 1; }
-        .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 30px; }
-
-        .student-card {
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-color: var(--white); 
-            border: 4px solid var(--primary-light);
-            border-radius: 20px; 
-            padding: 25px; 
-            text-align: center;
-            cursor: pointer; 
-            transition: 0.2s; 
-            position: relative;
-            overflow: hidden;
-            aspect-ratio: 1 / 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-        }
-        .student-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(25, 118, 210, 0.3); }
-        .student-card.all-done { border-color: var(--success-color); border-width: 5px; }
-        .student-card.has-pending { border-color: var(--danger-color); border-width: 5px; }
-
-        .student-card > * { position: relative; z-index: 2; }
-
-        .student-name-row {
-            display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap;
-        }
-
-        .student-name { 
-            font-size: 46px; font-weight: bold; color: var(--primary-color); 
-            text-shadow: -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff, 0 1px 3px rgba(0,0,0,0.3); 
-        }
-        .student-card.all-done .student-name { color: #2e7d32; }
-        .student-card.has-pending .student-name { color: #c62828; }
-        
-        .task-badge-circle {
-            width: 44px; height: 44px; border-radius: 50%; color: white; font-size: 22px;
-            font-weight: bold; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.25);
-        }
-
-        .score-badges-group { margin-top: 10px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-        .shell-score { font-size: 24px; font-weight: bold; color: #d89e00; background-color: #fffde7; border-radius: 20px; padding: 6px 18px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .alligator-score { font-size: 24px; font-weight: bold; color: #2e7d32; background-color: #e8f5e9; border-radius: 20px; padding: 6px 18px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
-        .sidebar-right-container {
-            width: 420px; display: flex; flex-direction: column; gap: 25px; flex-shrink: 0;
-        }
-
-        .student-announcements {
-            background: var(--white); padding: 25px 20px;
-            border-radius: 14px; box-shadow: 0 6px 15px rgba(0,0,0,0.06);
-            border-left: 6px solid var(--secondary-color);
-        }
-        .student-announcements h3 { margin-top: 0; color: var(--sidebar-bg); border-bottom: 2px solid var(--bg-color); padding-bottom: 12px; font-size: 26px; text-align: center; }
-        .student-announcements ul {
-            list-style-type: none; padding-left: 0; margin-bottom: 0; font-size: 22px; line-height: 1.8;
-            display: flex; flex-direction: column; gap: 14px;
-        }
-        .student-announcements li { padding: 8px 0; border-bottom: 1px dashed #eee; word-break: break-all; }
-
-        .tree-card {
-            background: var(--white); padding: 25px 20px; border-radius: 14px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.06); border-top: 6px solid var(--success-color); text-align: center;
-        }
-        .tree-card h3 { margin-top: 0; color: #2e7d32; font-size: 28px; margin-bottom: 12px; border-bottom: 2px solid var(--bg-color); padding-bottom: 10px; }
-        
-        .tree-visual-box { font-size: 80px; margin: 10px 0; transition: 0.3s; }
-        .tree-stage-name { font-size: 24px; font-weight: bold; color: #2e7d32; margin-bottom: 8px; }
-        .tree-progress-bar-bg { background-color: #e0e0e0; border-radius: 10px; height: 18px; width: 100%; overflow: hidden; margin: 12px 0 8px 0; }
-        .tree-progress-bar-fill { background-color: var(--success-color); height: 100%; width: 0%; transition: width 0.4s ease; }
-        .tree-stats-text { font-size: 18px; color: #555; font-weight: bold; }
-
-        .tree-rank-box { margin-top: 15px; text-align: left; background: #f9f9f9; padding: 12px; border-radius: 8px; max-height: 180px; overflow-y: auto; }
-        .tree-rank-box h4 { margin: 0 0 8px 0; font-size: 18px; color: var(--sidebar-bg); text-align: center; }
-        .tree-rank-list { list-style: none; padding: 0; margin: 0; font-size: 16px; }
-        .tree-rank-list li { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #eee; }
-
-        .codex-grid-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .codex-item {
-            background: #f9f9f9;
-            border: 3px dashed #ccc;
-            border-radius: 12px;
-            padding: 15px 10px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 110px;
-            position: relative;
-        }
-        .codex-item.unlocked {
-            background: #e8f5e9;
-            border: 3px solid #4caf50;
-            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
-        }
-        .codex-item-icon {
-            font-size: 42px;
-            margin-bottom: 6px;
-            filter: grayscale(100%) opacity(0.3);
-        }
-        .codex-item.unlocked .codex-item-icon {
-            filter: none;
-        }
-        .codex-item-name {
-            font-size: 15px;
-            font-weight: bold;
-            color: #777;
-        }
-        .codex-item.unlocked .codex-item-name {
-            color: #2e7d32;
-        }
-
-        .digital-clock-container {
-            position: fixed; bottom: 25px; right: 35px;
-            background: linear-gradient(135deg, #121212, #1e1e1e);
-            border: 4px solid #00ff66; border-radius: 18px; padding: 18px 32px;
-            color: #00ff66; font-family: 'Courier New', Courier, monospace; text-align: center;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 255, 102, 0.2);
-            z-index: 100; display: flex; flex-direction: column; align-items: center; pointer-events: none; 
-        }
-        .digital-clock-time { font-size: 58px; font-weight: bold; letter-spacing: 3px; text-shadow: 0 0 15px #00ff66, 0 0 30px rgba(0, 255, 102, 0.5); line-height: 1.1; }
-        .digital-clock-date { font-size: 22px; color: #aaeebb; margin-top: 6px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; letter-spacing: 1px; text-shadow: none; font-weight: bold; }
-
-        #student-personal-view { display: none; padding: 40px; flex: 1; width: 100%; overflow-y: auto; background-color: var(--bg-color); }
-        .personal-dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; max-width: 1300px; margin: 0 auto; }
-        .personal-card { background: white; padding: 30px; border-radius: 14px; box-shadow: 0 6px 15px rgba(0,0,0,0.06); border-top: 5px solid var(--primary-light); }
-        .personal-card h3 { color: var(--primary-color); margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 12px; font-size: 26px; }
-        .personal-task-list { list-style: none; padding: 0; margin: 0; font-size: 20px; }
-        .personal-task-list li { padding: 12px 0; border-bottom: 1px dashed #ccc; }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.55); display: none; justify-content: center; align-items: center; z-index: 1000;
-        }
-        .modal-content {
-            background: var(--white); padding: 40px; border-radius: 18px; width: 90%; max-width: 950px; text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.35); max-height: 90vh; overflow-y: auto;
-        }
-        
-        .student-action-btn-group { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin: 25px 0; }
-        .task-option-btn {
-            padding: 14px 22px; border-radius: 10px; font-size: 22px; font-weight: bold; color: white; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-        }
-        .task-option-btn:hover { opacity: 0.85; transform: scale(1.05); }
-        .task-option-btn.active-task { border: 4px solid #333; box-shadow: 0 0 12px rgba(0,0,0,0.4); }
-
-        .task-list { text-align: left; margin: 30px 0; padding: 30px; background-color: #fff9c4; border-radius: 14px; border-left: 10px solid var(--secondary-color); }
-        .task-list ul { margin: 18px 0 0 0; padding-left: 35px; }
-        .task-list li { margin-bottom: 20px; line-height: 1.6; font-size: 26px; }
-
-        /* 🔮 強力特效：魔法卡牌召喚陣與 6 張卡牌排版 (上 3 下 3) */
-        .gacha-magic-arena {
-            position: relative;
-            background: radial-gradient(circle, #24144d 0%, #0b051f 100%);
-            border-radius: 20px;
-            padding: 25px 20px;
-            box-shadow: inset 0 0 50px rgba(255, 215, 0, 0.3), 0 15px 35px rgba(0,0,0,0.6);
-            overflow: hidden;
-            border: 4px solid #ffd700;
-        }
-        .magic-circle-bg {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 500px; height: 500px;
-            transform: translate(-50%, -50%);
-            border: 4px dashed rgba(255, 215, 0, 0.5);
-            border-radius: 50%;
-            animation: rotateMagicCircle 15s linear infinite;
-            pointer-events: none;
-            z-index: 1;
-        }
-        .magic-circle-bg::before {
-            content: '✨ 🌟 ✨ 🔮 ✨ 🌟 ✨';
-            position: absolute;
-            top: -18px; left: 50%;
-            transform: translateX(-50%);
-            color: #ffd700;
-            font-size: 20px;
-            letter-spacing: 16px;
-        }
-        @keyframes rotateMagicCircle {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        /* 能量條樣式 (置於標題下方) */
-        .aura-bar-container {
-            background: rgba(20, 10, 40, 0.9);
-            border: 2px solid #ffd700;
-            border-radius: 12px;
-            padding: 12px 20px;
-            max-width: 650px;
-            margin: 12px auto 20px auto;
-            position: relative;
-            z-index: 5;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-        .aura-bar-title {
-            font-size: 18px;
-            color: #ffd700;
-            font-weight: bold;
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .aura-progress-bg {
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 8px;
-            height: 16px;
-            width: 100%;
-            overflow: hidden;
-            border: 1px solid rgba(255, 215, 0, 0.5);
-        }
-        .aura-progress-fill {
-            background: linear-gradient(90deg, #ff9800, #ffeb3b, #00ffcc);
-            height: 100%;
-            width: 0%;
-            transition: width 0.4s ease;
-        }
-
-        /* 6 張卡牌網格排版 (嚴格指定 3 欄，剛好上 3 下 3) */
-        .gacha-card-container { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 18px; 
-            margin: 10px auto; 
-            max-width: 720px;
-            perspective: 1000px; 
-            position: relative; 
-            z-index: 5; 
-            justify-items: center;
-        }
-
-        .gacha-card {
-            width: 210px; height: 280px; 
-            background: linear-gradient(135deg, #3d1c75, #5e2ca5);
-            border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.6); font-size: 20px; color: #ffd700;
-            font-weight: bold; transition: 0.3s; position: relative; border: 4px solid #ffd700;
-            user-select: none; gap: 10px; padding: 15px; box-sizing: border-box; text-align: center;
-        }
-        .gacha-card:hover { transform: translateY(-8px) scale(1.04); box-shadow: 0 0 35px #ffd700, 0 15px 30px rgba(0,0,0,0.8); }
-        
-        /* 召喚光柱特效 (動態觸發) */
-        .gacha-card.summoning {
-            animation: cardSummoningAnim 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
-            pointer-events: none; 
-            z-index: 100;
-        }
-        @keyframes cardSummoningAnim {
-            0% { transform: scale(1) translateY(0); filter: brightness(1); }
-            40% { transform: scale(1.25) translateY(-30px); filter: brightness(3); box-shadow: 0 0 80px #fff, 0 0 130px #ffd700; }
-            70% { transform: scale(1.15) translateY(-15px) rotateY(720deg); filter: brightness(2.5); }
-            100% { transform: scale(1.05) translateY(0) rotateY(1440deg); filter: brightness(1.5); }
-        }
-
-        /* 神聖光柱背景閃爍 */
-        .divine-beam-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,215,0,0.5) 40%, transparent 80%);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 50;
-            transition: opacity 0.3s ease;
-        }
-        .divine-beam-overlay.active { opacity: 1; animation: beamPulse 0.6s infinite alternate; }
-        @keyframes beamPulse {
-            0% { opacity: 0.8; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1.08); }
-        }
-
-        .gacha-card.flipped {
-            background: linear-gradient(135deg, #004d40, #00b0ff);
-            color: #ffffff; 
-            border-color: #00ffcc; 
-            font-size: 22px; 
-            text-align: center; 
-            line-height: 1.4;
-            box-shadow: 0 0 50px #00ffcc, inset 0 0 25px rgba(255,255,255,0.7);
-        }
-
-        /* 🌟 雙鱷魚聚光燈特效 (Spotlight) */
-        .gacha-card.spotlight-active {
-            box-shadow: 0 0 90px #ffd700, 0 0 160px #fff, inset 0 0 40px #ffd700 !important;
-            transform: scale(1.08);
-            border-color: #fff !important;
-            animation: spotlightPulse 0.8s ease-in-out infinite alternate !important;
-            z-index: 120 !important;
-        }
-        @keyframes spotlightPulse {
-            0% { box-shadow: 0 0 70px #ffd700, 0 0 120px #fff; transform: scale(1.06); }
-            100% { box-shadow: 0 0 120px #ffd700, 0 0 200px #fff; transform: scale(1.12); }
-        }
-
-        /* 關鍵修正：強制與頂部工具列對齊並佔滿剩餘高度 */
-        #teacher-view { 
-            display: none; 
-            flex: 1; 
-            width: 100vw;
-            flex-direction: row; 
-            height: 100%;
-            overflow: hidden; 
-        }
-        .sidebar { 
-            width: 280px; 
-            background-color: var(--sidebar-bg); 
-            color: white; 
-            padding: 20px 0; 
-            display: flex; 
-            flex-direction: column; 
-            flex-shrink: 0; 
-            height: 100%; 
-            overflow-y: auto; 
-            box-sizing: border-box;
-        }
-        .sidebar h2 { text-align: center; color: var(--secondary-color); margin-bottom: 20px; font-size: 26px;}
-        .nav-item { padding: 16px 25px; cursor: pointer; border-left: 5px solid transparent; user-select: none; font-size: 18px; }
-        .nav-item:hover { background-color: rgba(255,255,255,0.1); }
-        .nav-item.active { background-color: var(--primary-color); border-left: 5px solid var(--secondary-color); font-weight: bold;}
-        .nav-item.dragging { opacity: 0.4; background: rgba(255,255,255,0.2); }
-        
-        .main-content { 
-            flex: 1; 
-            padding: 40px; 
-            height: 100%; 
-            overflow-y: auto; 
-            box-sizing: border-box;
-            background-color: var(--bg-color);
-        }
-        .admin-section { display: none; }
-        .admin-section.active { display: block; }
-        
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.06); border-top: 5px solid var(--primary-light); margin-bottom: 25px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-        th, td { padding: 15px 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 18px; }
-        th { background-color: #F8FAFC; color: var(--sidebar-bg); font-weight: bold; }
-
-        .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; max-height: 180px; overflow-y: auto; padding: 18px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 18px; background-color: #f9f9f9; }
-        .checkbox-item { cursor: pointer; display: flex; align-items: center; font-size: 18px; }
-        .checkbox-item input { width: 20px; height: 20px; margin-right: 10px; cursor: pointer; }
-        
-        .point-btn-group button { margin-right: 6px; padding: 8px 12px; font-size: 15px; }
-        .badge-light { display: inline-block; width: 16px; height: 16px; border-radius: 50%; margin-right: 8px; }
-        .badge-green { background-color: var(--success-color); }
-        .badge-yellow { background-color: var(--warning-color); }
-        .badge-red { background-color: var(--danger-color); }
-        .badge-blue { background-color: #2196F3; }
-        .badge-gray { background-color: #ccc; }
-
-        .pie-chart-container { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 25px; margin: 25px 0; }
-        .pie-box { background: #f9f9f9; padding: 25px; border-radius: 12px; border: 1px solid #ddd; text-align: center; width: 320px; }
-        .pie-chart { width: 160px; height: 160px; border-radius: 50%; margin: 18px auto; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 22px; box-shadow: 0 6px 15px rgba(0,0,0,0.12); }
-    </style>
-</head>
-<body>
-
-    <div class="top-bar">
-        <div><h1 id="platform-title">五年級班級平台</h1></div>
-        
-        <div class="top-center-area">
-            <div class="top-duty-badge">
-                <span>🌟 值日生：</span><span id="top-duty-names-display">載入中...</span>
-            </div>
-        </div>
-
-        <div>
-            <button class="btn btn-yellow" onclick="openGachaRankModal()" style="background-color: #ff9800; color: white;">🎁 海螺抽卡</button>
-            <button id="student-login-btn" class="btn btn-yellow" onclick="showStudentLoginModal()">👨‍‍🎓 學生登入</button>
-            <button id="student-logout-btn" class="btn btn-yellow" onclick="studentLogout()" style="display: none;">登出個人面板</button>
-            <button id="login-btn" class="btn btn-yellow" onclick="showLoginModal()">👨‍🏫 老師登入</button>
-            <button id="logout-btn" class="btn btn-yellow" onclick="logout()" style="display: none;">登出後台 (返回學生端)</button>
-        </div>
-    </div>
-
-    <!-- 科技時鐘 (右下角懸浮) -->
-    <div class="digital-clock-container" id="digital-clock-box">
-        <div class="digital-clock-time" id="digital-time">00:00:00</div>
-        <div class="digital-clock-date" id="digital-date">民國115年--月--日</div>
-    </div>
-
-    <!-- 學生端介面 (打卡站) -->
-    <div id="student-view">
-        <div class="sticky-header-container">
-            <h2 class="class-main-title">✨ 五乙打卡站 ✨</h2>
-            <div class="daily-routine-bar">
-                <span class="routine-tag">🗣 跟老師問早</span> <span class="routine-arrow">➔</span>
-                <span class="routine-tag">📥 交作業</span> <span class="routine-arrow">➔</span>
-                <span class="routine-tag">📖 抄聯絡簿</span> <span class="routine-arrow">➔</span>
-                <span class="routine-tag">📍 打卡</span> <span class="routine-arrow">➔</span>
-                <span class="routine-tag">📚 安靜閱讀與訂正作業</span>
-            </div>
-        </div>
-        <div class="student-main-layout">
-            <div class="student-grid-container">
-                <div class="student-grid" id="student-grid"></div>
-            </div>
-            
-            <div class="sidebar-right-container">
-                <div class="student-announcements">
-                    <h3>📢 班級最新公告</h3>
-                    <ul id="student-announcement-list"></ul>
-                </div>
-
-                <div class="tree-card">
-                    <h3>🌳 乙棵成長樹與圖鑑</h3>
-                    <div class="tree-visual-box" id="tree-visual">🌱</div>
-                    <div class="tree-stage-name" id="tree-stage-title">第一階段 - 種子期</div>
-                    <div class="tree-progress-bar-bg">
-                        <div class="tree-progress-bar-fill" id="tree-progress-fill"></div>
-                    </div>
-                    <div class="tree-stats-text" id="tree-stats-text">經驗值：0 / 500</div>
-                    
-                    <div class="tree-rank-box">
-                        <h4>🏆 貢獻排行榜 TOP 10</h4>
-                        <ul class="tree-rank-list" id="tree-rank-list"></ul>
-                    </div>
-
-                    <button class="btn btn-yellow" style="width: 100%; margin-top: 15px; font-size: 20px; padding: 12px 0;" onclick="openCampusCodexModal()">📖 查看校園植物圖鑑</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 學生專屬個人面板 -->
-    <div id="student-personal-view">
-        <h2 id="personal-welcome" style="text-align: center; font-size: 40px; color: var(--sidebar-bg); margin-bottom: 35px; font-weight: bold;"></h2>
-        <div class="personal-dashboard-grid">
-            <div class="personal-card">
-                <h3>🏆 專屬積分與老師稱讚</h3>
-                <div id="personal-points" style="margin-top:25px; text-align:center;"></div>
-            </div>
-            <div class="personal-card">
-                <h3>🔐 修改登入密碼</h3>
-                <p style="font-size:18px; color:#666;">預設密碼為座號。為保護隱私，建議登入後立即修改！</p>
-                <input type="password" id="new-password-input" placeholder="限輸入剛好 6 碼 (英文或數字)" style="width: 70%;">
-                <button class="btn btn-yellow" onclick="changeStudentPassword()">確認修改</button>
-                <p style="font-size:16px; color:var(--danger-color); margin-top:8px;">⚠️ 限制：密碼必須剛好 6 碼, 且只能包含英文或數字。</p>
-            </div>
-            <div class="personal-card" style="grid-column: 1 / -1;">
-                <h3>📝 今日與近期任務紀錄</h3>
-                <ul class="personal-task-list" id="personal-tasks"></ul>
-            </div>
-            <div class="personal-card" style="grid-column: 1 / -1; border-top: 5px solid var(--warning-color);">
-                <h3>🎁 個人抽卡紀錄專區</h3>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr><th>時間</th><th>消耗海螺</th><th>獲得鱷魚</th></tr>
-                        </thead>
-                        <tbody id="personal-gacha-logs"></tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="personal-card" style="grid-column: 1 / -1;">
-                <h3>📅 出缺席紀錄 (本月)</h3>
-                <div id="personal-attendance" style="margin-top:18px;"></div>
-            </div>
-            <div class="personal-card" style="grid-column: 1 / -1; border-top: 5px solid var(--secondary-color);">
-                <h3>📢 班級最新公告</h3>
-                <ul class="personal-task-list" id="personal-announcement-list" style="font-size: 26px; margin-top: 18px;"></ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- 老師後台介面 -->
-    <div id="teacher-view">
-        <div class="sidebar" id="admin-sidebar" ondragover="allowDrop(event)">
-            <h2>管理後台</h2>
-            <div class="nav-item active" draggable="true" data-tab="admin-dashboard" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-dashboard')">公告與總覽</div>
-            <div class="nav-item" draggable="true" data-tab="admin-students" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-students')">學生管理 (新增/修改/照片/請假)</div>
-            <div class="nav-item" draggable="true" data-tab="admin-groups" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-groups')">👥 學生分組與海螺加扣分 🐚</div>
-            <div class="nav-item" draggable="true" data-tab="admin-account" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-account')">學生帳號管理 🔐</div>
-            <div class="nav-item" draggable="true" data-tab="admin-gacha-logs" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-gacha-logs')">🎁 學生抽卡紀錄總表</div>
-            <div class="nav-item" draggable="true" data-tab="admin-duty" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-duty')">本日值日生管理 🌟</div>
-            <div class="nav-item" draggable="true" data-tab="admin-tasks" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-tasks')">任務指派中心</div>
-            <div class="nav-item" draggable="true" data-tab="admin-attendance" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-attendance')">出缺席日曆報表 📊</div>
-            <div class="nav-item" draggable="true" data-tab="admin-task-report" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-task-report')">學生任務狀態報表 📝</div>
-            <div class="nav-item" draggable="true" data-tab="admin-points" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-points')">學生獎勵積分 (海螺與鱷魚) 🐚🐊</div>
-            <div class="nav-item" draggable="true" data-tab="admin-tree" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-tree')">🌳 乙棵成長樹管理 (加扣分)</div>
-            <div class="nav-item" draggable="true" data-tab="admin-settings" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-settings')">平台與外觀設定 ⚙️</div>
-        </div>
-        
-        <div class="main-content">
-            <div id="admin-dashboard" class="admin-section active">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">新增班級公告 (可自訂顏色與粗細)</h3>
-                    <textarea id="new-announcement" placeholder="請輸入公告內容..." rows="3" style="width: 100%; box-sizing: border-box;"></textarea>
-                    <div style="display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-top: 12px;">
-                        <div>
-                            <label>文字顏色：</label><input type="color" id="new-announcement-color" value="#333333">
-                        </div>
-                        <div>
-                            <label>文字粗細：</label>
-                            <select id="new-announcement-weight">
-                                <option value="normal">一般 (Normal)</option>
-                                <option value="bold">粗體 (Bold)</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-yellow" onclick="addAnnouncement()">發布公告</button>
-                    </div>
-                </div>
-                <div class="card">
-                    <h3>最新班級公告管理</h3>
-                    <ul id="admin-announcement-list" style="list-style-type: none; padding-left: 0;"></ul>
-                </div>
-            </div>
-
-            <div id="admin-students" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">✨ 批次文字新增學生</h3>
-                    <p style="font-size: 16px; color: #666; margin-top: 0;">💡 請輸入起始座號，並在下方文字框貼上多位學生姓名（支援換行、逗號或空格分隔）。</p>
-                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                        <label>起始座號：</label>
-                        <input type="number" id="batch-start-seat" placeholder="例如：1" style="width: 120px; margin-bottom:0;" value="1">
-                    </div>
-                    <textarea id="batch-names-input" rows="3" placeholder="王小明&#10;李小華" style="width: 100%; max-width: 650px;"></textarea>
-                    <br><button class="btn btn-yellow" onclick="addBatchStudents()">+ 批次新增學生</button>
-                </div>
-                <div class="card" style="border-top: 5px solid var(--secondary-color);">
-                    <h3 style="color: #f57f17; margin-top: 0;">🎂 批次快速設定學生生日</h3>
-                    <p style="font-size: 16px; color: #666;">💡 請由 1 號開始，在下方貼上所有學生的生日（格式如 05-20 或 5/20），系統會自動填入！</p>
-                    <textarea id="batch-birthdays-input" rows="3" placeholder="03-15&#10;05-20&#10;12-01" style="width: 100%; max-width: 650px;"></textarea>
-                    <br><button class="btn btn-yellow" onclick="batchUpdateBirthdays()">🎂 批次更新學生生日</button>
-                </div>
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-                        <h3 style="margin: 0;">學生名單、個人照片、今日出缺席與狀態</h3>
-                        <div>
-                            <button class="btn" style="font-size: 16px; padding: 8px 14px;" onclick="selectAllStudents(true)">全選</button>
-                            <button class="btn" style="background-color: #999; font-size: 16px; padding: 8px 14px;" onclick="selectAllStudents(false)">全不選</button>
-                            <button class="btn btn-danger" style="font-size: 16px; padding: 8px 14px; margin-left: 12px;" onclick="deleteSelectedStudents()">🗑️ 刪除所選學生</button>
-                        </div>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 50px;"><input type="checkbox" id="select-all-checkbox" onclick="toggleSelectAll(this)" style="width:20px; height:20px; cursor:pointer;"></th>
-                                <th>座號</th><th>姓名</th><th>個人照片上傳</th><th>今日出缺席與打卡狀態</th><th>操作管理</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-student-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="admin-groups" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">👥 學生分組設定</h3>
-                    <p style="font-size: 16px; color: #666;">💡 請輸入群組名稱（例如：第一組），並在下方輸入屬於該組的學生座號（支援逗號、空格或換行隔開）。</p>
-                    <input type="text" id="group-name-input" placeholder="例如：第一組" style="width: 250px;">
-                    <textarea id="group-seats-input" rows="3" placeholder="例如：1, 3, 5, 7" style="width: 100%; box-sizing: border-box; max-width: 650px;"></textarea>
-                    <br><button class="btn btn-yellow" onclick="saveGroup()">💾 儲存/建立群組</button>
-                </div>
-                <div class="card" style="border-top: 5px solid var(--secondary-color);">
-                    <h3 style="color: #f57f17; margin-top: 0;">🐚 小組海螺積分管理面板 (加扣分)</h3>
-                    <p style="font-size: 16px; color: #666;">💡 您可以針對各小組成員一鍵進行海螺加扣分或歸零操作。</p>
-                    <table>
-                        <thead>
-                            <tr><th>組別名稱</th><th>組員座號與目前海螺狀態</th><th>操作管理</th><th>小組加扣海螺按鈕</th></tr>
-                        </thead>
-                        <tbody id="admin-groups-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="admin-account" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">🔐 學生登入帳號管理</h3>
-                    <p style="font-size:16px; color:#666;">💡 若學生忘記密碼，老師可以直接點擊「重設為座號」，將該生密碼初始化。</p>
-                    <table>
-                        <thead>
-                            <tr><th>座號</th><th>姓名</th><th>目前密碼</th><th>最後登入時間</th><th>最後修改密碼時間</th><th>操作</th></tr>
-                        </thead>
-                        <tbody id="admin-account-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="admin-gacha-logs" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">🎁 全班學生抽卡紀錄總表</h3>
-                    <table>
-                        <thead>
-                            <tr><th>座號</th><th>學生姓名</th><th>抽卡時間</th><th>消耗海螺</th><th>獲得鱷魚</th></tr>
-                        </thead>
-                        <tbody id="admin-gacha-log-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="admin-duty" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">🌟 本日值日生設定與修改</h3>
-                    <div class="checkbox-grid" id="duty-checkbox-list"></div>
-                    <div style="margin-top: 18px;">
-                        <button class="btn" style="font-size:16px; margin-right: 12px;" onclick="selectDutyCheckboxes(true)">全選</button>
-                        <button class="btn" style="background-color: #999; font-size:16px; margin-right: 18px;" onclick="selectDutyCheckboxes(false)">全不選</button>
-                        <button class="btn btn-yellow" onclick="saveDutyStudents()">💾 儲存本日值日生</button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="admin-tasks" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">📢 群發班級任務 (支援一次派發多樣任務)</h3>
-                    <p style="font-size: 16px; color: #666; margin-top: 0;">💡 您可以在下方文字框輸入多行任務（用**空行**或**逗號**分隔），系統會一次幫全班派發全部任務！</p>
-                    <textarea id="class-task-input" placeholder="例如：&#10;完成數學習作 P.10-12&#10;背國語第3課課文&#10;交視力檢查回條" rows="5" style="width: 100%; box-sizing: border-box; max-width: 800px;"></textarea>
-                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 10px; flex-wrap: wrap;">
-                        <div>
-                            <label style="font-size: 18px;">完成時限：</label>
-                            <input type="datetime-local" id="class-task-deadline">
-                        </div>
-                        <button class="btn btn-yellow" onclick="assignClassTask()">派發給全班</button>
-                    </div>
-                </div>
-
-                <div class="card" style="border-top: 5px solid var(--warning-color);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
-                        <h3 style="margin: 0; color: #f57f17;">📋 目前全班已派發的任務清單</h3>
-                        <button class="btn btn-danger" onclick="clearAllClassTasks()">🗑 一鍵收回所有全班任務</button>
-                    </div>
-                    <p style="font-size: 16px; color: #666; margin-top: 0;">💡 以下顯示目前所有全班性任務，您可以針對特定任務點擊「收回」來刪除它。</p>
-                    <table>
-                        <thead>
-                            <tr><th>任務內容</th><th>派發日期</th><th>完成期限</th><th>操作管理</th></tr>
-                        </thead>
-                        <tbody id="admin-class-task-list"></tbody>
-                    </table>
-                </div>
-
-                <div class="card">
-                    <h3 style="color: var(--sidebar-bg);">🎯 指派特定任務 (勾選多位學生)</h3>
-                    <div style="margin-bottom: 12px;">
-                        <button class="btn" style="font-size:16px; margin-right: 12px;" onclick="selectAllCheckboxes(true)">全選學生</button>
-                        <button class="btn" style="background-color: #999; font-size:16px;" onclick="selectAllCheckboxes(false)">全不選</button>
-                    </div>
-                    <div class="checkbox-grid" id="student-checkbox-list"></div>
-                    <input type="text" id="selected-task-input" placeholder="例如：訂正行為反思學習單" style="width: 50%;">
-                    <label style="font-size: 18px; margin-left: 12px;">完成時限：</label>
-                    <input type="datetime-local" id="selected-task-deadline">
-                    <button class="btn btn-yellow" onclick="assignSelectedTask()">發送任務給勾選學生</button>
-                </div>
-            </div>
-
-            <div id="admin-attendance" class="admin-section">
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
-                        <h3 style="margin: 0; color: var(--primary-color);">📅 出席狀態月曆與報表</h3>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <button class="btn" onclick="changeAttendanceMonth(-1)">⬅ 上個月</button>
-                            <span id="current-report-month-label" style="font-size: 22px; font-weight: bold; color: var(--sidebar-bg);"></span>
-                            <button class="btn" onclick="changeAttendanceMonth(1)">下個月 ➡️</button>
-                        </div>
-                        <button class="btn btn-success" onclick="exportAttendanceCSV()">📥 匯出出席狀況 Excel</button>
-                    </div>
-                    <div style="overflow-x: auto;">
-                        <table id="attendance-report-table">
-                            <thead></thead><tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="admin-task-report" class="admin-section">
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                        <h3 style="margin: 0; color: var(--primary-color);">📝 學生任務完成狀況與圓餅圖分析</h3>
-                        <button class="btn btn-success" onclick="exportTaskCSV()">📥 匯出每月任務完成率 Excel</button>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr><th>座號</th><th>姓名</th><th>未完成任務清單</th><th>狀態</th><th>圓餅圖分析 / 個別管理</th></tr>
-                        </thead>
-                        <tbody id="task-report-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="admin-points" class="admin-section">
-                <div class="card" style="background-color: #e8f5e9; border-top: 5px solid var(--success-color);">
-                    <h3 style="color: #2e7d32; margin-top: 0;">🎯 批次座號快速加分小幫手</h3>
-                    <p style="font-size: 16px; color: #555;">💡 請在下方輸入需要加分的<strong>學生座號</strong>（支援換行、逗號或空格隔開），接著選擇項目與數量，按下一鍵加分即可！</p>
-                    
-                    <textarea id="batch-seats-input" rows="3" placeholder="1&#10;3&#10;5" style="width: 100%; max-width: 650px;"></textarea>
-                    
-                    <div style="display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-top: 10px;">
-                        <div>
-                            <label>加分項目：</label>
-                            <select id="batch-point-type">
-                                <option value="points">海螺 🐚</option>
-                                <option value="alligator">鱷魚 🐊</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>增加數量：</label>
-                            <input type="number" id="batch-point-amount" value="1" min="1" max="100" style="width: 100px; margin-bottom:0;">
-                        </div>
-                        <button class="btn btn-success" onclick="executeBatchSeatPoints()">✨ 一鍵幫這些座號加分</button>
-                    </div>
-                </div>
-
-                <div class="card" style="background-color: #fff9c4; border-top: 5px solid var(--secondary-color);">
-                    <h3 style="color: #f57f17; margin-top: 0;">🐚 鱷魚全班批量加分</h3>
-                    <button class="btn btn-yellow" onclick="addGlobalPoints('points', 1)">全班海螺 +1 🐚</button>
-                    <button class="btn btn-yellow" onclick="addGlobalPoints('points', 2)">全班海螺 +2 🐚</button>
-                    <button class="btn btn-yellow" onclick="addGlobalPoints('alligator', 1)" style="background-color: #81c784; color: white;">全班鱷魚 +1 🐊</button>
-                </div>
-                
-                <div class="card" style="background-color: #ffebee; border-top: 5px solid var(--danger-color);">
-                    <h3 style="color: var(--danger-color); margin-top: 0;">⚠️ 系統數據一鍵重置 (危險操作)</h3>
-                    <button class="btn btn-danger" style="margin-right: 12px; margin-bottom: 8px;" onclick="clearAllTasks()">📝 學生任務一鍵清空</button>
-                    <button class="btn btn-danger" style="margin-right: 12px; margin-bottom: 8px;" onclick="resetAllPoints('points')">🐚 學生海螺積分一鍵歸零</button>
-                    <button class="btn btn-danger" style="margin-bottom: 8px;" onclick="resetAllPoints('alligator')">🐊 學生鱷魚積分一鍵歸零</button>
-                </div>
-                
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
-                        <h3 style="margin: 0; color: var(--primary-color);">個人積分與稱讚評語管理面板</h3>
-                        <button class="btn btn-success" style="font-size: 20px; padding: 12px 24px;" onclick="saveAllPraises()">⚡ 一鍵儲存全班評語狀態</button>
-                    </div>
-                    <p style="font-size: 16px; color: #666; margin-top: 0;">💡 您可以直接在下方個別學生的評語欄位輸入或修改，完成後點擊右上角的「一鍵儲存全班評語狀態」即可全部更新！</p>
-                    <table>
-                        <thead>
-                            <tr><th>座號</th><th>姓名</th><th>目前海螺 🐚</th><th>目前鱷魚 🐊</th><th>老師正向稱讚評語 (48小時自動移除)</th><th>加扣分操作</th></tr>
-                        </thead>
-                        <tbody id="admin-points-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="admin-tree" class="admin-section">
-                <div class="card" style="border-top: 5px solid var(--success-color);">
-                    <h3 style="color: #2e7d32; margin-top: 0;">🌳 乙棵成長樹經驗值手動加扣分管理</h3>
-                    <p style="font-size: 16px; color: #666;">💡 您可以在下方隨時為個別學生手動調整「樹木貢獻積分」（影響全班乙棵成長樹總進度與排行榜）。</p>
-                    <table>
-                        <thead>
-                            <tr><th>座號</th><th>學生姓名</th><th>目前樹木貢獻積分</th><th>手動加扣分操作</th></tr>
-                        </thead>
-                        <tbody id="admin-tree-points-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="admin-settings" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">⚙️ 平台名稱設定</h3>
-                    <input type="text" id="platform-name-input" placeholder="輸入平台名稱..." style="width: 60%;">
-                    <button class="btn btn-yellow" onclick="updatePlatformName()">儲存名稱</button>
-                </div>
-                <div class="card">
-                    <h3>🎨 平台主題色彩設定</h3>
-                    <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px;">
-                        <button class="btn" style="background-color: #FFC107; color:#333;" onclick="setTheme('yellow')">黃色主題</button>
-                        <button class="btn" style="background-color: #4CAF50; color:white;" onclick="setTheme('green')">綠色主題</button>
-                        <button class="btn" style="background-color: #FFFFFF; color:#333; border: 1px solid #ccc;" onclick="setTheme('white')">白色主題</button>
-                        <button class="btn" style="background-color: #212121; color:white;" onclick="setTheme('black')">黑色主題</button>
-                        <button class="btn" style="background-color: #1976D2; color:white;" onclick="setTheme('blue')">藍色主題</button>
-                        <button class="btn" style="background-color: #D32F2F; color:white;" onclick="setTheme('red')">紅色主題</button>
-                        <button class="btn" style="background-color: #0D47A1; color:white;" onclick="setTheme('royal-blue')">寶藍主題</button>
-                    </div>
-                </div>
-                <div class="card" style="border-top: 5px solid var(--success-color);">
-                    <h3 style="color: var(--success-color); margin-top: 0;">💾 班級資料備份與還原 (匯出 / 匯入)</h3>
-                    <p style="font-size: 16px; color: #666;">備份所有學生名單、積分、照片、任務與打卡紀錄！</p>
-                    <div style="display: flex; gap: 15px; margin-top: 18px; flex-wrap: wrap; align-items: center;">
-                        <button class="btn btn-success" onclick="exportBackupData()">📥 一鍵下載備份檔 (JSON)</button>
-                        <div style="border-left: 2px solid #ccc; height: 35px; margin: 0 10px;"></div>
-                        <input type="file" id="import-backup-file" accept=".json" style="display: none;" onchange="importBackupData(event)">
-                        <button class="btn" style="background-color: #607D8B; color: white;" onclick="document.getElementById('import-backup-file').click()">📤 上傳備份檔還原資料</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 📖 校園植物圖鑑彈出視窗 -->
-    <div class="modal-overlay" id="campus-codex-modal" style="z-index: 1150;">
-        <div class="modal-content" style="max-width: 900px;">
-            <h2 style="color: #2e7d32; font-size: 36px; margin-bottom: 10px;">🌿 校園傳奇植物圖鑑榮譽榜</h2>
-            <p style="font-size: 18px; color: #666; margin-top: 0;">全班同心協力將成長樹養滿等，即可依序解鎖神秘的校園代表植物！未解鎖的樹種會以挖空問號顯示，累積集氣挑戰吧！</p>
-            <div class="codex-grid-container" id="campus-codex-grid"></div>
-            <br>
-            <button class="btn" onclick="closeModal('campus-codex-modal')" style="font-size: 20px; padding: 12px 30px;">關閉視窗</button>
-        </div>
-    </div>
-
-    <!-- 個別學生任務管理彈出視窗 -->
-    <div class="modal-overlay" id="admin-student-tasks-modal" style="z-index: 1150;">
-        <div class="modal-content" style="max-width: 800px;">
-            <h2 id="admin-modal-student-title" style="color: var(--primary-color); font-size: 34px;"></h2>
-            <p style="font-size: 20px; color: #666;">以下為該學生目前所有指派的任務清單，您可以隨時點擊「收回」來刪除特定任務：</p>
-            <div style="max-height: 400px; overflow-y: auto; margin: 20px 0;">
-                <table>
-                    <thead>
-                        <tr><th>任務內容</th><th>類型</th><th>期限</th><th>操作</th></tr>
-                    </thead>
-                    <tbody id="admin-student-task-list"></tbody>
-                </table>
-            </div>
-            <button class="btn" onclick="closeModal('admin-student-tasks-modal')" style="font-size: 20px; padding: 12px 25px;">關閉視窗</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="checkin-success-modal" style="z-index: 1100;">
-        <div class="modal-content" style="max-width: 600px; padding: 60px;">
-            <div style="font-size: 80px; margin-bottom: 20px;">🎉</div>
-            <h2 id="checkin-success-text" style="font-size: 36px; color: var(--success-color); margin-bottom: 40px; line-height: 1.5;"></h2>
-            <button class="btn btn-success" style="font-size: 28px; padding: 20px 40px; width: 100%; border-radius: 16px; box-shadow: 0 8px 15px rgba(0,0,0,0.2);" onclick="closeModal('checkin-success-modal')">我知道了！繼續任務</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="admin-alert-modal" style="z-index: 1200;">
-        <div class="modal-content" style="max-width: 600px; padding: 50px;">
-            <div style="font-size: 70px; margin-bottom: 15px;" id="admin-alert-icon">✨</div>
-            <h2 id="admin-alert-title" style="font-size: 32px; color: var(--primary-color); margin-bottom: 15px;"></h2>
-            <p id="admin-alert-text" style="font-size: 24px; color: #555; margin-bottom: 35px; line-height: 1.5;"></p>
-            <button class="btn btn-yellow" style="font-size: 26px; padding: 18px 40px; width: 100%; border-radius: 14px; box-shadow: 0 8px 15px rgba(0,0,0,0.2);" onclick="closeModal('admin-alert-modal')">確定</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="student-modal">
-        <div class="modal-content">
-            <div id="modal-top-badges" style="display:flex; justify-content:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;"></div>
-            <h2 id="modal-student-name" style="margin-top:0; font-size: 38px;"></h2>
-            <div id="modal-shells"></div>
-            <div id="modal-praise-area" style="margin-top: 15px;"></div>
-            <p id="modal-status" style="font-size: 22px; margin-top: 15px;"></p>
-            <button id="clock-in-btn" class="btn btn-yellow" style="width: 100%; margin-bottom: 25px; font-size: 48px; padding: 28px 0; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.25);">📍 點我出席打卡</button>
-            <div style="margin: 20px 0;">
-                <p style="font-weight: bold; font-size: 22px; margin-bottom: 12px; color: var(--sidebar-bg);">🏷️️ 點擊設定目前任務去向：</p>
-                <div class="student-action-btn-group" id="student-task-buttons-container">
-                    <button class="task-option-btn" style="background-color: #E91E63;" onclick="setStudentTaskTag('潔牙')">潔牙</button>
-                    <button class="task-option-btn" style="background-color: #9C27B0;" onclick="setStudentTaskTag('Ｔ－ＢＡＬＬ')">Ｔ－ＢＡＬＬ</button>
-                    <button class="task-option-btn" style="background-color: #FF5722;" onclick="setStudentTaskTag('籃球隊')">籃球隊</button>
-                    <button class="task-option-btn" style="background-color: #3F51B5;" onclick="setStudentTaskTag('弦樂團')">弦樂團</button>
-                    <button class="task-option-btn" style="background-color: #00BCD4;" onclick="setStudentTaskTag('合唱團')">合唱團</button>
-                    <button class="task-option-btn" style="background-color: #4CAF50;" onclick="setStudentTaskTag('志工')">志工</button>
-                    <button class="task-option-btn" style="background-color: #FF9800;" onclick="setStudentTaskTag('童軍團')">童軍團</button>
-                    <button class="task-option-btn" style="background-color: #795548;" onclick="setStudentTaskTag('科展')">科展</button>
-                    <button class="task-option-btn" style="background-color: #607D8B;" onclick="setStudentTaskTag('任務')">任務</button>
-                    <button class="task-option-btn" style="background-color: #00897B;" onclick="setStudentTaskTag('會議')">會議</button>
-                    <button class="task-option-btn" style="background-color: #D32F2F;" onclick="setStudentTaskTag('旗手')">旗手</button>
-                    <button class="task-option-btn" style="background-color: #388E3C;" onclick="setStudentTaskTag('科學')">科學</button>
-                    <button class="task-option-btn" style="background-color: #C2185B;" onclick="setStudentTaskTag('榮譽下午茶')">榮譽下午茶</button>
-                </div>
-                <button class="btn" style="background-color: #999; font-size: 18px; padding: 8px 16px; margin-top: 8px;" onclick="clearStudentTaskTag()">清除任務標籤</button>
-            </div>
-            <div class="task-list">
-                <strong style="font-size: 24px;">📝 今日待辦任務 (全部準時完成可獲 1 🐚)：</strong>
-                <ul id="modal-task-list"></ul>
-                <div id="encouragement-msg" style="margin-top: 25px; font-size: 32px; font-weight: bold; color: #2e7d32; text-align: center; display: none;">
-                    🎉 我超級棒！我都完成了！（拍手）👏
-                </div>
-            </div>
-            <button class="btn" onclick="closeModal('student-modal')" style="font-size: 22px; padding: 14px 30px;">關閉視窗</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="gacha-rank-modal">
-        <div class="modal-content" style="max-width: 700px;">
-            <h2 style="color: #f57f17; font-size: 34px;">🏆 海螺抽卡轉蛋機 🐚</h2>
-            <p style="font-size: 20px; color: #666;">請點選您的名字（海螺需 5 個以上）進入抽卡畫面：</p>
-            <div style="max-height: 450px; overflow-y: auto; margin: 20px 0;">
-                <table>
-                    <thead>
-                        <tr><th style="font-size:20px;">排名</th><th style="font-size:22px;">座號與姓名</th><th style="font-size:20px;">目前海螺 🐚</th><th style="font-size:20px;">狀態</th></tr>
-                    </thead>
-                    <tbody id="gacha-rank-list"></tbody>
-                </table>
-            </div>
-            <button class="btn" onclick="closeModal('gacha-rank-modal')" style="font-size: 20px; padding: 12px 25px;">關閉視窗</button>
-        </div>
-    </div>
-
-    <!-- 🔮 魔法陣抽卡互動視窗 (6張卡牌：上3下3 + 能量條在標題下方) -->
-    <div class="modal-overlay" id="gacha-draw-modal">
-        <div class="modal-content" style="max-width: 950px; background: #0c081e; color: #fff; border: 3px solid #ffd700;">
-            <div class="divine-beam-overlay" id="divine-beam"></div>
-            <h2 id="gacha-draw-title" style="color: #ffd700; font-size: 32px; text-shadow: 0 0 10px rgba(255,215,0,0.6); margin-bottom: 5px;"></h2>
-            <p id="gacha-shell-status" style="font-size: 18px; font-weight: bold; color: #ffeb3b; margin-top: 0;"></p>
-            
-            <!-- 能量條放置在標題下方 -->
-            <div class="aura-bar-container">
-                <div class="aura-bar-title">
-                    <span>✨ 光芒能量條 (集滿 10 個 100% 抽中 2 隻鱷魚)</span>
-                    <span id="aura-count-text">0 / 10</span>
-                </div>
-                <div class="aura-progress-bg">
-                    <div class="aura-progress-fill" id="aura-progress-fill"></div>
-                </div>
-            </div>
-
-            <div class="gacha-magic-arena">
-                <div class="magic-circle-bg"></div>
-                <p id="gacha-hint" style="font-size: 18px; color: #e1bee7; position: relative; z-index: 5; margin-bottom: 12px; font-weight: bold;">🔮 魔法陣已啟動！請從下方 6 張神秘卡牌中挑選 1 張召喚 (每次消耗 5 🐚)</p>
-                <div class="gacha-card-container" id="gacha-cards-box"></div>
-            </div>
-
-            <br>
-            <button class="btn btn-yellow" id="gacha-redraw-btn" style="display: none; font-size: 20px; padding: 12px 25px;" onclick="startGachaDraw()">再抽一次 (消耗 5 海螺)</button>
-            <br><br>
-            <button class="btn" onclick="closeModal('gacha-draw-modal'); openGachaRankModal();" style="font-size: 20px; padding: 10px 22px; background: #4a237a;">返回排行榜</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="task-pie-modal">
-        <div class="modal-content" style="max-width: 800px;">
-            <h2 id="pie-modal-title" style="color: var(--primary-color); font-size: 34px;"></h2>
-            <div style="display: flex; justify-content: center; align-items: center; gap: 18px; margin-bottom: 25px;">
-                <button class="btn" onclick="changeTaskPieMonth(-1)" style="font-size: 18px;">⬅️ 上個月</button>
-                <span id="pie-month-label" style="font-size: 24px; font-weight: bold; color: var(--sidebar-bg);"></span>
-                <button class="btn" onclick="changeTaskPieMonth(1)" style="font-size: 18px;">下個月 ➡</button>
-            </div>
-            <div class="pie-chart-container">
-                <div class="pie-box">
-                    <h4 id="pie-student-name-header" style="margin: 0; color: #333; font-size: 20px;">學生個人完成率</h4>
-                    <div id="student-pie-chart" class="pie-chart">0%</div>
-                    <p id="student-pie-details" style="font-size: 16px; color: #666; margin: 8px 0;">已完成：0 / 總數：0</p>
-                </div>
-                <div class="pie-box">
-                    <h4 style="margin: 0; color: #333; font-size: 20px;">全班平均完成率</h4>
-                    <div id="class-pie-chart" class="pie-chart">0%</div>
-                    <p id="class-pie-details" style="font-size: 16px; color: #666; margin: 8px 0;">全班總完成：0 / 總數：0</p>
-                </div>
-            </div>
-            <button class="btn" style="margin-top: 20px; font-size: 22px; padding: 12px 30px;" onclick="closeModal('task-pie-modal')">關閉視窗</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="login-modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <h2 style="font-size: 32px;">老師登入</h2>
-            <p style="font-size: 20px;">請輸入管理員密碼：</p>
-            <input type="password" id="password-input" style="width: 80%; text-align:center; font-size:24px; padding:15px;">
-            <br><br>
-            <button class="btn btn-yellow" onclick="checkLogin()" style="font-size: 22px; padding: 14px 30px;">登入</button>
-            <button class="btn" onclick="closeModal('login-modal')" style="font-size: 22px; padding: 14px 30px;">取消</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="student-login-modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <h2 style="font-size: 32px;">👨🎓 學生個人面板登入</h2>
-            <input type="number" id="login-seat-input" placeholder="請輸入「座號」" style="width: 80%; text-align:center; font-size:22px; padding:15px; margin-bottom:18px;">
-            <input type="password" id="login-password-input" placeholder="請輸入密碼 (預設為座號)" style="width: 80%; text-align:center; font-size:22px; padding:15px;">
-            <br><br>
-            <button class="btn btn-yellow" onclick="checkStudentLogin()" style="font-size: 22px; padding: 14px 30px;">確認登入</button>
-            <button class="btn" onclick="closeModal('student-login-modal')" style="font-size: 22px; padding: 14px 30px;">取消</button>
-        </div>
-    </div>
-
-    <script>
-        let platformName = "五年級班級平台";
-        let students = [];
-        let announcements = [];
-        let dutyStudents = [];
-        let loggedInStudentId = null;
-        let sidebarOrder = [];
-        let gachaLogs = [];
-        let studentGroups = []; 
-        let unlockedTrees = []; 
-        
-        let isCloudLoaded = false; 
-        let globalAudioCtx = null; // 全域音訊物件
-
-        const taskTagColors = {
-            '潔牙': '#E91E63', 'Ｔ－ＢＡＬＬ': '#9C27B0', '籃球隊': '#FF5722',
-            '弦樂團': '#3F51B5', '合唱團': '#00BCD4', '志工': '#4CAF50', 
-            '童軍團': '#FF9800', '科展': '#795548', '任務': '#607D8B',
-            '會議': '#00897B', '旗手': '#D32F2F', '科學': '#388E3C', '榮譽下午茶': '#C2185B'
-        };
-
-        let currentStudentId = null;
-        let activeGachaStudentId = null;
-        let activeAdminStudentTaskId = null;
-        let attendanceReportDate = new Date();
-        let taskPieReportDate = new Date();
-        let activePieStudentId = null;
-
-        function startLiveClock() {
-            function updateClock() {
-                const now = new Date();
-                const year = now.getFullYear() - 1911;
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const date = String(now.getDate()).padStart(2, '0');
-                let hours = now.getHours();
-                const minutes = String(now.getMinutes()).padStart(2, '0');
                 const seconds = String(now.getSeconds()).padStart(2, '0');
                 const period = hours >= 12 ? '下午' : '上午';
                 hours = hours % 12 || 12;
@@ -2413,7 +1267,7 @@
             if (selectedTaskInput && !selectedTaskInput.value) selectedTaskInput.value = `${y}-${m}-${d}T23:59`;
         }
 
-        const FIREBASE_URL = "[https://class02-8cb8e-default-rtdb.firebaseio.com/](https://class02-8cb8e-default-rtdb.firebaseio.com/)";
+        const FIREBASE_URL = "https://class02-8cb8e-default-rtdb.firebaseio.com/";
         let isCloudSyncing = false;
 
         function loadDataFromStorage() {
@@ -2585,4 +1439,1780 @@
                     break;
                 }
                 tempSum += stageTarget;
-                if (i === treeStages.length - 1) currentStageIndex = i
+                if (i === treeStages.length - 1) currentStageIndex = i;
+            }
+
+            let stageCurrentPts = Math.min(stageTarget, currentCyclePoints - stageBase);
+            if (totalPts >= totalTreeStagesMax && currentCyclePoints === 0) stageCurrentPts = stageTarget;
+            let percentage = Math.round((stageCurrentPts / stageTarget) * 100);
+
+            const stageInfo = treeStages[currentStageIndex];
+            document.getElementById('tree-visual').innerText = totalPts >= totalTreeStagesMax && currentCyclePoints === 0 ? "🌴" : stageInfo.icon;
+            document.getElementById('tree-stage-title').innerText = stageInfo.name;
+            document.getElementById('tree-progress-fill').style.width = `${percentage}%`;
+            document.getElementById('tree-stats-text').innerText = `總經驗值：${totalPts} (${stageCurrentPts}/${stageTarget} - ${percentage}%)`;
+
+            let sortedStudents = [...students].sort((a, b) => (b.treeContribution || 0) - (a.treeContribution || 0));
+            let top10 = sortedStudents.slice(0, 10);
+            const rankUl = document.getElementById('tree-rank-list');
+            rankUl.innerHTML = '';
+            
+            top10.forEach((s, idx) => {
+                let rankIcon = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `${idx + 1}.`));
+                rankUl.innerHTML += `<li><span>${rankIcon} ${s.seat}號 ${s.name}</span><strong>+${s.treeContribution || 0}分</strong></li>`;
+            });
+            if (top10.length === 0 || top10.every(s => (s.treeContribution || 0) === 0)) {
+                rankUl.innerHTML = '<li style="color:#666; text-align:center;">尚無貢獻紀錄，快來打卡與完成任務吧！</li>';
+            }
+        }
+
+        function openCampusCodexModal() {
+            const gridContainer = document.getElementById('campus-codex-grid');
+            gridContainer.innerHTML = '';
+
+            campusLegendaryTrees.forEach((tree, index) => {
+                const isUnlocked = unlockedTrees.includes(tree.name);
+                let cardClass = isUnlocked ? "codex-item unlocked" : "codex-item";
+                let iconDisplay = isUnlocked ? tree.icon : "❓";
+                let nameDisplay = isUnlocked ? tree.name : `神秘樹種 #${index + 1}`;
+
+                gridContainer.innerHTML += `
+                    <div class="${cardClass}">
+                        <div class="codex-item-icon">${iconDisplay}</div>
+                        <div class="codex-item-name">${nameDisplay}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('campus-codex-modal').style.display = 'flex';
+        }
+
+        function addTreePoints(student, taskKey, isClassTaskDone, isCheckInDone) {
+            let addedPoints = 0;
+            let currentTaskStatus = student.completedTasksForTree[taskKey] || false;
+            let currentCheckInStatus = student.checkedInTodayForTree || false;
+
+            if (isClassTaskDone && !currentTaskStatus) {
+                addedPoints += 1;
+                student.completedTasksForTree[taskKey] = true;
+            } else if (!isClassTaskDone && currentTaskStatus) {
+                addedPoints -= 1;
+                student.completedTasksForTree[taskKey] = false;
+            }
+
+            if (isCheckInDone && !currentCheckInStatus) {
+                addedPoints += 2;
+                student.checkedInTodayForTree = true;
+            } else if (!isCheckInDone && currentCheckInStatus) {
+                addedPoints -= 2;
+                student.checkedInTodayForTree = false;
+            }
+
+            let hasBothNow = isClassTaskDone && isCheckInDone;
+            let hadBothBefore = currentTaskStatus && currentCheckInStatus;
+
+            if (hasBothNow && !hadBothBefore) addedPoints += 1;
+            else if (!hasBothNow && hadBothBefore) addedPoints -= 1;
+
+            if (addedPoints !== 0) {
+                student.treeContribution = Math.max(0, (student.treeContribution || 0) + addedPoints);
+            }
+        }
+
+        function renderAdminTreePointsTable() {
+            const tbody = document.getElementById('admin-tree-points-list');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            students.forEach(student => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${student.seat}</td>
+                        <td><strong>${student.name}</strong></td>
+                        <td style="color:#2e7d32; font-weight:bold; font-size:22px;">+${student.treeContribution || 0} 分</td>
+                        <td>
+                            <button class="btn btn-success" style="padding:6px 14px; font-size:16px; margin-right:6px;" onclick="modifyStudentTreePoints(${student.id}, 1)">+1分</button>
+                            <button class="btn btn-success" style="padding:6px 14px; font-size:16px; margin-right:6px;" onclick="modifyStudentTreePoints(${student.id}, 5)">+5分</button>
+                            <button class="btn btn-danger" style="padding:6px 14px; font-size:16px; margin-right:6px;" onclick="modifyStudentTreePoints(${student.id}, -1)">-1分</button>
+                            <button class="btn btn-danger" style="padding:6px 14px; font-size:16px;" onclick="modifyStudentTreePoints(${student.id}, -5)">-5分</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function modifyStudentTreePoints(studentId, amount) {
+            const student = students.find(s => s.id === studentId);
+            if(student) {
+                student.treeContribution = Math.max(0, (student.treeContribution || 0) + amount);
+                refreshAllViews();
+            }
+        }
+
+        function saveGroup() {
+            const nameInput = document.getElementById('group-name-input').value.trim();
+            const seatsInput = document.getElementById('group-seats-input').value.trim();
+            if (!nameInput || !seatsInput) return showAdminAlert("提示", "❌ 請輸入組別名稱與組員座號！", "⚠");
+            let seats = seatsInput.split(/[\n,，\s]+/).map(s => parseInt(s.trim())).filter(s => !isNaN(s));
+            if (seats.length === 0) return showAdminAlert("提示", "❌ 座號格式不正確！", "⚠️");
+            let existing = studentGroups.find(g => g.name === nameInput);
+            if (existing) existing.seats = seats;
+            else studentGroups.push({ name: nameInput, seats: seats });
+            document.getElementById('group-name-input').value = '';
+            document.getElementById('group-seats-input').value = '';
+            isCloudLoaded = true;
+            saveDataToStorage();
+            refreshAllViews();
+            showAdminAlert("儲存成功", `✅ 群組「${nameInput}」已成功儲存！`, "👥");
+        }
+
+        function deleteGroup(index) {
+            if (confirm("確定要刪除這個群組嗎？")) {
+                studentGroups.splice(index, 1);
+                saveDataToStorage();
+                refreshAllViews();
+                showAdminAlert("刪除成功", "✅ 群組已刪除！", "🗑️");
+            }
+        }
+
+        function modifyGroupPoints(groupIndex, amount) {
+            const group = studentGroups[groupIndex];
+            if (!group) return;
+            group.seats.forEach(seatNum => {
+                let student = students.find(s => s.seat === seatNum);
+                if (student) {
+                    if (amount === 0) student.points = 0;
+                    else student.points = Math.max(0, student.points + amount);
+                }
+            });
+            saveDataToStorage();
+            refreshAllViews();
+            let actionDesc = amount === 0 ? "歸零" : (amount > 0 ? `+${amount}` : `${amount}`);
+            showAdminAlert("操作成功", `✅ 已成功對「${group.name}」所有組員執行海螺 ${actionDesc}！`, "🐚");
+        }
+
+        function renderAdminGroups() {
+            const tbody = document.getElementById('admin-groups-list');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (studentGroups.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="color:#666; text-align:center;">目前尚未建立任何小組。</td></tr>`;
+                return;
+            }
+            studentGroups.forEach((group, index) => {
+                let membersDesc = [];
+                group.seats.forEach(seatNum => {
+                    let s = students.find(st => st.seat === seatNum);
+                    if (s) membersDesc.push(`${s.seat}號 ${s.name} (🐚${s.points})`);
+                    else membersDesc.push(`${seatNum}號(未建檔)`);
+                });
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${group.name}</strong></td>
+                        <td>${membersDesc.join('、')}</td>
+                        <td><button class="btn btn-danger" style="font-size:15px; padding:8px 14px;" onclick="deleteGroup(${index})">刪除群組</button></td>
+                        <td>
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                <button class="btn btn-yellow" style="padding: 6px 12px; font-size: 16px;" onclick="modifyGroupPoints(${index}, 1)">+1</button>
+                                <button class="btn btn-yellow" style="padding: 6px 12px; font-size: 16px;" onclick="modifyGroupPoints(${index}, 2)">+2</button>
+                                <button class="btn btn-yellow" style="padding: 6px 12px; font-size: 16px;" onclick="modifyGroupPoints(${index}, 5)">+5</button>
+                                <button class="btn btn-yellow" style="padding: 6px 12px; font-size: 16px;" onclick="modifyGroupPoints(${index}, 10)">+10</button>
+                                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 16px;" onclick="modifyGroupPoints(${index}, -1)">-1</button>
+                                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 16px;" onclick="modifyGroupPoints(${index}, -2)">-2</button>
+                                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 16px;" onclick="modifyGroupPoints(${index}, -5)">-5</button>
+                                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 16px;" onclick="modifyGroupPoints(${index}, -10)">-10</button>
+                                <button class="btn" style="background-color: #607D8B; color: white; padding: 6px 12px; font-size: 16px;" onclick="modifyGroupPoints(${index}, 0)">歸零</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function checkPraiseExpirations() {
+            const now = new Date().getTime();
+            let changed = false;
+            const fortyEightHours = 48 * 60 * 60 * 1000;
+            students.forEach(student => {
+                if (student.praiseComment && student.praiseTimestamp) {
+                    if (now - student.praiseTimestamp > fortyEightHours) {
+                        student.praiseComment = '';
+                        student.praiseTimestamp = null;
+                        changed = true;
+                    }
+                }
+            });
+            if (changed && isCloudLoaded) saveDataToStorage();
+        }
+
+        function exportBackupData() {
+            const backupData = {
+                platformName: platformName, students: students, announcements: announcements,
+                dutyStudents: dutyStudents, sidebarOrder: sidebarOrder, gachaLogs: gachaLogs, studentGroups: studentGroups, unlockedTrees: unlockedTrees
+            };
+            const dataStr = JSON.stringify(backupData);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+            const a = document.createElement('a');
+            a.href = url; a.download = `班級平台備份_${dateStr}.json`; a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importBackupData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.students) {
+                        if(confirm("⚠️ 警告：還原資料將會覆蓋目前的「所有」紀錄！確定要繼續嗎？")) {
+                            platformName = data.platformName || "五年級班級平台";
+                            students = data.students || [];
+                            announcements = data.announcements || [];
+                            dutyStudents = data.dutyStudents || [];
+                            sidebarOrder = data.sidebarOrder || [];
+                            gachaLogs = data.gachaLogs || [];
+                            studentGroups = data.studentGroups || [];
+                            unlockedTrees = data.unlockedTrees || [];
+                            isCloudLoaded = true; 
+                            saveDataToStorage();
+                            refreshAllViews();
+                            showAdminAlert("還原成功", "✅ 班級所有資料已成功還原並寫入雲端！", "💾");
+                        }
+                    }
+                } catch (err) {}
+                document.getElementById('import-backup-file').value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function getStudentHonorBadgesHtml(student) {
+            let badgeHtml = '';
+            const allShellsZero = students.every(s => s.points === 0);
+            if (!allShellsZero && student.points > 0) {
+                let sortedByShells = [...students].sort((a, b) => b.points - a.points);
+                let topShellIds = sortedByShells.slice(0, 3).map(s => s.id);
+                if (topShellIds.includes(student.id)) badgeHtml += '<span style="font-size:24px;" title="海螺排行榜前三名">👑</span>';
+            }
+            const allAlligatorsZero = students.every(s => (s.alligator || 0) === 0);
+            if (!allAlligatorsZero && (student.alligator || 0) > 0) {
+                let sortedByAlligator = [...students].sort((a, b) => (b.alligator || 0) - (a.alligator || 0));
+                let topAlligatorIds = sortedByAlligator.slice(0, 3).map(s => s.id);
+                if (topAlligatorIds.includes(student.id)) badgeHtml += '<span style="font-size:24px;" title="鱷魚排行榜前三名">💎</span>';
+            }
+            if (student.birthday && student.birthday.trim() !== '') {
+                const now = new Date();
+                const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
+                const parts = student.birthday.trim().split(/[-/]/);
+                if (parts.length >= 1) {
+                    const studentMonth = String(parts[0]).padStart(2, '0');
+                    if (studentMonth === currentMonth) badgeHtml += '<span style="font-size:24px;" title="當月壽星">🎂</span>';
+                }
+            }
+            return badgeHtml;
+        }
+
+        function batchUpdateBirthdays() {
+            const text = document.getElementById('batch-birthdays-input').value.trim();
+            if (!text) return showAdminAlert("提示", "❌ 請在文字框中輸入資料！", "⚠");
+            let birthdays = text.split(/[\n,，\s]+/).map(b => b.trim()).filter(b => b !== '');
+            if (birthdays.length === 0) return showAdminAlert("提示", "❌ 無效資料！", "⚠️");
+            students.sort((a, b) => a.seat - b.seat);
+            let updatedCount = 0;
+            birthdays.forEach((bday, index) => {
+                let seatNum = index + 1;
+                let student = students.find(s => s.seat === seatNum);
+                if (student) {
+                    let formattedBday = bday.replace('/', '-');
+                    if (formattedBday.length === 4 && formattedBday.indexOf('-') === 1) formattedBday = '0' + formattedBday;
+                    student.birthday = formattedBday;
+                    updatedCount++;
+                }
+            });
+            document.getElementById('batch-birthdays-input').value = '';
+            saveDataToStorage();
+            refreshAllViews();
+            showAdminAlert("更新成功", `✅ 更新了 ${updatedCount} 位學生的生日！`, "🎂");
+        }
+
+        function openGachaRankModal() {
+            const tbody = document.getElementById('gacha-rank-list');
+            tbody.innerHTML = '';
+            const allShellsZero = students.every(s => s.points === 0);
+            const allAlligatorsZero = students.every(s => (s.alligator || 0) === 0);
+            let rankList = [...students];
+            if (allShellsZero && allAlligatorsZero) rankList.sort((a, b) => a.seat - b.seat);
+            else rankList.sort((a, b) => b.points - a.points);
+            
+            rankList.forEach((s, index) => {
+                let rankNum = index + 1;
+                let rankIcon = (allShellsZero && allAlligatorsZero) ? `${s.seat}` : (rankNum === 1 ? '🥇' : (rankNum === 2 ? '🥈' : (rankNum === 3 ? '🥉' : `${rankNum}`)));
+                let canDraw = s.points >= 5;
+                let statusHtml = canDraw ? 
+                    `<button class="btn btn-yellow" style="padding: 10px 20px; font-size:18px;" onclick="openGachaDrawModal(${s.id})">召喚卡牌 (5海螺)</button>` : 
+                    `<span style="color:#888; font-size:18px;">海螺不足 5 個</span>`;
+                let badgesHtml = (!allShellsZero || !allAlligatorsZero) ? getStudentHonorBadgesHtml(s) : '';
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-weight:bold; font-size:22px; text-align:center;">${rankIcon}</td>
+                        <td style="font-size:26px; font-weight:bold; color:var(--primary-color);">${s.seat}號 ${s.name} ${badgesHtml}</td>
+                        <td style="color:#d89e00; font-weight:bold; font-size:22px;">🐚 ${s.points}</td>
+                        <td>${statusHtml}</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('gacha-rank-modal').style.display = 'flex';
+        }
+
+        function openGachaDrawModal(studentId) {
+            activeGachaStudentId = studentId;
+            closeModal('gacha-rank-modal');
+            setupGachaDrawUI();
+            document.getElementById('gacha-draw-modal').style.display = 'flex';
+        }
+
+        function setupGachaDrawUI() {
+            unlockAudioContext();
+
+            const student = students.find(s => s.id === activeGachaStudentId);
+            if (student.gachaAura === undefined) student.gachaAura = 0;
+            
+            document.getElementById('gacha-draw-title').innerText = `🔮 ${student.seat}號 ${student.name} 的魔法召喚陣`;
+            document.getElementById('gacha-shell-status').innerHTML = `目前剩餘海螺：🐚 <span style="font-size:24px;">${student.points}</span> 個`;
+            
+            // 更新能量條顯示
+            const auraCount = student.gachaAura;
+            document.getElementById('aura-count-text').innerText = `${auraCount} / 10`;
+            const auraPercent = Math.min(100, (auraCount / 10) * 100);
+            document.getElementById('aura-progress-fill').style.width = `${auraPercent}%`;
+
+            const hint = document.getElementById('gacha-hint');
+            const cardsBox = document.getElementById('gacha-cards-box');
+            const divineBeam = document.getElementById('divine-beam');
+            divineBeam.classList.remove('active');
+            document.getElementById('gacha-redraw-btn').style.display = 'none';
+            hint.style.display = 'block';
+            hint.innerText = auraCount >= 10 ? "⭐ 光芒能量已集滿 10 個！本次抽卡 100% 保證獲得 2 隻鱷魚！" : "🔮 魔法陣已啟動！請從下方 6 張神秘卡牌中挑選 1 張召喚 (每次消耗 5 🐚)";
+            
+            cardsBox.innerHTML = '';
+            for (let i = 1; i <= 6; i++) {
+                cardsBox.innerHTML += `
+                    <div class="gacha-card" id="card-${i}" onclick="executeGachaDraw(${i})">
+                        <div style="font-size: 32px;">✨🐚✨</div>
+                        <div style="font-size:16px;">神秘符文卡 #${i}</div>
+                        <div style="font-size: 13px; opacity: 0.7; font-weight: normal;">點擊召喚</div>
+                    </div>
+                `;
+            }
+        }
+
+        // 🔮 播放魔法閃亮音效 (Web Audio API 動態合成)
+        function playSparkleSound() {
+            try {
+                if (!globalAudioCtx) {
+                    globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (globalAudioCtx.state === 'suspended') {
+                    globalAudioCtx.resume();
+                }
+
+                const now = globalAudioCtx.currentTime;
+                const frequencies = [1046.50, 1318.51, 1567.98, 2093.00, 2637.02, 3135.96]; 
+                
+                frequencies.forEach((freq, index) => {
+                    const osc = globalAudioCtx.createOscillator();
+                    const gain = globalAudioCtx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + index * 0.08);
+
+                    gain.gain.setValueAtTime(0, now + index * 0.08);
+                    gain.gain.linearRampToValueAtTime(0.2, now + index * 0.08 + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.08 + 0.3);
+
+                    osc.connect(gain);
+                    gain.connect(globalAudioCtx.destination);
+
+                    osc.start(now + index * 0.08);
+                    osc.stop(now + index * 0.08 + 0.35);
+                });
+            } catch (e) {}
+        }
+
+        function executeGachaDraw(selectedCardIndex) {
+            const student = students.find(s => s.id === activeGachaStudentId);
+            if (student.points < 5) return showAdminAlert("提示", "❌ 您的海螺數量不足 5 個！", "⚠️");
+            
+            student.points -= 5;
+            if (student.gachaAura === undefined) student.gachaAura = 0;
+
+            let alligatorWon = 1;
+            let isPurityGuaranteed = false;
+
+            if (student.gachaAura >= 9) {
+                alligatorWon = 2;
+                student.gachaAura = 0; 
+                isPurityGuaranteed = true;
+            } else {
+                student.gachaAura += 1; 
+                let rand = Math.random();
+                alligatorWon = rand < 0.90 ? 1 : 2;
+            }
+
+            student.alligator = (student.alligator || 0) + alligatorWon;
+
+            const now = new Date();
+            const timeStr = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            gachaLogs.unshift({ seat: student.seat, name: student.name, time: timeStr, shellsSpent: 5, alligatorWon: alligatorWon });
+
+            saveDataToStorage();
+            refreshAllViews();
+
+            for (let i = 1; i <= 6; i++) {
+                const cardEl = document.getElementById(`card-${i}`);
+                if (cardEl) cardEl.onclick = null;
+            }
+
+            const targetCard = document.getElementById(`card-${selectedCardIndex}`);
+            const divineBeam = document.getElementById('divine-beam');
+            
+            targetCard.classList.remove('summoning', 'flipped', 'spotlight-active');
+            void targetCard.offsetWidth; 
+            targetCard.classList.add('summoning');
+            divineBeam.classList.add('active');
+            document.getElementById('gacha-hint').innerText = "⚡ 神聖光柱降臨！魔法卡牌正在凝聚力量...";
+
+            // 🎵 點擊卡片瞬間觸發閃亮音效
+            playSparkleSound();
+
+            setTimeout(() => {
+                divineBeam.classList.remove('active');
+                targetCard.classList.remove('summoning');
+                targetCard.classList.add('flipped');
+
+                // 🌟 如果抽中 2 隻鱷魚，額外觸發聚光燈與左右灑花特效！
+                if (alligatorWon === 2) {
+                    targetCard.classList.add('spotlight-active');
+                    triggerDoubleAlligatorConfetti();
+                } else {
+                    triggerConfetti();
+                }
+                
+                let guaranteedText = isPurityGuaranteed ? '<div style="font-size:13px; color:#ffeb3b;">🌟 保底光芒爆發！</div>' : '';
+                targetCard.innerHTML = `
+                    <div style="font-size: 28px;">🌟✨🌟</div>
+                    <div style="font-size: 18px; color: #ffeb3b; font-weight: bold; margin: 2px 0;">召喚成功！</div>
+                    <div style="font-size: 26px; color: #00ffcc; font-weight: bold;">🐊 +${alligatorWon} 隻</div>
+                    ${guaranteedText}
+                    <div style="font-size: 12px; color: #fff; opacity: 0.9; margin-top: 4px;">(消耗 5 🐚 | 光芒 +1)</div>
+                `;
+                
+                document.getElementById('gacha-hint').innerText = isPurityGuaranteed ? `🎉 保底爆發！成功獲得 2 隻鱷魚，光芒能量已重新計算！` : (alligatorWon === 2 ? `🎉 太神啦！雙倍鱷魚降臨！成功獲得 2 隻鱷魚積分！` : `🎉 太神啦！成功召喚出 ${alligatorWon} 隻鱷魚積分！`);
+                document.getElementById('gacha-shell-status').innerHTML = `目前剩餘海螺：🐚 <span style="font-size:24px;">${student.points}</span> 個`;
+                
+                const auraCount = student.gachaAura;
+                document.getElementById('aura-count-text').innerText = `${auraCount} / 10`;
+                document.getElementById('aura-progress-fill').style.width = `${Math.min(100, (auraCount / 10) * 100)}%`;
+
+                if (student.points >= 5) document.getElementById('gacha-redraw-btn').style.display = 'inline-block';
+            }, 1400);
+        }
+
+        function startGachaDraw() { setupGachaDrawUI(); }
+
+        let draggedItem = null;
+        function drag(event) { draggedItem = event.target; event.target.classList.add('dragging'); }
+        function allowDrop(event) { event.preventDefault(); }
+        function drop(event) {
+            event.preventDefault();
+            if (draggedItem) {
+                draggedItem.classList.remove('dragging');
+                const sidebar = document.getElementById('admin-sidebar');
+                const target = event.target.closest('.nav-item');
+                if (target && target !== draggedItem) {
+                    const rect = target.getBoundingClientRect();
+                    const next = (event.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
+                    sidebar.insertBefore(draggedItem, next ? target.nextSibling : target);
+                    sidebarOrder = Array.from(sidebar.querySelectorAll('.nav-item')).map(item => item.getAttribute('data-tab'));
+                    saveDataToStorage();
+                }
+                draggedItem = null;
+            }
+        }
+
+        function showStudentLoginModal() {
+            document.getElementById('login-seat-input').value = '';
+            document.getElementById('login-password-input').value = '';
+            document.getElementById('student-login-modal').style.display = 'flex';
+        }
+
+        function checkStudentLogin() {
+            const seat = parseInt(document.getElementById('login-seat-input').value);
+            const pwd = document.getElementById('login-password-input').value;
+            const student = students.find(s => s.seat === seat);
+
+            const correctPwd = student && student.password ? student.password : seat.toString();
+
+            if (student && pwd === correctPwd) {
+                const now = new Date();
+                student.lastLoginTime = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+                saveDataToStorage();
+
+                closeModal('student-login-modal');
+                document.getElementById('student-view').style.display = 'none';
+                document.getElementById('teacher-view').style.display = 'none';
+                document.getElementById('student-personal-view').style.display = 'block';
+                // 隱藏右下角科技時鐘
+                document.getElementById('digital-clock-box').style.display = 'none';
+                
+                document.getElementById('login-btn').style.display = 'none';
+                document.getElementById('student-login-btn').style.display = 'none';
+                document.getElementById('logout-btn').style.display = 'none';
+                document.getElementById('student-logout-btn').style.display = 'inline-block';
+                loggedInStudentId = student.id;
+                renderStudentPersonalDashboard();
+                refreshAllViews();
+            } else {
+                showAdminAlert("登入失敗", "❌ 座號或密碼錯誤！請重新輸入。", "⚠️");
+            }
+        }
+
+        function studentLogout() {
+            loggedInStudentId = null;
+            document.getElementById('student-personal-view').style.display = 'none';
+            document.getElementById('student-view').style.display = 'flex';
+            // 恢復顯示右下角科技時鐘
+            document.getElementById('digital-clock-box').style.display = 'flex';
+            
+            document.getElementById('student-logout-btn').style.display = 'none';
+            document.getElementById('login-btn').style.display = 'inline-block';
+            document.getElementById('student-login-btn').style.display = 'inline-block';
+        }
+
+        function changeStudentPassword() {
+            const newPwd = document.getElementById('new-password-input').value;
+            if (!/^[A-Za-z0-9]{6}$/.test(newPwd)) return showAdminAlert("格式錯誤", "❌ 密碼必須為「剛好 6 碼」的英文或數字。", "⚠");
+            const student = students.find(s => s.id === loggedInStudentId);
+            student.password = newPwd;
+            const now = new Date();
+            student.lastPasswordChangeTime = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            saveDataToStorage();
+            refreshAllViews();
+            showAdminAlert("修改成功", "✅ 密碼修改成功！下次請使用新密碼登入。", "🔒");
+            document.getElementById('new-password-input').value = '';
+        }
+
+        function renderStudentPersonalDashboard() {
+            if(!loggedInStudentId) return;
+            const student = students.find(s => s.id === loggedInStudentId);
+            document.getElementById('personal-welcome').innerText = `🎉 歡迎，${student.seat}號 ${student.name}！`;
+            
+            let praiseHtml = '';
+            if (student.praiseComment && student.praiseComment.trim() !== '') {
+                praiseHtml = `<div style="margin-top:15px; background:#fff3e0; border:2px dashed #ffb74d; border-radius:10px; padding:12px; font-size:36px; color:#e65100; font-weight:bold; text-align:left;">老師稱讚：${student.praiseComment}</div>`;
+            }
+
+            document.getElementById('personal-points').innerHTML = `
+                <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
+                    <span style="font-size:28px; color:#d89e00; font-weight:bold;">🐚 海螺：${student.points}</span> 
+                    <span style="font-size:28px; color:#2e7d32; font-weight:bold;">🐊 鱷魚：${student.alligator}</span>
+                </div>
+                ${praiseHtml}
+            `;
+            
+            const taskUl = document.getElementById('personal-tasks');
+            taskUl.innerHTML = '';
+            if(student.tasks.length === 0) taskUl.innerHTML = '<li style="color:#666;">目前沒有任何任務紀錄。</li>';
+            else student.tasks.forEach(t => {
+                let statusHtml = t.completed ? '<span style="color:var(--success-color); font-weight:bold;">✅ 已完成</span>' : '<span style="color:var(--danger-color); font-weight:bold;">❌ 未完成</span>';
+                let dateHtml = t.createdAt ? `<span style="color:#888; font-size:16px; margin-right:12px;">(${t.createdAt})</span>` : '';
+                taskUl.innerHTML += `<li>${dateHtml} ${t.text} &nbsp;&nbsp; ${statusHtml}</li>`;
+            });
+
+            const gachaLogTbody = document.getElementById('personal-gacha-logs');
+            gachaLogTbody.innerHTML = '';
+            const myLogs = gachaLogs.filter(l => l.seat === student.seat && l.name === student.name);
+            if (myLogs.length === 0) gachaLogTbody.innerHTML = `<tr><td colspan="3" style="color:#666; text-align:center;">尚無抽卡紀錄。</td></tr>`;
+            else myLogs.forEach(l => {
+                gachaLogTbody.innerHTML += `<tr><td>${l.time}</td><td>🐚 -${l.shellsSpent}</td><td style="color:#2e7d32; font-weight:bold;">🐊 +${l.alligatorWon}</td></tr>`;
+            });
+
+            const attDiv = document.getElementById('personal-attendance');
+            const today = new Date();
+            const y = today.getFullYear();
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            const daysInMonth = new Date(y, today.getMonth() + 1, 0).getDate();
+            let attHtml = '<ul style="list-style:none; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:18px;">';
+            let hasRecord = false;
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateKey = `${y}-${m}-${String(d).padStart(2, '0')}`;
+                const val = student.attendanceLog[dateKey];
+                if (val) {
+                    hasRecord = true;
+                    let statusText = val;
+                    let color = 'var(--success-color)';
+                    if (val === '事假') { color = 'var(--warning-color);'; }
+                    else if (val === '病假') { color = 'var(--danger-color)'; }
+                    else if (val === '公假') { color = '#2196F3'; }
+                    else {
+                        const [h, min] = val.split(':').map(Number);
+                        if (!isNaN(h) && h * 60 + min > 480) { color = 'var(--warning-color)'; statusText = `黃燈遲到 (${val})`; }
+                        else if (!isNaN(h)) { statusText = `綠燈準時 (${val})`; }
+                    }
+                    attHtml += `<li style="background:#f9f9f9; padding:10px 14px; border-radius:6px; border-left:5px solid ${color};">
+                        <strong>${dateKey}</strong> - <span style="color:${color}; font-weight:bold;">${statusText}</span></li>`;
+                }
+            }
+            attHtml += '</ul>';
+            if (!hasRecord) attHtml = '<p style="color:#666;">本月尚無任何出缺席紀錄。</p>';
+            attDiv.innerHTML = attHtml;
+        }
+
+        function getWeekKey(date) {
+            const d = new Date(date);
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1); 
+            const monday = new Date(d.setDate(diff));
+            return `${monday.getFullYear()}-${String(monday.getMonth()+1).padStart(2,'0')}-${String(monday.getDate()).padStart(2,'0')}`;
+        }
+
+        function checkWeekOnTimeAttendance(student) {
+            const now = new Date();
+            const monday = new Date(now);
+            const dayDiff = now.getDay() === 0 ? -6 : 1 - now.getDay();
+            monday.setDate(now.getDate() + dayDiff);
+            let onTimeCount = 0;
+            for (let i = 0; i < 5; i++) {
+                const checkDate = new Date(monday);
+                checkDate.setDate(monday.getDate() + i);
+                const y = checkDate.getFullYear();
+                const m = String(checkDate.getMonth() + 1).padStart(2, '0');
+                const d = String(checkDate.getDate()).padStart(2, '0');
+                const dateKey = `${y}-${m}-${d}`;
+                const val = student.attendanceLog[dateKey];
+                if (val) {
+                    if (['事假', '病假', '公假'].includes(val)) {
+                        onTimeCount++;
+                    } else {
+                        const [h, min] = val.split(':').map(Number);
+                        if (!isNaN(h) && h * 60 + min <= 480) onTimeCount++;
+                    }
+                }
+            }
+            return onTimeCount === 5;
+        }
+
+        function checkAndRewardAlligator(student) {
+            const currentWeekKey = getWeekKey(new Date());
+            if (student.lastAlligatorRewardDate === currentWeekKey) return; 
+            if (checkWeekOnTimeAttendance(student)) {
+                student.alligator = (student.alligator || 0) + 1;
+                student.lastAlligatorRewardDate = currentWeekKey; 
+                triggerConfetti();
+                showAdminAlert("鱷魚獎勵解鎖", `🐊 太棒了！${student.seat}號 ${student.name} 達成「連續五天準時/請假出席」，獲得 1 隻鱷魚 🐊！`, "🐊");
+            }
+        }
+
+        function getTodayDateStr() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function checkDailyResets() {
+            const todayStr = getTodayDateStr();
+            let changed = false;
+            students.forEach(student => {
+                if (student.lastResetDate !== todayStr) {
+                    if (student.currentTaskTag !== '') { student.currentTaskTag = ''; changed = true; }
+                    student.checkedInTodayForTree = false;
+                    student.completedTasksForTree = {};
+                    student.lastResetDate = todayStr;
+                    changed = true;
+                }
+            });
+            if (changed && isCloudLoaded) saveDataToStorage();
+            return changed;
+        }
+
+        function refreshAllViews() {
+            students.sort((a, b) => a.seat - b.seat);
+            students.forEach(s => checkAndRewardAlligator(s));
+            renderStudentGrid();
+            renderTreeSystem();
+            renderAdminStudentList();
+            renderAdminGroups();
+            renderAdminAccountList();
+            renderAdminGachaLogs();
+            renderStudentCheckboxes();
+            renderAdminClassTaskList();
+            renderDutyCheckboxes();
+            renderTopDutyDisplay();
+            renderAnnouncements();
+            renderPointsTable();
+            renderAdminTreePointsTable();
+            renderAttendanceReport();
+            renderTaskReport();
+            if (activeAdminStudentTaskId !== null) {
+                renderAdminStudentTaskModalContent();
+            }
+            document.getElementById('platform-title').innerText = platformName;
+            document.getElementById('page-title').innerText = platformName;
+            saveDataToStorage();
+        }
+
+        function renderAdminAccountList() {
+            const tbody = document.getElementById('admin-account-list');
+            tbody.innerHTML = '';
+            students.forEach(student => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${student.seat}</td><td>${student.name}</td>
+                        <td><strong style="color:var(--primary-color);">${student.password}</strong></td>
+                        <td style="color:#666;">${student.lastLoginTime}</td>
+                        <td style="color:#666;">${student.lastPasswordChangeTime}</td>
+                        <td><button class="btn btn-danger" style="font-size:15px; padding:8px 14px;" onclick="resetStudentPassword(${student.id})">重設為座號</button></td>
+                    </tr>`;
+            });
+        }
+
+        function renderAdminGachaLogs() {
+            const tbody = document.getElementById('admin-gacha-log-list');
+            tbody.innerHTML = '';
+            if (gachaLogs.length === 0) tbody.innerHTML = `<tr><td colspan="5" style="color:#666; text-align:center;">目前尚無紀錄。</td></tr>`;
+            else gachaLogs.forEach(l => {
+                tbody.innerHTML += `<tr><td>${l.seat}</td><td><strong>${l.name}</strong></td><td style="color:#666;">${l.time}</td><td>🐚 -${l.shellsSpent}</td><td style="color:#2e7d32; font-weight:bold;">🐊 +${l.alligatorWon}</td></tr>`;
+            });
+        }
+
+        function resetStudentPassword(id) {
+            const student = students.find(s => s.id === id);
+            if (confirm(`⚠ 確定要將 ${student.name} 的密碼強制重設為座號嗎？`)) {
+                student.password = student.seat.toString();
+                student.lastPasswordChangeTime = '老師強制重設';
+                saveDataToStorage();
+                refreshAllViews();
+                showAdminAlert("密碼重設成功", `✅ 已成功重設！`, "🔒");
+            }
+        }
+
+        function isAllTasksCompleted(student) {
+            if (student.tasks.length === 0) return false;
+            return student.tasks.every(task => task.completed);
+        }
+
+        function hasPendingTasks(student) {
+            if (student.tasks.length === 0) return false;
+            return student.tasks.some(task => !task.completed);
+        }
+
+        function renderTopDutyDisplay() {
+            const container = document.getElementById('top-duty-names-display');
+            if (dutyStudents.length === 0) { container.innerText = '尚無'; return; }
+            let names = [];
+            dutyStudents.forEach(seat => {
+                const found = students.find(s => s.seat === seat);
+                if (found) names.push(`${found.seat}號 ${found.name}`);
+            });
+            container.innerText = names.length > 0 ? names.join('、') : '尚無';
+        }
+
+        function renderStudentGrid() {
+            const grid = document.getElementById('student-grid');
+            grid.innerHTML = '';
+            const todayStr = getTodayDateStr();
+
+            students.forEach(student => {
+                const card = document.createElement('div');
+                const allDone = isAllTasksCompleted(student);
+                const hasPending = hasPendingTasks(student);
+                const attendanceVal = student.attendanceLog[todayStr];
+                
+                let cardClass = 'student-card';
+                if (allDone) cardClass += ' all-done';
+                else if (hasPending) cardClass += ' has-pending';
+                card.className = cardClass;
+                
+                if (student.photoUrl && student.photoUrl.trim() !== '') card.style.backgroundImage = `url('${student.photoUrl.trim()}')`;
+                else card.style.backgroundImage = 'none';
+
+                card.onclick = () => openStudentModal(student.id);
+
+                let statusInfo = '';
+                if (attendanceVal) {
+                    if (['事假', '病假', '公假'].includes(attendanceVal)) {
+                        let leaveColor = attendanceVal === '病假' ? 'var(--danger-color)' : (attendanceVal === '事假' ? 'var(--warning-color)' : '#2196F3');
+                        statusInfo += `<div style="color:${leaveColor}; font-size:18px; font-weight:bold; margin-top:8px; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;">📌 今日${attendanceVal}</div>`;
+                    } else {
+                        const [h, m] = attendanceVal.split(':').map(Number);
+                        const isLate = (h * 60 + m > 480);
+                        const checkColor = isLate ? 'var(--warning-color)' : 'var(--success-color)';
+                        const checkText = isLate ? '📍 已打卡 (黃燈遲到)' : '📍 已打卡 (綠燈準時)';
+                        statusInfo += `<div style="color:${checkColor}; font-size:18px; font-weight:bold; margin-top:8px; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;">${checkText} (${attendanceVal})</div>`;
+                    }
+                }
+                if (allDone) statusInfo += '<div style="color:var(--success-color); font-size:18px; font-weight:bold; margin-top:4px; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;">✅ 任務全數完成</div>';
+
+                let taskBadgeHtml = '';
+                if (student.currentTaskTag) {
+                    const tag = student.currentTaskTag;
+                    const bgColor = taskTagColors[tag] || '#333';
+                    taskBadgeHtml = `<div class="task-badge-circle" style="background-color: ${bgColor};" title="${tag}">${tag.charAt(0)}</div>`;
+                }
+                let honorBadgesHtml = getStudentHonorBadgesHtml(student);
+
+                card.innerHTML = `
+                    <div class="student-name-row">
+                        ${taskBadgeHtml}
+                        <div class="student-name">${student.seat < 10 ? '0'+student.seat : student.seat} ${student.name}</div>
+                        ${honorBadgesHtml}
+                    </div>
+                    <div class="score-badges-group">
+                        <div class="shell-score">🐚 x ${student.points}</div>
+                        <div class="alligator-score">🐊 x ${student.alligator || 0}</div>
+                    </div>
+                    ${statusInfo}
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openStudentModal(id) {
+            const student = students.find(s => s.id === id);
+            currentStudentId = id;
+            let modalTopBadgesHtml = '';
+            if (student.currentTaskTag) {
+                const tag = student.currentTaskTag;
+                const bgColor = taskTagColors[tag] || '#333';
+                modalTopBadgesHtml += `<div class="task-badge-circle" style="background-color: ${bgColor};" title="${tag}">${tag.charAt(0)}</div>`;
+            }
+            modalTopBadgesHtml += getStudentHonorBadgesHtml(student);
+            document.getElementById('modal-top-badges').innerHTML = modalTopBadgesHtml;
+            document.getElementById('modal-student-name').innerText = `${student.seat}號 ${student.name}`;
+            document.getElementById('modal-shells').innerHTML = `<span class="shell-score" style="font-size:24px; padding: 8px 18px;">🐚 海螺：${student.points} 個</span> <span class="alligator-score" style="font-size:24px; padding: 8px 18px;">🐊 鱷魚：${student.alligator || 0} 隻</span>`;
+            
+            const praiseArea = document.getElementById('modal-praise-area');
+            if (student.praiseComment && student.praiseComment.trim() !== '') {
+                praiseArea.innerHTML = `<div style="background:#fff3e0; border:2px dashed #ffb74d; border-radius:10px; padding:16px; font-size:40px; color:#e65100; font-weight:bold;">💬 老師稱讚：${student.praiseComment}</div>`;
+            } else {
+                praiseArea.innerHTML = '';
+            }
+
+            const btns = document.querySelectorAll('.task-option-btn');
+            btns.forEach(btn => {
+                if (btn.innerText === student.currentTaskTag) btn.classList.add('active-task');
+                else btn.classList.remove('active-task');
+            });
+
+            const clockInBtn = document.getElementById('clock-in-btn');
+            const statusText = document.getElementById('modal-status');
+            const todayStr = getTodayDateStr();
+            const now = new Date();
+            const totalMinutes = now.getHours() * 60 + now.getMinutes();
+
+            const attendanceVal = student.attendanceLog[todayStr];
+            if (attendanceVal) {
+                clockInBtn.style.display = 'none';
+                if (['事假', '病假', '公假'].includes(attendanceVal)) {
+                    statusText.innerHTML = `<span style="color: #2196F3; font-size:28px; font-weight:bold;">📌 今日已登記：${attendanceVal}</span>`;
+                } else {
+                    statusText.innerHTML = `<span style="color: green; font-size:28px; font-weight:bold;">✅ 今日已打卡 (${attendanceVal})</span>`;
+                }
+            } else if (totalMinutes > 520) {
+                clockInBtn.style.display = 'none';
+                statusText.innerHTML = '<span style="color: red; font-size:28px; font-weight:bold;">❌ 已超過 08:40，無法打卡 (紅燈)</span>';
+            } else {
+                clockInBtn.style.display = 'inline-block';
+                statusText.innerHTML = '';
+            }
+
+            const taskList = document.getElementById('modal-task-list');
+            taskList.innerHTML = '';
+            const encouragementMsg = document.getElementById('encouragement-msg');
+
+            if (student.tasks.length === 0) {
+                taskList.innerHTML = '<li style="color:#666;">目前沒有指派任務。</li>';
+                encouragementMsg.style.display = 'none';
+            } else {
+                const currentTime = new Date();
+
+                student.tasks.forEach((task, index) => {
+                    const li = document.createElement('div');
+                    li.style.marginBottom = "15px";
+                    
+                    let isOverdue = false;
+                    if (task.deadline) {
+                        const deadlineDate = new Date(task.deadline);
+                        if (currentTime > deadlineDate) isOverdue = true;
+                    }
+
+                    let deadlineStr = task.deadline ? ` <span style="color: #d32f2f; font-size: 20px; font-weight: bold;">(期限：${task.deadline.replace('T', ' ')})</span>` : ' <span style="color: #666; font-size: 18px;">(無期限)</span>';
+                    let taskTypeTag = task.isClassTask ? ' <span style="color:#1976D2; font-size:16px; font-weight:bold;">[全班任務]</span>' : ' <span style="color:#607D8B; font-size:16px; font-weight:bold;">[個別任務]</span>';
+                    let overdueTag = isOverdue ? ' <span style="color:#d32f2f; font-size:18px; font-weight:bold; background:#ffebee; padding:2px 8px; border-radius:4px;">⚠️ 已逾期</span>' : '';
+                    
+                    if (task.completed) {
+                        let completedStatusText = task.wasOverdueWhenCompleted ? '✅ 已完成 (逾期)' : '✅ 已完成';
+                        li.innerHTML = `<s>${task.text}</s>${taskTypeTag}${deadlineStr}${overdueTag} <span style="color: var(--success-color); font-weight: bold; margin-left: 18px;">${completedStatusText}</span>`;
+                        const undoBtn = document.createElement('button');
+                        undoBtn.innerText = "↺ 還原";
+                        undoBtn.className = "btn";
+                        undoBtn.style.backgroundColor = "#ff9800";
+                        undoBtn.style.color = "#fff";
+                        undoBtn.style.fontSize = "16px";
+                        undoBtn.style.padding = "6px 14px";
+                        undoBtn.style.marginLeft = "12px";
+                        undoBtn.onclick = () => { 
+                            task.completed = false; 
+                            let wasOverdue = task.wasOverdueWhenCompleted;
+                            task.wasOverdueWhenCompleted = false;
+
+                            if (!wasOverdue && task.isClassTask) {
+                                let hasClassTaskDone = student.tasks.some(t => t.isClassTask && t.completed && !t.wasOverdueWhenCompleted);
+                                let hasValidCheckIn = student.attendanceLog[todayStr] && (function() {
+                                    let val = student.attendanceLog[todayStr];
+                                    if (['事假', '病假', '公假'].includes(val)) return true;
+                                    let parts = val.split(':').map(Number);
+                                    return (parts[0] * 60 + parts[1] <= 480);
+                                })();
+                                addTreePoints(student, index, hasClassTaskDone, hasValidCheckIn);
+                            }
+                            openStudentModal(student.id); 
+                            refreshAllViews(); 
+                        };
+                        li.appendChild(undoBtn);
+                    } else {
+                        li.innerHTML = `<strong>${task.text}</strong>${taskTypeTag}${deadlineStr}${overdueTag}`;
+                        const doneBtn = document.createElement('button');
+                        doneBtn.innerText = isOverdue ? "逾期完成" : "完成";
+                        doneBtn.className = isOverdue ? "btn btn-danger" : "btn btn-success";
+                        doneBtn.style.fontSize = "18px";
+                        doneBtn.style.padding = "8px 16px";
+                        doneBtn.style.marginLeft = "12px";
+                        doneBtn.onclick = () => {
+                            task.completed = true;
+                            task.wasOverdueWhenCompleted = isOverdue;
+
+                            if (!isOverdue) {
+                                triggerConfetti();
+                                if (task.isClassTask) {
+                                    const allDone = isAllTasksCompleted(student);
+                                    if (allDone && !student.shellRewardedToday) {
+                                        student.points += 1;
+                                        student.shellRewardedToday = true;
+                                        showAdminAlert("任務全完成", `🎉 恭喜 ${student.name} 完成今日所有全班任務，獲得 1 個海螺 🐚！`, "🎉");
+                                    }
+                                    checkAndRewardAlligator(student);
+
+                                    let hasClassTaskDone = student.tasks.some(t => t.isClassTask && t.completed && !t.wasOverdueWhenCompleted);
+                                    let hasValidCheckIn = student.attendanceLog[todayStr] && (function() {
+                                        let val = student.attendanceLog[todayStr];
+                                        if (['事假', '病假', '公假'].includes(val)) return true;
+                                        let parts = val.split(':').map(Number);
+                                        return (parts[0] * 60 + parts[1] <= 480);
+                                    })();
+                                    addTreePoints(student, index, hasClassTaskDone, hasValidCheckIn);
+                                } else {
+                                    showAdminAlert("個人任務完成", `✅ ${student.name} 已完成個人指定任務！`, "👍");
+                                }
+                            } else {
+                                showAdminAlert("逾期完成提醒", `⚠ ${student.name}，此任務已超過期限，故無法獲得海螺及大樹加分喔！`, "⏳");
+                            }
+                            openStudentModal(student.id);
+                            refreshAllViews();
+                        };
+                        li.appendChild(doneBtn);
+                    }
+                    taskList.appendChild(li);
+                });
+                if (isAllTasksCompleted(student)) encouragementMsg.style.display = 'block';
+                else encouragementMsg.style.display = 'none';
+            }
+            document.getElementById('student-modal').style.display = 'flex';
+        }
+
+        function setStudentTaskTag(tagName) {
+            const student = students.find(s => s.id === currentStudentId);
+            if (student) { student.currentTaskTag = tagName; refreshAllViews(); openStudentModal(student.id); }
+        }
+
+        function clearStudentTaskTag() {
+            const student = students.find(s => s.id === currentStudentId);
+            if (student) { student.currentTaskTag = ''; refreshAllViews(); openStudentModal(student.id); }
+        }
+
+        document.getElementById('clock-in-btn').onclick = function() {
+            const student = students.find(s => s.id === currentStudentId);
+            const now = new Date();
+            const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            const todayStr = getTodayDateStr();
+            student.attendanceLog[todayStr] = timeStr;
+            checkAndRewardAlligator(student);
+
+            const [h, m] = timeStr.split(':').map(Number);
+            let isValidCheckIn = (h * 60 + m <= 480);
+            let hasClassTaskDone = student.tasks.some(t => t.isClassTask && t.completed && !t.wasOverdueWhenCompleted);
+            addTreePoints(student, 'checkin', hasClassTaskDone, isValidCheckIn);
+
+            openStudentModal(student.id);
+            refreshAllViews();
+            document.getElementById('checkin-success-text').innerText = `${student.seat}號 ${student.name}\n於 ${timeStr} 打卡成功！`;
+            document.getElementById('checkin-success-modal').style.display = 'flex';
+        };
+
+        function setStudentAttendanceStatus(studentId, statusVal) {
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+            const todayStr = getTodayDateStr();
+
+            if (statusVal === '出席') {
+                const now = new Date();
+                const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+                student.attendanceLog[todayStr] = timeStr;
+                const [h, m] = timeStr.split(':').map(Number);
+                let isValidCheckIn = (h * 60 + m <= 480);
+                let hasClassTaskDone = student.tasks.some(t => t.isClassTask && t.completed && !t.wasOverdueWhenCompleted);
+                addTreePoints(student, 'checkin', hasClassTaskDone, isValidCheckIn);
+                showAdminAlert("出缺席更新", `✅ 已將 ${student.name} 設為出席打卡 (${timeStr})！大樹積分 +2`, "📍");
+            } else {
+                student.attendanceLog[todayStr] = statusVal;
+                let hasClassTaskDone = student.tasks.some(t => t.isClassTask && t.completed && !t.wasOverdueWhenCompleted);
+                addTreePoints(student, 'checkin', hasClassTaskDone, true);
+                showAdminAlert("出缺席更新", `✅ 已將 ${student.name} 設為「${statusVal}」！`, "📌");
+            }
+            refreshAllViews();
+        }
+
+        function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
+
+        function showLoginModal() {
+            document.getElementById('password-input').value = '';
+            document.getElementById('login-modal').style.display = 'flex';
+        }
+
+        function checkLogin() {
+            if (document.getElementById('password-input').value === '0922') {
+                closeModal('login-modal');
+                document.getElementById('student-view').style.display = 'none';
+                document.getElementById('student-personal-view').style.display = 'none';
+                document.getElementById('teacher-view').style.display = 'flex';
+                // 進入老師後台時也隱藏右下角科技時鐘
+                document.getElementById('digital-clock-box').style.display = 'none';
+                
+                document.getElementById('login-btn').style.display = 'none';
+                document.getElementById('student-login-btn').style.display = 'none';
+                document.getElementById('student-logout-btn').style.display = 'none';
+                document.getElementById('logout-btn').style.display = 'inline-block';
+                document.getElementById('platform-name-input').value = platformName;
+                setDefaultTaskDeadlines();
+                refreshAllViews();
+            } else { 
+                showAdminAlert("登入失敗", "密碼錯誤！", "⚠️"); 
+            }
+        }
+
+        function logout() {
+            document.getElementById('teacher-view').style.display = 'none';
+            document.getElementById('student-view').style.display = 'flex';
+            // 返回學生打卡站首頁時恢復顯示右下角科技時鐘
+            document.getElementById('digital-clock-box').style.display = 'flex';
+            
+            document.getElementById('logout-btn').style.display = 'none';
+            document.getElementById('login-btn').style.display = 'inline-block';
+            document.getElementById('student-login-btn').style.display = 'inline-block';
+            refreshAllViews();
+        }
+
+        function switchAdminTab(tabId) {
+            document.querySelectorAll('.admin-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            const clickedItem = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+            if(clickedItem) clickedItem.classList.add('active');
+        }
+
+        function changeAttendanceMonth(direction) {
+            attendanceReportDate.setMonth(attendanceReportDate.getMonth() + direction);
+            renderAttendanceReport();
+        }
+
+        function renderAttendanceReport() {
+            const table = document.getElementById('attendance-report-table');
+            const thead = table.querySelector('thead');
+            const tbody = table.querySelector('tbody');
+            thead.innerHTML = ''; tbody.innerHTML = '';
+            const year = attendanceReportDate.getFullYear();
+            const month = attendanceReportDate.getMonth();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            document.getElementById('current-report-month-label').innerText = `${year}年 ${month + 1}月`;
+            let headerHtml = '<tr><th>座號</th><th>姓名</th>';
+            for (let d = 1; d <= daysInMonth; d++) headerHtml += `<th style="text-align:center; min-width:35px;">${d}日</th>`;
+            headerHtml += '</tr>';
+            thead.innerHTML = headerHtml;
+
+            students.forEach(student => {
+                let rowHtml = `<tr><td>${student.seat}</td><td>${student.name}</td>`;
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const mStr = String(month + 1).padStart(2, '0');
+                    const dStr = String(d).padStart(2, '0');
+                    const dateKey = `${year}-${mStr}-${dStr}`;
+                    const val = student.attendanceLog[dateKey];
+                    let dotClass = 'badge-gray';
+                    let tooltipText = `${dateKey}：未打卡`;
+
+                    if (val) {
+                        if (val === '事假') { dotClass = 'badge-yellow'; tooltipText = `${dateKey}：事假`; }
+                        else if (val === '病假') { dotClass = 'badge-red'; tooltipText = `${dateKey}：病假`; }
+                        else if (val === '公假') { dotClass = 'badge-blue'; tooltipText = `${dateKey}：公假`; }
+                        else {
+                            const [h, m] = val.split(':').map(Number);
+                            dotClass = (h * 60 + m <= 480) ? 'badge-green' : 'badge-yellow';
+                            tooltipText = `${dateKey}：${val}`;
+                        }
+                    } else {
+                        const checkDate = new Date(year, month, d);
+                        const today = new Date();
+                        const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                        if (checkDate < todayDate) dotClass = 'badge-red';
+                    }
+                    rowHtml += `<td style="text-align:center;"><span class="badge-light ${dotClass}" title="${tooltipText}"></span></td>`;
+                }
+                rowHtml += '</tr>';
+                tbody.innerHTML += rowHtml;
+            });
+        }
+
+        function exportAttendanceCSV() {
+            const year = attendanceReportDate.getFullYear();
+            const month = attendanceReportDate.getMonth() + 1;
+            const daysInMonth = new Date(year, month, 0).getDate();
+            let csvContent = `\uFEFF"出缺席紀錄報表","${year}年${month}月"\n座號,姓名`;
+            for (let d = 1; d <= daysInMonth; d++) csvContent += `,${year}/${month}/${d}`;
+            csvContent += "\n";
+
+            students.forEach(student => {
+                csvContent += `${student.seat},${student.name}`;
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const mStr = String(month).padStart(2, '0');
+                    const dStr = String(d).padStart(2, '0');
+                    const dateKey = `${year}-${mStr}-${dStr}`;
+                    const val = student.attendanceLog[dateKey] || '未打卡';
+                    csvContent += `,${val}`;
+                }
+                csvContent += "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `出席狀況報表_${year}年${month}月.csv`; a.click();
+        }
+
+        function renderTaskReport() {
+            const tbody = document.getElementById('task-report-list');
+            tbody.innerHTML = '';
+            students.forEach(student => {
+                const uncompletedTasks = student.tasks.filter(t => !t.completed);
+                const taskTexts = uncompletedTasks.length > 0 ? uncompletedTasks.map(t => t.text).join('、') : '無未完成任務';
+                const status = uncompletedTasks.length > 0 ? `<span style="color:var(--danger-color); font-weight:bold;">有 ${uncompletedTasks.length} 項未完成</span>` : '<span style="color:var(--success-color); font-weight:bold;">全部完成</span>';
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${student.seat}</td>
+                        <td><a href="javascript:void(0)" onclick="openTaskPieModal(${student.id})" style="color:var(--primary-color); font-weight:bold; text-decoration:none;">${student.name}</a></td>
+                        <td>${taskTexts}</td>
+                        <td>${status}</td>
+                        <td>
+                            <button class="btn" style="padding: 8px 14px; font-size:16px; margin-right:6px;" onclick="openTaskPieModal(${student.id})">📊 分析</button>
+                            <button class="btn btn-danger" style="padding: 8px 14px; font-size:16px;" onclick="openAdminStudentTasksModal(${student.id})">📝 管理任務</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openAdminStudentTasksModal(studentId) {
+            activeAdminStudentTaskId = studentId;
+            renderAdminStudentTaskModalContent();
+            document.getElementById('admin-student-tasks-modal').style.display = 'flex';
+        }
+
+        function renderAdminStudentTaskModalContent() {
+            const student = students.find(s => s.id === activeAdminStudentTaskId);
+            if (!student) return;
+            document.getElementById('admin-modal-student-title').innerText = `${student.seat}號 ${student.name} 的任務管理`;
+            const tbody = document.getElementById('admin-student-task-list');
+            tbody.innerHTML = '';
+
+            if (student.tasks.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="color:#666; text-align:center;">目前沒有任何指派任務。</td></tr>`;
+            } else {
+                student.tasks.forEach((task, taskIndex) => {
+                    let typeBadge = task.isClassTask ? '<span style="color:#1976D2; font-weight:bold;">[全班任務]</span>' : '<span style="color:#607D8B; font-weight:bold;">[個別任務]</span>';
+                    let deadlineStr = task.deadline ? task.deadline.replace('T', ' ') : '無期限';
+                    let statusStr = task.completed ? '<span style="color:var(--success-color); font-weight:bold;">✅ 已完成</span>' : '<span style="color:var(--danger-color); font-weight:bold;">❌ 未完成</span>';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${task.text}</strong><br>${statusStr}</td>
+                            <td>${typeBadge}</td>
+                            <td style="color:#d32f2f; font-weight:bold; font-size:16px;">${deadlineStr}</td>
+                            <td><button class="btn btn-danger" style="font-size:15px; padding:8px 14px;" onclick="removeStudentIndividualTask(${student.id}, ${taskIndex})">收回此任務</button></td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        function removeStudentIndividualTask(studentId, taskIndex) {
+            const student = students.find(s => s.id === studentId);
+            if (student && student.tasks[taskIndex]) {
+                let taskName = student.tasks[taskIndex].text;
+                if (confirm(`確定要收回 ${student.name} 的任務：「${taskName}」嗎？`)) {
+                    student.tasks.splice(taskIndex, 1);
+                    saveDataToStorage();
+                    refreshAllViews();
+                    showAdminAlert("收回成功", `✅ 已成功收回該學生的任務！`, "🗑️");
+                }
+            }
+        }
+
+        function openTaskPieModal(studentId) {
+            activePieStudentId = studentId;
+            updateTaskPieModalContent();
+            document.getElementById('task-pie-modal').style.display = 'flex';
+        }
+
+        function changeTaskPieMonth(direction) {
+            taskPieReportDate.setMonth(taskPieReportDate.getMonth() + direction);
+            updateTaskPieModalContent();
+        }
+
+        function updateTaskPieModalContent() {
+            const student = students.find(s => s.id === activePieStudentId);
+            const year = taskPieReportDate.getFullYear();
+            const month = taskPieReportDate.getMonth();
+            document.getElementById('pie-modal-title').innerText = `${student.seat}號 ${student.name} - 任務完成率分析`;
+            document.getElementById('pie-month-label').innerText = `${year}年 ${month + 1}月`;
+            document.getElementById('pie-student-name-header').innerText = `${student.name} 個人完成率`;
+
+            let studentTotal = 0, studentCompleted = 0;
+            student.tasks.forEach(task => {
+                const taskDate = new Date(task.createdAt || getTodayDateStr());
+                if (taskDate.getFullYear() === year && taskDate.getMonth() === month) {
+                    studentTotal++;
+                    if (task.completed) studentCompleted++;
+                }
+            });
+            let studentRate = studentTotal > 0 ? Math.round((studentCompleted / studentTotal) * 100) : 0;
+            const studentPie = document.getElementById('student-pie-chart');
+            studentPie.innerText = `${studentRate}%`;
+            studentPie.style.background = `conic-gradient(#4caf50 ${studentRate * 3.6}deg, #e0e0e0 0deg)`;
+            document.getElementById('student-pie-details').innerText = `已完成：${studentCompleted} / 總數：${studentTotal}`;
+
+            let classTotal = 0, classCompleted = 0;
+            students.forEach(s => {
+                s.tasks.forEach(task => {
+                    const taskDate = new Date(task.createdAt || getTodayDateStr());
+                    if (taskDate.getFullYear() === year && taskDate.getMonth() === month) {
+                        classTotal++;
+                        if (task.completed) classCompleted++;
+                    }
+                });
+            });
+            let classRate = classTotal > 0 ? Math.round((classCompleted / classTotal) * 100) : 0;
+            const classPie = document.getElementById('class-pie-chart');
+            classPie.innerText = `${classRate}%`;
+            classPie.style.background = `conic-gradient(#1976D2 ${classRate * 3.6}deg, #e0e0e0 0deg)`;
+            document.getElementById('class-pie-details').innerText = `全班已完成：${classCompleted} / 總數：${classTotal}`;
+        }
+
+        function exportTaskCSV() {
+            const year = taskPieReportDate.getFullYear();
+            const month = taskPieReportDate.getMonth() + 1;
+            let csvContent = `\uFEFF"學生任務完成率報表","${year}年${month}月"\n座號,姓名,指定任務總數,已完成數,完成率(%)\n`;
+            students.forEach(student => {
+                let total = 0, completed = 0;
+                student.tasks.forEach(task => {
+                    const taskDate = new Date(task.createdAt || getTodayDateStr());
+                    if (taskDate.getFullYear() === year && taskDate.getMonth() === (month - 1)) {
+                        total++;
+                        if (task.completed) completed++;
+                    }
+                });
+                let rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+                csvContent += `${student.seat},${student.name},${total},${completed},${rate}%\n`;
+            });
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `任務完成率_${year}年${month}月.csv`; a.click();
+        }
+
+        function renderDutyCheckboxes() {
+            const container = document.getElementById('duty-checkbox-list');
+            container.innerHTML = '';
+            students.forEach(student => {
+                const isChecked = dutyStudents.includes(student.seat) ? 'checked' : '';
+                container.innerHTML += `<label class="checkbox-item"><input type="checkbox" class="duty-checkbox" value="${student.seat}" ${isChecked}> ${student.seat}號 ${student.name}</label>`;
+            });
+        }
+        function selectDutyCheckboxes(isSelect) { document.querySelectorAll('.duty-checkbox').forEach(cb => cb.checked = isSelect); }
+        function saveDutyStudents() {
+            const checkboxes = document.querySelectorAll('.duty-checkbox:checked');
+            dutyStudents = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            saveDataToStorage(); 
+            renderTopDutyDisplay(); 
+            showAdminAlert("儲存成功", "本日值日生已成功更新！", "🌟");
+        }
+
+        function renderAnnouncements() {
+            const adminList = document.getElementById('admin-announcement-list');
+            const studentList = document.getElementById('student-announcement-list');
+            const personalList = document.getElementById('personal-announcement-list');
+            adminList.innerHTML = ''; studentList.innerHTML = ''; personalList.innerHTML = '';
+            if(announcements.length === 0) {
+                adminList.innerHTML = '<li style="color:#666; padding:12px 0;">目前沒有任何公告。</li>';
+                studentList.innerHTML = '<li>目前沒有最新公告。</li>';
+                personalList.innerHTML = '<li style="color:#666;">目前沒有最新公告。</li>';
+            } else {
+                announcements.forEach((ann, index) => {
+                    let prefix = announcements.length >= 2 ? `${index + 1}. ` : '➤ ';
+                    let styleAttr = `color: ${ann.color || '#333333'}; font-weight: ${ann.weight || 'normal'};`;
+                    studentList.innerHTML += `<li><span style="${styleAttr}"><strong>${prefix}</strong>${ann.text}</span></li>`;
+                    personalList.innerHTML += `<li style="padding: 12px 0; border-bottom: 1px dashed #ccc;"><span style="${styleAttr}"><strong>${prefix}</strong>${ann.text}</span></li>`;
+                    adminList.innerHTML += `<li style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px dashed #eee;">
+                            <span style="${styleAttr}"><strong>${prefix}</strong>${ann.text}</span>
+                            <div>
+                                <button class="btn" style="padding:6px 14px; font-size:16px; margin-right:6px;" onclick="editAnnouncement(${index})">修改</button>
+                                <button class="btn btn-danger" style="padding:6px 14px; font-size:16px;" onclick="deleteAnnouncement(${index})">刪除</button>
+                            </div>
+                        </li>`;
+                });
+            }
+        }
+        
+        function addAnnouncement() {
+            const input = document.getElementById('new-announcement');
+            const color = document.getElementById('new-announcement-color').value;
+            const weight = document.getElementById('new-announcement-weight').value;
+            if(input.value.trim() !== '') {
+                announcements.unshift({ text: input.value.trim(), color: color, weight: weight });
+                input.value = '';
+                refreshAllViews();
+                showAdminAlert("發布成功", "公告已成功發布！", "📢");
+            } else {
+                showAdminAlert("提示", "請輸入公告內容！", "⚠");
+            }
+        }
+
+        function editAnnouncement(index) {
+            const ann = announcements[index];
+            const newText = prompt("請修改公告內容：", ann.text);
+            if (newText !== null && newText.trim() !== "") {
+                const newColor = prompt("請輸入文字顏色 (色票 hex，例如 #ff0000 為紅):", ann.color) || ann.color;
+                const newWeight = confirm("是否設為粗體？(點擊「確定」設為粗體，點擊「取消」設為一般)") ? "bold" : "normal";
+                announcements[index] = { text: newText.trim(), color: newColor, weight: newWeight };
+                refreshAllViews();
+                showAdminAlert("更新成功", "公告已成功更新！", "✏");
+            }
+        }
+
+        function deleteAnnouncement(index) {
+            if(confirm("確定要刪除這則公告嗎？")) { 
+                announcements.splice(index, 1); 
+                refreshAllViews(); 
+                showAdminAlert("刪除成功", "公告已刪除！", "🗑");
+            }
+        }
+
+        function renderAdminStudentList() {
+            const tbody = document.getElementById('admin-student-list');
+            tbody.innerHTML = '';
+            const todayStr = getTodayDateStr();
+            students.forEach(student => {
+                const val = student.attendanceLog[todayStr];
+                let statusBadge = '<span class="badge-light badge-gray"></span> 未打卡';
+                if(val) {
+                    if (val === '事假') statusBadge = '<span class="badge-light badge-yellow"></span> 事假';
+                    else if (val === '病假') statusBadge = '<span class="badge-light badge-red"></span> 病假';
+                    else if (val === '公假') statusBadge = '<span class="badge-light badge-blue"></span> 公假';
+                    else {
+                        const [h, m] = val.split(':').map(Number);
+                        statusBadge = (h * 60 + m <= 480) ? `<span class="badge-light badge-green"></span> 綠燈 (${val})` : `<span class="badge-light badge-yellow"></span> 黃燈 (${val})`;
+                    }
+                }
+                
+                let photoPreview = student.photoUrl ? `<img src="${student.photoUrl}" style="width:40px; height:40px; object-fit:cover; border-radius:50%; margin-right:6px; vertical-align:middle;" />` : `<span style="color:#888; font-size:14px; margin-right:6px;">無</span>`;
+
+                tbody.innerHTML += `<tr>
+                    <td><input type="checkbox" class="student-select-checkbox" value="${student.id}" style="width:20px; height:20px; cursor:pointer;"></td>
+                    <td>${student.seat}</td>
+                    <td>${student.name}</td>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                            ${photoPreview}
+                            <input type="file" accept="image/*" style="font-size:14px; width: 180px;" onchange="uploadStudentPhoto(${student.id}, event)">
+                            ${student.photoUrl ? `<button class="btn btn-danger" style="padding:2px 8px; font-size:12px;" onclick="removeStudentPhoto(${student.id})">移除</button>` : ''}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                            <span>${statusBadge}</span>
+                            <div style="display:flex; gap:4px; margin-left:10px;">
+                                <button class="btn btn-success" style="padding:4px 8px; font-size:14px;" onclick="setStudentAttendanceStatus(${student.id}, '出席')">出席</button>
+                                <button class="btn btn-yellow" style="padding:4px 8px; font-size:14px;" onclick="setStudentAttendanceStatus(${student.id}, '事假')">事假</button>
+                                <button class="btn btn-danger" style="padding:4px 8px; font-size:14px;" onclick="setStudentAttendanceStatus(${student.id}, '病假')">病假</button>
+                                <button class="btn" style="background-color:#2196F3; color:white; padding:4px 8px; font-size:14px;" onclick="setStudentAttendanceStatus(${student.id}, '公假')">公假</button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn" style="padding: 6px 12px; font-size:15px;" onclick="editStudent(${student.id})">修改</button>
+                        <button class="btn btn-danger" style="padding: 6px 12px; font-size:15px;" onclick="deleteStudent(${student.id})">刪除</button>
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('select-all-checkbox').checked = false;
+        }
+
+        function uploadStudentPhoto(id, event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 400;
+                    const MAX_HEIGHT = 400;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                    const student = students.find(s => s.id === id);
+                    if (student) {
+                        student.photoUrl = compressedDataUrl;
+                        saveDataToStorage();
+                        refreshAllViews();
+                        showAdminAlert("上傳成功", `✅ ${student.name} 的個人照片已壓縮並成功儲存！`, "🖼️");
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeStudentPhoto(id) {
+            const student = students.find(s => s.id === id);
+            if (student) {
+                student.photoUrl = '';
+                saveDataToStorage();
+                refreshAllViews();
+                showAdminAlert("已移除", `✅ ${student.name} 的個人照片已移除。`, "🗑");
+            }
+        }
+
+        function addBatchStudents() {
+            let startSeat = parseInt(document.getElementById('batch-start-seat').value) || 1;
+            const text = document.getElementById('batch-names-input').value.trim();
+            if(!text) return showAdminAlert("提示", "請輸入學生姓名！", "⚠️");
+            const names = text.split(/[\n,，\s]+/).map(n => n.trim()).filter(n => n !== '');
+            if(names.length === 0) return showAdminAlert("提示", "沒有有效學生姓名！", "⚠️️");
+
+            let currentId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
+            names.forEach(name => {
+                students.push({
+                    id: currentId++, seat: startSeat, name: name, photoUrl: '', birthday: '', tasks: [], points: 0, alligator: 0, gachaAura: 0,
+                    praiseComment: '', praiseTimestamp: null, attendanceLog: {}, currentTaskTag: '', lastAlligatorRewardDate: '',
+                    shellRewardedToday: false, lastResetDate: '', password: startSeat.toString(), lastLoginTime: '未曾登入', lastPasswordChangeTime: '未曾修改',
+                    treeContribution: 0, checkedInTodayForTree: false, completedTasksForTree: {}
+                });
+                startSeat++;
+            });
+            document.getElementById('batch-names-input').value = '';
+            document.getElementById('batch-start-seat').value = startSeat;
+            saveDataToStorage();
+            refreshAllViews();
+            showAdminAlert("新增成功", `成功批次新增 ${names.length} 位學生！`, "✨");
+        }
+
+        function toggleSelectAll(source) { document.querySelectorAll('.student-select-checkbox').forEach(cb => cb.checked = source.checked); }
+        function selectAllStudents(isSelect) {
+            document.getElementById('select-all-checkbox').checked = isSelect;
+            document.querySelectorAll('.student-select-checkbox').forEach(cb => cb.checked = isSelect);
+        }
+        function deleteSelectedStudents() {
+            const checkboxes = document.querySelectorAll('.student-select-checkbox:checked');
+            if(checkboxes.length === 0) return showAdminAlert("提示", "請至少勾選一位要刪除的學生！", "⚠");
+            if(confirm(`確定要刪除勾選的 ${checkboxes.length} 位學生嗎？`)) {
+                const selectedIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+                students = students.filter(s => !selectedIds.includes(s.id));
+                saveDataToStorage();
+                refreshAllViews(); 
+                showAdminAlert("刪除成功", "已成功刪除所選學生！", "🗑️");
+            }
+        }
+        function editStudent(id) {
+            const student = students.find(s => s.id === id);
+            const newName = prompt(`請輸入 ${student.seat}號 的新姓名：`, student.name);
+            if(newName && newName.trim() !== '') { 
+                student.name = newName.trim(); 
+                saveDataToStorage();
+                refreshAllViews(); 
+                showAdminAlert("修改成功", "學生姓名已更新！", "✏"); 
+            }
+        }
+        function deleteStudent(id) {
+            const student = students.find(s => s.id === id);
+            if(confirm(`確定要刪除 ${student.seat}號 ${student.name} 嗎？`)) { 
+                students = students.filter(s => s.id !== id); 
+                saveDataToStorage();
+                refreshAllViews(); 
+                showAdminAlert("刪除成功", "學生已刪除！", "🗑️"); 
+            }
+        }
+
+        function renderStudentCheckboxes() {
+            const container = document.getElementById('student-checkbox-list');
+            container.innerHTML = '';
+            students.forEach(student => {
+                container.innerHTML += `<label class="checkbox-item"><input type="checkbox" class="student-checkbox" value="${student.id}"> ${student.seat}號 ${student.name}</label>`;
+            });
+        }
+        function selectAllCheckboxes(isSelect) { document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = isSelect); }
+        
+        function assignClassTask() {
+            const rawText = document.getElementById('class-task-input').value.trim();
+            const deadline = document.getElementById('class-task-deadline').value;
+            if(!rawText) return showAdminAlert("提示", "請輸入任務內容！", "⚠️");
+
+            let taskTexts = rawText.split(/[\n,，、]+/).map(t => t.trim()).filter(t => t !== '');
+            if(taskTexts.length === 0) return showAdminAlert("提示", "沒有有效的任務內容！", "⚠️");
+
+            const today = getTodayDateStr();
+            students.forEach(student => {
+                taskTexts.forEach(taskText => {
+                    student.tasks.push({ text: taskText, deadline: deadline, completed: false, createdAt: today, isClassTask: true, wasOverdueWhenCompleted: false });
+                });
+                student.shellRewardedToday = false; 
+            });
+
+            document.getElementById('class-task-input').value = ''; 
+            setDefaultTaskDeadlines();
+            saveDataToStorage();
+            showAdminAlert("派發成功", `已成功為全班派發 ${taskTexts.length} 項任務！`, "📢");
+            refreshAllViews();
+        }
+
+        function renderAdminClassTaskList() {
+            const tbody = document.getElementById('admin-class-task-list');
+            tbody.innerHTML = '';
+            let classTasks = [];
+            if (students.length > 0) classTasks = students[0].tasks.filter(t => t.isClassTask);
+
+            if (classTasks.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="color:#666; text-align:center;">目前沒有任何全班派發任務。</td></tr>`;
+            } else {
+                classTasks.forEach((task, index) => {
+                    let deadlineStr = task.deadline ? task.deadline.replace('T', ' ') : '無期限';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${task.text}</strong></td>
+                            <td>${task.createdAt || '今日'}</td>
+                            <td style="color:#d32f2f; font-weight:bold;">${deadlineStr}</td>
+                            <td><button class="btn btn-danger" style="font-size:15px; padding:8px 14px;" onclick="removeSingleClassTask(${index})">收回此任務</button></td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        function removeSingleClassTask(index) {
+            if (confirm("確定要收回這項全班任務嗎？")) {
+                let classTasks = students.length > 0 ? students[0].tasks.filter(t => t.isClassTask) : [];
+                if (classTasks[index]) {
+                    let targetText = classTasks[index].text;
+                    students.forEach(student => {
+                        student.tasks = student.tasks.filter(t => !(t.isClassTask && t.text === targetText));
+                    });
+                    saveDataToStorage();
+                    refreshAllViews();
+                    showAdminAlert("收回成功", `✅ 已成功收回全班任務：「${targetText}」`, "🗑");
+                }
+            }
+        }
+
+        function clearAllClassTasks() {
+            if (confirm("⚠️ 確定要收回「所有」全班派發的任務嗎？")) {
+                students.forEach(student => { student.tasks = student.tasks.filter(t => !t.isClassTask); });
+                saveDataToStorage();
+                refreshAllViews();
+                showAdminAlert("清空成功", `✅ 已成功收回所有全班任務！`, "🗑");
+            }
+        }
+
+        function assignSelectedTask() {
+            const taskText = document.getElementById('selected-task-input').value.trim();
+            const deadline = document.getElementById('selected-task-deadline').value;
+            if(!taskText) return showAdminAlert("提示", "請輸入任務內容！", "⚠️");
+            const checkboxes = document.querySelectorAll('.student-checkbox:checked');
+            if(checkboxes.length === 0) return showAdminAlert("提示", "請勾選學生！", "⚠️");
+            const today = getTodayDateStr();
+            checkboxes.forEach(cb => {
+                const student = students.find(s => s.id === parseInt(cb.value));
+                if(student) student.tasks.push({ text: taskText, deadline: deadline, completed: false, createdAt: today, isClassTask: false, wasOverdueWhenCompleted: false });
+                cb.checked = false;
+            });
+            document.getElementById('selected-task-input').value = ''; 
+            setDefaultTaskDeadlines();
+            saveDataToStorage();
+            showAdminAlert("派發成功", "已發送指定任務！", "🎯");
+            refreshAllViews();
+        }
+
+        function executeBatchSeatPoints() {
+            const text = document.getElementById('batch-seats-input').value.trim();
+            if (!text) return showAdminAlert("提示", "❌ 請輸入或貼上要加分的學生座號！", "⚠️");
+            
+            let seatTokens = text.split(/[\n,，\s]+/).map(s => parseInt(s.trim())).filter(s => !isNaN(s));
+            if (seatTokens.length === 0) return showAdminAlert("提示", "❌ 沒有解析到有效的座號！", "⚠️");
+
+            const type = document.getElementById('batch-point-type').value;
+            const amount = parseInt(document.getElementById('batch-point-amount').value) || 1;
+            const pointNameLabel = type === 'points' ? `海螺 🐚 +${amount}` : `鱷魚 🐊 +${amount}`;
+
+            let successCount = 0;
+            seatTokens.forEach(seatNum => {
+                let student = students.find(s => s.seat === seatNum);
+                if (student) {
+                    if (type === 'points') student.points += amount;
+                    else if (type === 'alligator') student.alligator = (student.alligator || 0) + amount;
+                    successCount++;
+                }
+            });
+
+            document.getElementById('batch-seats-input').value = '';
+            saveDataToStorage();
+            refreshAllViews();
+            showAdminAlert("批次加分成功", `✅ 成功為 ${successCount} 位學生發放了 ${pointNameLabel}！`, "✨");
+        }
+
+        function renderPointsTable() {
+            const tbody = document.getElementById('admin-points-list');
+            tbody.innerHTML = '';
+            students.forEach(student => {
+                let commentVal = student.praiseComment || '';
+                tbody.innerHTML += `<tr>
+                        <td>${student.seat}</td>
+                        <td>${student.name}</td>
+                        <td style="font-weight:bold; color:#d89e00;">🐚 ${student.points}</td>
+                        <td style="font-weight:bold; color:#2e7d32;">🐊 ${student.alligator || 0}</td>
+                        <td>
+                            <input type="text" class="admin-praise-input" data-student-id="${student.id}" value="${commentVal}" placeholder="輸入稱讚評語..." style="width: 100%; box-sizing: border-box; margin:0;" />
+                        </td>
+                        <td class="point-btn-group">
+                            <button class="point-btn-add" onclick="modifyPoints(${student.id}, 'points', 1)">🐚+1</button>
+                            <button class="point-btn-sub" onclick="modifyPoints(${student.id}, 'points', -1)">🐚-1</button>
+                            <button class="point-btn-add" onclick="modifyPoints(${student.id}, 'alligator', 1)" style="background-color:#2e7d32;">🐊+1</button>
+                            <button class="point-btn-sub" onclick="modifyPoints(${student.id}, 'alligator', -1)">🐊-1</button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function saveAllPraises() {
+            const inputs = document.querySelectorAll('.admin-praise-input');
+            inputs.forEach(input => {
+                const id = parseInt(input.getAttribute('data-student-id'));
+                const student = students.find(s => s.id === id);
+                if (student) {
+                    const commentText = input.value.trim();
+                    if (student.praiseComment !== commentText) {
+                        student.praiseComment = commentText;
+                        student.praiseTimestamp = commentText ? new Date().getTime() : null;
+                    }
+                }
+            });
+            saveDataToStorage();
+            refreshAllViews();
+            showAdminAlert("儲存成功", `✅ 全班評語已成功更新！`, "💬");
+        }
+
+        function modifyPoints(id, type, amount) {
+            const student = students.find(s => s.id === id);
+            if(student) {
+                if(type === 'points') student.points = Math.max(0, student.points + amount);
+                else if(type === 'alligator') student.alligator = Math.max(0, (student.alligator || 0) + amount);
+                saveDataToStorage();
+                refreshAllViews();
+            }
+        }
+        function addGlobalPoints(type, amount) {
+            let label = type === 'points' ? `海螺 +${amount} 🐚` : `鱷魚 +${amount} 🐊`;
+            if(confirm(`確定要為全班每位學生增加 ${label} 嗎？`)) {
+                students.forEach(student => {
+                    if(type === 'points') student.points += amount;
+                    if(type === 'alligator') student.alligator = (student.alligator || 0) + amount;
+                });
+                saveDataToStorage();
+                refreshAllViews();
+                showAdminAlert("批量加分成功", `已成功為全班增加 ${label}！`, "🌟");
+            }
+        }
+        function clearAllTasks() {
+            if(confirm("⚠️ 警告：確定要清空「全班」目前所有任務嗎？")) {
+                students.forEach(student => { student.tasks = []; student.shellRewardedToday = false; });
+                saveDataToStorage();
+                refreshAllViews(); 
+                showAdminAlert("清空成功", "全班任務已清空！", "🗑️");
+            }
+        }
+        function resetAllPoints(type) {
+            let label = type === 'points' ? '海螺 🐚' : '鱷魚 🐊';
+            if(confirm(`⚠️ 警告：確定要將「全班」的 ${label} 積分歸零嗎？`)) {
+                students.forEach(student => {
+                    if(type === 'points') student.points = 0;
+                    if(type === 'alligator') student.alligator = 0;
+                });
+                saveDataToStorage();
+                refreshAllViews(); 
+                showAdminAlert("歸零成功", `全班 ${label} 已歸零！`, "⚠");
+            }
+        }
+
+        function updatePlatformName() {
+            const val = document.getElementById('platform-name-input').value.trim();
+            if(val) { 
+                platformName = val; 
+                saveDataToStorage();
+                refreshAllViews(); 
+                showAdminAlert("儲存成功", "平台名稱已更新！", "⚙"); 
+            }
+        }
+        function setTheme(themeName) {
+            let root = document.documentElement;
+            if (themeName === 'yellow') { root.style.setProperty('--primary-color', '#F57F17'); root.style.setProperty('--secondary-color', '#FFEE58'); root.style.setProperty('--sidebar-bg', '#FBC02D'); root.style.setProperty('--bg-color', '#FFFDE7'); }
+            else if (themeName === 'green') { root.style.setProperty('--primary-color', '#2E7D32'); root.style.setProperty('--secondary-color', '#FFC107'); root.style.setProperty('--sidebar-bg', '#1B5E20'); root.style.setProperty('--bg-color', '#F1F8E9'); }
+            else if (themeName === 'white') { root.style.setProperty('--primary-color', '#424242'); root.style.setProperty('--secondary-color', '#FFC107'); root.style.setProperty('--sidebar-bg', '#212121'); root.style.setProperty('--bg-color', '#FAFAFA'); }
+            else if (themeName === 'black') { root.style.setProperty('--primary-color', '#757575'); root.style.setProperty('--secondary-color', '#FFC107'); root.style.setProperty('--sidebar-bg', '#121212'); root.style.setProperty('--bg-color', '#212121'); }
+            else if (themeName === 'blue') { root.style.setProperty('--primary-color', '#1976D2'); root.style.setProperty('--secondary-color', '#FFC107'); root.style.setProperty('--sidebar-bg', '#0D47A1'); root.style.setProperty('--bg-color', '#F0F4F8'); }
+            else if (themeName === 'red') { root.style.setProperty('--primary-color', '#C62828'); root.style.setProperty('--secondary-color', '#FFC107'); root.style.setProperty('--sidebar-bg', '#8E0000'); root.style.setProperty('--bg-color', '#FFEBEE'); }
+            else if (themeName === 'royal-blue') { root.style.setProperty('--primary-color', '#283593'); root.style.setProperty('--secondary-color', '#FFD54F'); root.style.setProperty('--sidebar-bg', '#1A237E'); root.style.setProperty('--bg-color', '#E8EAF6'); }
+            showAdminAlert("主題切換成功", `已成功切換為 ${themeName} 主題！`, "🎨");
+        }
+    </script>
+</body>
+</html>
