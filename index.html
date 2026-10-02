@@ -167,27 +167,6 @@
 
         .student-card > * { position: relative; z-index: 2; }
 
-        .student-name-row {
-            display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap;
-        }
-
-        .student-name { 
-            font-size: 46px; font-weight: bold; color: var(--primary-color); 
-            text-shadow: -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff, 0 1px 3px rgba(0,0,0,0.3); 
-        }
-        .student-card.all-done .student-name { color: #2e7d32; }
-        .student-card.has-pending .student-name { color: #c62828; }
-        
-        .task-badge-circle {
-            width: 44px; height: 44px; border-radius: 50%; color: white; font-size: 22px;
-            font-weight: bold; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.25);
-        }
-
-        .score-badges-group { margin-top: 10px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-        .shell-score { font-size: 24px; font-weight: bold; color: #d89e00; background-color: #fffde7; border-radius: 20px; padding: 6px 18px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .alligator-score { font-size: 24px; font-weight: bold; color: #2e7d32; background-color: #e8f5e9; border-radius: 20px; padding: 6px 18px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
         .sidebar-right-container {
             width: 420px; display: flex; flex-direction: column; gap: 25px; flex-shrink: 0;
         }
@@ -287,164 +266,7 @@
         .modal-content {
             background: var(--white); padding: 40px; border-radius: 18px; width: 90%; max-width: 950px; text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.35); max-height: 90vh; overflow-y: auto;
         }
-        
-        .student-action-btn-group { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin: 25px 0; }
-        .task-option-btn {
-            padding: 14px 22px; border-radius: 10px; font-size: 22px; font-weight: bold; color: white; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-        }
-        .task-option-btn:hover { opacity: 0.85; transform: scale(1.05); }
-        .task-option-btn.active-task { border: 4px solid #333; box-shadow: 0 0 12px rgba(0,0,0,0.4); }
 
-        .task-list { text-align: left; margin: 30px 0; padding: 30px; background-color: #fff9c4; border-radius: 14px; border-left: 10px solid var(--secondary-color); }
-        .task-list ul { margin: 18px 0 0 0; padding-left: 35px; }
-        .task-list li { margin-bottom: 20px; line-height: 1.6; font-size: 26px; }
-
-        /* 🔮 強力特效：魔法卡牌召喚陣與 6 張卡牌排版 (上 3 下 3) */
-        .gacha-magic-arena {
-            position: relative;
-            background: radial-gradient(circle, #24144d 0%, #0b051f 100%);
-            border-radius: 20px;
-            padding: 25px 20px;
-            box-shadow: inset 0 0 50px rgba(255, 215, 0, 0.3), 0 15px 35px rgba(0,0,0,0.6);
-            overflow: hidden;
-            border: 4px solid #ffd700;
-        }
-        .magic-circle-bg {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 500px; height: 500px;
-            transform: translate(-50%, -50%);
-            border: 4px dashed rgba(255, 215, 0, 0.5);
-            border-radius: 50%;
-            animation: rotateMagicCircle 15s linear infinite;
-            pointer-events: none;
-            z-index: 1;
-        }
-        .magic-circle-bg::before {
-            content: '✨ 🌟 ✨ 🔮 ✨ 🌟 ✨';
-            position: absolute;
-            top: -18px; left: 50%;
-            transform: translateX(-50%);
-            color: #ffd700;
-            font-size: 20px;
-            letter-spacing: 16px;
-        }
-        @keyframes rotateMagicCircle {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        /* 能量條樣式 (置於標題下方) */
-        .aura-bar-container {
-            background: rgba(20, 10, 40, 0.9);
-            border: 2px solid #ffd700;
-            border-radius: 12px;
-            padding: 12px 20px;
-            max-width: 650px;
-            margin: 12px auto 20px auto;
-            position: relative;
-            z-index: 5;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-        .aura-bar-title {
-            font-size: 18px;
-            color: #ffd700;
-            font-weight: bold;
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .aura-progress-bg {
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 8px;
-            height: 16px;
-            width: 100%;
-            overflow: hidden;
-            border: 1px solid rgba(255, 215, 0, 0.5);
-        }
-        .aura-progress-fill {
-            background: linear-gradient(90deg, #ff9800, #ffeb3b, #00ffcc);
-            height: 100%;
-            width: 0%;
-            transition: width 0.4s ease;
-        }
-
-        /* 6 張卡牌網格排版 (嚴格指定 3 欄，剛好上 3 下 3) */
-        .gacha-card-container { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 18px; 
-            margin: 10px auto; 
-            max-width: 720px;
-            perspective: 1000px; 
-            position: relative; 
-            z-index: 5; 
-            justify-items: center;
-        }
-
-        .gacha-card {
-            width: 210px; height: 280px; 
-            background: linear-gradient(135deg, #3d1c75, #5e2ca5);
-            border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.6); font-size: 20px; color: #ffd700;
-            font-weight: bold; transition: 0.3s; position: relative; border: 4px solid #ffd700;
-            user-select: none; gap: 10px; padding: 15px; box-sizing: border-box; text-align: center;
-        }
-        .gacha-card:hover { transform: translateY(-8px) scale(1.04); box-shadow: 0 0 35px #ffd700, 0 15px 30px rgba(0,0,0,0.8); }
-        
-        /* 召喚光柱特效 (動態觸發) */
-        .gacha-card.summoning {
-            animation: cardSummoningAnim 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
-            pointer-events: none; 
-            z-index: 100;
-        }
-        @keyframes cardSummoningAnim {
-            0% { transform: scale(1) translateY(0); filter: brightness(1); }
-            40% { transform: scale(1.25) translateY(-30px); filter: brightness(3); box-shadow: 0 0 80px #fff, 0 0 130px #ffd700; }
-            70% { transform: scale(1.15) translateY(-15px) rotateY(720deg); filter: brightness(2.5); }
-            100% { transform: scale(1.05) translateY(0) rotateY(1440deg); filter: brightness(1.5); }
-        }
-
-        /* 神聖光柱背景閃爍 */
-        .divine-beam-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,215,0,0.5) 40%, transparent 80%);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 50;
-            transition: opacity 0.3s ease;
-        }
-        .divine-beam-overlay.active { opacity: 1; animation: beamPulse 0.6s infinite alternate; }
-        @keyframes beamPulse {
-            0% { opacity: 0.8; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1.08); }
-        }
-
-        .gacha-card.flipped {
-            background: linear-gradient(135deg, #004d40, #00b0ff);
-            color: #ffffff; 
-            border-color: #00ffcc; 
-            font-size: 22px; 
-            text-align: center; 
-            line-height: 1.4;
-            box-shadow: 0 0 50px #00ffcc, inset 0 0 25px rgba(255,255,255,0.7);
-        }
-
-        /* 🌟 雙鱷魚聚光燈特效 (Spotlight) */
-        .gacha-card.spotlight-active {
-            box-shadow: 0 0 90px #ffd700, 0 0 160px #fff, inset 0 0 40px #ffd700 !important;
-            transform: scale(1.08);
-            border-color: #fff !important;
-            animation: spotlightPulse 0.8s ease-in-out infinite alternate !important;
-            z-index: 120 !important;
-        }
-        @keyframes spotlightPulse {
-            0% { box-shadow: 0 0 70px #ffd700, 0 0 120px #fff; transform: scale(1.06); }
-            100% { box-shadow: 0 0 120px #ffd700, 0 0 200px #fff; transform: scale(1.12); }
-        }
-
-        /* 關鍵修正：強制與頂部工具列對齊並佔滿剩餘高度 */
         #teacher-view { 
             display: none; 
             flex: 1; 
@@ -469,7 +291,6 @@
         .nav-item { padding: 16px 25px; cursor: pointer; border-left: 5px solid transparent; user-select: none; font-size: 18px; }
         .nav-item:hover { background-color: rgba(255,255,255,0.1); }
         .nav-item.active { background-color: var(--primary-color); border-left: 5px solid var(--secondary-color); font-weight: bold;}
-        .nav-item.dragging { opacity: 0.4; background: rgba(255,255,255,0.2); }
         
         .main-content { 
             flex: 1; 
@@ -486,22 +307,6 @@
         table { width: 100%; border-collapse: collapse; margin-top: 12px; }
         th, td { padding: 15px 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 18px; }
         th { background-color: #F8FAFC; color: var(--sidebar-bg); font-weight: bold; }
-
-        .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; max-height: 180px; overflow-y: auto; padding: 18px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 18px; background-color: #f9f9f9; }
-        .checkbox-item { cursor: pointer; display: flex; align-items: center; font-size: 18px; }
-        .checkbox-item input { width: 20px; height: 20px; margin-right: 10px; cursor: pointer; }
-        
-        .point-btn-group button { margin-right: 6px; padding: 8px 12px; font-size: 15px; }
-        .badge-light { display: inline-block; width: 16px; height: 16px; border-radius: 50%; margin-right: 8px; }
-        .badge-green { background-color: var(--success-color); }
-        .badge-yellow { background-color: var(--warning-color); }
-        .badge-red { background-color: var(--danger-color); }
-        .badge-blue { background-color: #2196F3; }
-        .badge-gray { background-color: #ccc; }
-
-        .pie-chart-container { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 25px; margin: 25px 0; }
-        .pie-box { background: #f9f9f9; padding: 25px; border-radius: 12px; border: 1px solid #ddd; text-align: center; width: 320px; }
-        .pie-chart { width: 160px; height: 160px; border-radius: 50%; margin: 18px auto; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 22px; box-shadow: 0 6px 15px rgba(0,0,0,0.12); }
     </style>
 </head>
 <body>
@@ -586,496 +391,44 @@
                 <p style="font-size:18px; color:#666;">預設密碼為座號。為保護隱私，建議登入後立即修改！</p>
                 <input type="password" id="new-password-input" placeholder="限輸入剛好 6 碼 (英文或數字)" style="width: 70%;">
                 <button class="btn btn-yellow" onclick="changeStudentPassword()">確認修改</button>
-                <p style="font-size:16px; color:var(--danger-color); margin-top:8px;">⚠️ 限制：密碼必須剛好 6 碼，且只能包含英文或數字。</p>
             </div>
             <div class="personal-card" style="grid-column: 1 / -1;">
                 <h3>📝 今日與近期任務紀錄</h3>
                 <ul class="personal-task-list" id="personal-tasks"></ul>
-            </div>
-            <div class="personal-card" style="grid-column: 1 / -1; border-top: 5px solid var(--warning-color);">
-                <h3>🎁 個人抽卡紀錄專區</h3>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr><th>時間</th><th>消耗海螺</th><th>獲得鱷魚</th></tr>
-                        </thead>
-                        <tbody id="personal-gacha-logs"></tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="personal-card" style="grid-column: 1 / -1;">
-                <h3>📅 出缺席紀錄 (本月)</h3>
-                <div id="personal-attendance" style="margin-top:18px;"></div>
-            </div>
-            <div class="personal-card" style="grid-column: 1 / -1; border-top: 5px solid var(--secondary-color);">
-                <h3>📢 班級最新公告</h3>
-                <ul class="personal-task-list" id="personal-announcement-list" style="font-size: 26px; margin-top: 18px;"></ul>
             </div>
         </div>
     </div>
 
     <!-- 老師後台介面 -->
     <div id="teacher-view">
-        <div class="sidebar" id="admin-sidebar" ondragover="allowDrop(event)">
+        <div class="sidebar" id="admin-sidebar">
             <h2>管理後台</h2>
-            <div class="nav-item active" draggable="true" data-tab="admin-dashboard" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-dashboard')">公告與總覽</div>
-            <div class="nav-item" draggable="true" data-tab="admin-students" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-students')">學生管理 (新增/修改/照片/請假)</div>
-            <div class="nav-item" draggable="true" data-tab="admin-groups" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-groups')">👥 學生分組與海螺加扣分 🐚</div>
-            <div class="nav-item" draggable="true" data-tab="admin-account" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-account')">學生帳號管理 🔐</div>
-            <div class="nav-item" draggable="true" data-tab="admin-gacha-logs" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-gacha-logs')">🎁 學生抽卡紀錄總表</div>
-            <div class="nav-item" draggable="true" data-tab="admin-duty" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-duty')">本日值日生管理 🌟</div>
-            <div class="nav-item" draggable="true" data-tab="admin-tasks" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-tasks')">任務指派中心</div>
-            <div class="nav-item" draggable="true" data-tab="admin-attendance" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-attendance')">出缺席日曆報表 📊</div>
-            <div class="nav-item" draggable="true" data-tab="admin-task-report" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-task-report')">學生任務狀態報表 📝</div>
-            <div class="nav-item" draggable="true" data-tab="admin-points" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-points')">學生獎勵積分 (海螺與鱷魚) 🐚🐊</div>
-            <div class="nav-item" draggable="true" data-tab="admin-tree" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-tree')">🌳 乙棵成長樹管理 (加扣分)</div>
-            <div class="nav-item" draggable="true" data-tab="admin-settings" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-settings')">平台與外觀設定 ⚙️</div>
+            <div class="nav-item active" onclick="switchAdminTab('admin-dashboard')">公告與總覽</div>
+            <div class="nav-item" onclick="switchAdminTab('admin-settings')">平台設定</div>
         </div>
-        
         <div class="main-content">
             <div id="admin-dashboard" class="admin-section active">
                 <div class="card">
-                    <h3 style="color: var(--primary-color);">新增班級公告 (可自訂顏色與粗細)</h3>
-                    <textarea id="new-announcement" placeholder="請輸入公告內容..." rows="3" style="width: 100%; box-sizing: border-box;"></textarea>
-                    <div style="display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-top: 12px;">
-                        <div>
-                            <label>文字顏色：</label><input type="color" id="new-announcement-color" value="#333333">
-                        </div>
-                        <div>
-                            <label>文字粗細：</label>
-                            <select id="new-announcement-weight">
-                                <option value="normal">一般 (Normal)</option>
-                                <option value="bold">粗體 (Bold)</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-yellow" onclick="addAnnouncement()">發布公告</button>
-                    </div>
-                </div>
-                <div class="card">
-                    <h3>最新班級公告管理</h3>
-                    <ul id="admin-announcement-list" style="list-style-type: none; padding-left: 0;"></ul>
+                    <h3>後台總覽與公告管理</h3>
+                    <p>歡迎進入老師管理後台。</p>
                 </div>
             </div>
-
-            <div id="admin-students" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">✨ 批次文字新增學生</h3>
-                    <p style="font-size: 16px; color: #666; margin-top: 0;">💡 請輸入起始座號，並在下方文字框貼上多位學生姓名（支援換行、逗號或空格分隔）。</p>
-                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                        <label>起始座號：</label>
-                        <input type="number" id="batch-start-seat" placeholder="例如：1" style="width: 120px; margin-bottom:0;" value="1">
-                    </div>
-                    <textarea id="batch-names-input" rows="3" placeholder="王小明&#10;李小華" style="width: 100%; max-width: 650px;"></textarea>
-                    <br><button class="btn btn-yellow" onclick="addBatchStudents()">+ 批次新增學生</button>
-                </div>
-                <div class="card" style="border-top: 5px solid var(--secondary-color);">
-                    <h3 style="color: #f57f17; margin-top: 0;">🎂 批次快速設定學生生日</h3>
-                    <p style="font-size: 16px; color: #666;">💡 請由 1 號開始，在下方貼上所有學生的生日（格式如 05-20 或 5/20），系統會自動填入！</p>
-                    <textarea id="batch-birthdays-input" rows="3" placeholder="03-15&#10;05-20&#10;12-01" style="width: 100%; max-width: 650px;"></textarea>
-                    <br><button class="btn btn-yellow" onclick="batchUpdateBirthdays()">🎂 批次更新學生生日</button>
-                </div>
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-                        <h3 style="margin: 0;">學生名單、個人照片、今日出缺席與狀態</h3>
-                        <div>
-                            <button class="btn" style="font-size: 16px; padding: 8px 14px;" onclick="selectAllStudents(true)">全選</button>
-                            <button class="btn" style="background-color: #999; font-size: 16px; padding: 8px 14px;" onclick="selectAllStudents(false)">全不選</button>
-                            <button class="btn btn-danger" style="font-size: 16px; padding: 8px 14px; margin-left: 12px;" onclick="deleteSelectedStudents()">🗑️ 刪除所選學生</button>
-                        </div>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 50px;"><input type="checkbox" id="select-all-checkbox" onclick="toggleSelectAll(this)" style="width:20px; height:20px; cursor:pointer;"></th>
-                                <th>座號</th><th>姓名</th><th>個人照片上傳</th><th>今日出缺席與打卡狀態</th><th>操作管理</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-student-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="admin-groups" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">👥 學生分組設定</h3>
-                    <p style="font-size: 16px; color: #666;">💡 請輸入群組名稱（例如：第一組），並在下方輸入屬於該組的學生座號（支援逗號、空格或換行隔開）。</p>
-                    <input type="text" id="group-name-input" placeholder="例如：第一組" style="width: 250px;">
-                    <textarea id="group-seats-input" rows="3" placeholder="例如：1, 3, 5, 7" style="width: 100%; box-sizing: border-box; max-width: 650px;"></textarea>
-                    <br><button class="btn btn-yellow" onclick="saveGroup()">💾 儲存/建立群組</button>
-                </div>
-                <div class="card" style="border-top: 5px solid var(--secondary-color);">
-                    <h3 style="color: #f57f17; margin-top: 0;">🐚 小組海螺積分管理面板 (加扣分)</h3>
-                    <p style="font-size: 16px; color: #666;">💡 您可以針對各小組成員一鍵進行海螺加扣分或歸零操作。</p>
-                    <table>
-                        <thead>
-                            <tr><th>組別名稱</th><th>組員座號與目前海螺狀態</th><th>操作管理</th><th>小組加扣海螺按鈕</th></tr>
-                        </thead>
-                        <tbody id="admin-groups-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="admin-account" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">🔐 學生登入帳號管理</h3>
-                    <p style="font-size:16px; color:#666;">💡 若學生忘記密碼，老師可以直接點擊「重設為座號」，將該生密碼初始化。</p>
-                    <table>
-                        <thead>
-                            <tr><th>座號</th><th>姓名</th><th>目前密碼</th><th>最後登入時間</th><th>最後修改密碼時間</th><th>操作</th></tr>
-                        </thead>
-                        <tbody id="admin-account-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="admin-gacha-logs" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">🎁 全班學生抽卡紀錄總表</h3>
-                    <table>
-                        <thead>
-                            <tr><th>座號</th><th>學生姓名</th><th>抽卡時間</th><th>消耗海螺</th><th>獲得鱷魚</th></tr>
-                        </thead>
-                        <tbody id="admin-gacha-log-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="admin-duty" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">🌟 本日值日生設定與修改</h3>
-                    <div class="checkbox-grid" id="duty-checkbox-list"></div>
-                    <div style="margin-top: 18px;">
-                        <button class="btn" style="font-size:16px; margin-right: 12px;" onclick="selectDutyCheckboxes(true)">全選</button>
-                        <button class="btn" style="background-color: #999; font-size:16px; margin-right: 18px;" onclick="selectDutyCheckboxes(false)">全不選</button>
-                        <button class="btn btn-yellow" onclick="saveDutyStudents()">💾 儲存本日值日生</button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="admin-tasks" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">📢 群發班級任務 (支援一次派發多樣任務)</h3>
-                    <p style="font-size: 16px; color: #666; margin-top: 0;">💡 您可以在下方文字框輸入多行任務（用**空行**或**逗號**分隔），系統會一次幫全班派發全部任務！</p>
-                    <textarea id="class-task-input" placeholder="例如：&#10;完成數學習作 P.10-12&#10;背國語第3課課文&#10;交視力檢查回條" rows="5" style="width: 100%; box-sizing: border-box; max-width: 800px;"></textarea>
-                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 10px; flex-wrap: wrap;">
-                        <div>
-                            <label style="font-size: 18px;">完成時限：</label>
-                            <input type="datetime-local" id="class-task-deadline">
-                        </div>
-                        <button class="btn btn-yellow" onclick="assignClassTask()">派發給全班</button>
-                    </div>
-                </div>
-
-                <div class="card" style="border-top: 5px solid var(--warning-color);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
-                        <h3 style="margin: 0; color: #f57f17;">📋 目前全班已派發的任務清單</h3>
-                        <button class="btn btn-danger" onclick="clearAllClassTasks()">🗑 一鍵收回所有全班任務</button>
-                    </div>
-                    <p style="font-size: 16px; color: #666; margin-top: 0;">💡 以下顯示目前所有全班性任務，您可以針對特定任務點擊「收回」來刪除它。</p>
-                    <table>
-                        <thead>
-                            <tr><th>任務內容</th><th>派發日期</th><th>完成期限</th><th>操作管理</th></tr>
-                        </thead>
-                        <tbody id="admin-class-task-list"></tbody>
-                    </table>
-                </div>
-
-                <div class="card">
-                    <h3 style="color: var(--sidebar-bg);">🎯 指派特定任務 (勾選多位學生)</h3>
-                    <div style="margin-bottom: 12px;">
-                        <button class="btn" style="font-size:16px; margin-right: 12px;" onclick="selectAllCheckboxes(true)">全選學生</button>
-                        <button class="btn" style="background-color: #999; font-size:16px;" onclick="selectAllCheckboxes(false)">全不選</button>
-                    </div>
-                    <div class="checkbox-grid" id="student-checkbox-list"></div>
-                    <input type="text" id="selected-task-input" placeholder="例如：訂正行為反思學習單" style="width: 50%;">
-                    <label style="font-size: 18px; margin-left: 12px;">完成時限：</label>
-                    <input type="datetime-local" id="selected-task-deadline">
-                    <button class="btn btn-yellow" onclick="assignSelectedTask()">發送任務給勾選學生</button>
-                </div>
-            </div>
-
-            <div id="admin-attendance" class="admin-section">
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
-                        <h3 style="margin: 0; color: var(--primary-color);">📅 出席狀態月曆與報表</h3>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <button class="btn" onclick="changeAttendanceMonth(-1)">⬅ 上個月</button>
-                            <span id="current-report-month-label" style="font-size: 22px; font-weight: bold; color: var(--sidebar-bg);"></span>
-                            <button class="btn" onclick="changeAttendanceMonth(1)">下個月 ➡️</button>
-                        </div>
-                        <button class="btn btn-success" onclick="exportAttendanceCSV()">📥 匯出出席狀況 Excel</button>
-                    </div>
-                    <div style="overflow-x: auto;">
-                        <table id="attendance-report-table">
-                            <thead></thead><tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="admin-task-report" class="admin-section">
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                        <h3 style="margin: 0; color: var(--primary-color);">📝 學生任務完成狀況與圓餅圖分析</h3>
-                        <button class="btn btn-success" onclick="exportTaskCSV()">📥 匯出每月任務完成率 Excel</button>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr><th>座號</th><th>姓名</th><th>未完成任務清單</th><th>狀態</th><th>圓餅圖分析 / 個別管理</th></tr>
-                        </thead>
-                        <tbody id="task-report-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="admin-points" class="admin-section">
-                <div class="card" style="background-color: #e8f5e9; border-top: 5px solid var(--success-color);">
-                    <h3 style="color: #2e7d32; margin-top: 0;">🎯 批次座號快速加分小幫手</h3>
-                    <p style="font-size: 16px; color: #555;">💡 請在下方輸入需要加分的<strong>學生座號</strong>（支援換行、逗號或空格隔開），接著選擇項目與數量，按下一鍵加分即可！</p>
-                    
-                    <textarea id="batch-seats-input" rows="3" placeholder="1&#10;3&#10;5" style="width: 100%; max-width: 650px;"></textarea>
-                    
-                    <div style="display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-top: 10px;">
-                        <div>
-                            <label>加分項目：</label>
-                            <select id="batch-point-type">
-                                <option value="points">海螺 🐚</option>
-                                <option value="alligator">鱷魚 🐊</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>增加數量：</label>
-                            <input type="number" id="batch-point-amount" value="1" min="1" max="100" style="width: 100px; margin-bottom:0;">
-                        </div>
-                        <button class="btn btn-success" onclick="executeBatchSeatPoints()">✨ 一鍵幫這些座號加分</button>
-                    </div>
-                </div>
-
-                <div class="card" style="background-color: #fff9c4; border-top: 5px solid var(--secondary-color);">
-                    <h3 style="color: #f57f17; margin-top: 0;">🐚 鱷魚全班批量加分</h3>
-                    <button class="btn btn-yellow" onclick="addGlobalPoints('points', 1)">全班海螺 +1 🐚</button>
-                    <button class="btn btn-yellow" onclick="addGlobalPoints('points', 2)">全班海螺 +2 🐚</button>
-                    <button class="btn btn-yellow" onclick="addGlobalPoints('alligator', 1)" style="background-color: #81c784; color: white;">全班鱷魚 +1 🐊</button>
-                </div>
-                
-                <div class="card" style="background-color: #ffebee; border-top: 5px solid var(--danger-color);">
-                    <h3 style="color: var(--danger-color); margin-top: 0;">⚠️ 系統數據一鍵重置 (危險操作)</h3>
-                    <button class="btn btn-danger" style="margin-right: 12px; margin-bottom: 8px;" onclick="clearAllTasks()">📝 學生任務一鍵清空</button>
-                    <button class="btn btn-danger" style="margin-right: 12px; margin-bottom: 8px;" onclick="resetAllPoints('points')">🐚 學生海螺積分一鍵歸零</button>
-                    <button class="btn btn-danger" style="margin-bottom: 8px;" onclick="resetAllPoints('alligator')">🐊 學生鱷魚積分一鍵歸零</button>
-                </div>
-                
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
-                        <h3 style="margin: 0; color: var(--primary-color);">個人積分與稱讚評語管理面板</h3>
-                        <button class="btn btn-success" style="font-size: 20px; padding: 12px 24px;" onclick="saveAllPraises()">⚡ 一鍵儲存全班評語狀態</button>
-                    </div>
-                    <p style="font-size: 16px; color: #666; margin-top: 0;">💡 您可以直接在下方個別學生的評語欄位輸入或修改，完成後點擊右上角的「一鍵儲存全班評語狀態」即可全部更新！</p>
-                    <table>
-                        <thead>
-                            <tr><th>座號</th><th>姓名</th><th>目前海螺 🐚</th><th>目前鱷魚 🐊</th><th>老師正向稱讚評語 (48小時自動移除)</th><th>加扣分操作</th></tr>
-                        </thead>
-                        <tbody id="admin-points-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="admin-tree" class="admin-section">
-                <div class="card" style="border-top: 5px solid var(--success-color);">
-                    <h3 style="color: #2e7d32; margin-top: 0;">🌳 乙棵成長樹經驗值手動加扣分管理</h3>
-                    <p style="font-size: 16px; color: #666;">💡 您可以在下方隨時為個別學生手動調整「樹木貢獻積分」（影響全班乙棵成長樹總進度與排行榜）。</p>
-                    <table>
-                        <thead>
-                            <tr><th>座號</th><th>學生姓名</th><th>目前樹木貢獻積分</th><th>手動加扣分操作</th></tr>
-                        </thead>
-                        <tbody id="admin-tree-points-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
             <div id="admin-settings" class="admin-section">
                 <div class="card">
-                    <h3 style="color: var(--primary-color);">⚙️ 平台名稱設定</h3>
-                    <input type="text" id="platform-name-input" placeholder="輸入平台名稱..." style="width: 60%;">
-                    <button class="btn btn-yellow" onclick="updatePlatformName()">儲存名稱</button>
-                </div>
-                <div class="card">
-                    <h3>🎨 平台主題色彩設定</h3>
-                    <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px;">
-                        <button class="btn" style="background-color: #FFC107; color:#333;" onclick="setTheme('yellow')">黃色主題</button>
-                        <button class="btn" style="background-color: #4CAF50; color:white;" onclick="setTheme('green')">綠色主題</button>
-                        <button class="btn" style="background-color: #FFFFFF; color:#333; border: 1px solid #ccc;" onclick="setTheme('white')">白色主題</button>
-                        <button class="btn" style="background-color: #212121; color:white;" onclick="setTheme('black')">黑色主題</button>
-                        <button class="btn" style="background-color: #1976D2; color:white;" onclick="setTheme('blue')">藍色主題</button>
-                        <button class="btn" style="background-color: #D32F2F; color:white;" onclick="setTheme('red')">紅色主題</button>
-                        <button class="btn" style="background-color: #0D47A1; color:white;" onclick="setTheme('royal-blue')">寶藍主題</button>
-                    </div>
-                </div>
-                <div class="card" style="border-top: 5px solid var(--success-color);">
-                    <h3 style="color: var(--success-color); margin-top: 0;">💾 班級資料備份與還原 (匯出 / 匯入)</h3>
-                    <p style="font-size: 16px; color: #666;">備份所有學生名單、積分、照片、任務與打卡紀錄！</p>
-                    <div style="display: flex; gap: 15px; margin-top: 18px; flex-wrap: wrap; align-items: center;">
-                        <button class="btn btn-success" onclick="exportBackupData()">📥 一鍵下載備份檔 (JSON)</button>
-                        <div style="border-left: 2px solid #ccc; height: 35px; margin: 0 10px;"></div>
-                        <input type="file" id="import-backup-file" accept=".json" style="display: none;" onchange="importBackupData(event)">
-                        <button class="btn" style="background-color: #607D8B; color: white;" onclick="document.getElementById('import-backup-file').click()">📤 上傳備份檔還原資料</button>
-                    </div>
+                    <h3>平台設定</h3>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 📖 校園植物圖鑑彈出視窗 -->
-    <div class="modal-overlay" id="campus-codex-modal" style="z-index: 1150;">
-        <div class="modal-content" style="max-width: 900px;">
-            <h2 style="color: #2e7d32; font-size: 36px; margin-bottom: 10px;">🌿 校園傳奇植物圖鑑榮譽榜</h2>
-            <p style="font-size: 18px; color: #666; margin-top: 0;">全班同心協力將成長樹養滿等，即可依序解鎖神秘的校園代表植物！未解鎖的樹種會以挖空問號顯示，累積集氣挑戰吧！</p>
-            <div class="codex-grid-container" id="campus-codex-grid"></div>
-            <br>
-            <button class="btn" onclick="closeModal('campus-codex-modal')" style="font-size: 20px; padding: 12px 30px;">關閉視窗</button>
-        </div>
-    </div>
-
-    <!-- 個別學生任務管理彈出視窗 -->
-    <div class="modal-overlay" id="admin-student-tasks-modal" style="z-index: 1150;">
-        <div class="modal-content" style="max-width: 800px;">
-            <h2 id="admin-modal-student-title" style="color: var(--primary-color); font-size: 34px;"></h2>
-            <p style="font-size: 20px; color: #666;">以下為該學生目前所有指派的任務清單，您可以隨時點擊「收回」來刪除特定任務：</p>
-            <div style="max-height: 400px; overflow-y: auto; margin: 20px 0;">
-                <table>
-                    <thead>
-                        <tr><th>任務內容</th><th>類型</th><th>期限</th><th>操作</th></tr>
-                    </thead>
-                    <tbody id="admin-student-task-list"></tbody>
-                </table>
-            </div>
-            <button class="btn" onclick="closeModal('admin-student-tasks-modal')" style="font-size: 20px; padding: 12px 25px;">關閉視窗</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="checkin-success-modal" style="z-index: 1100;">
-        <div class="modal-content" style="max-width: 600px; padding: 60px;">
-            <div style="font-size: 80px; margin-bottom: 20px;">🎉</div>
-            <h2 id="checkin-success-text" style="font-size: 36px; color: var(--success-color); margin-bottom: 40px; line-height: 1.5;"></h2>
-            <button class="btn btn-success" style="font-size: 28px; padding: 20px 40px; width: 100%; border-radius: 16px; box-shadow: 0 8px 15px rgba(0,0,0,0.2);" onclick="closeModal('checkin-success-modal')">我知道了！繼續任務</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="admin-alert-modal" style="z-index: 1200;">
-        <div class="modal-content" style="max-width: 600px; padding: 50px;">
-            <div style="font-size: 70px; margin-bottom: 15px;" id="admin-alert-icon">✨</div>
-            <h2 id="admin-alert-title" style="font-size: 32px; color: var(--primary-color); margin-bottom: 15px;"></h2>
-            <p id="admin-alert-text" style="font-size: 24px; color: #555; margin-bottom: 35px; line-height: 1.5;"></p>
-            <button class="btn btn-yellow" style="font-size: 26px; padding: 18px 40px; width: 100%; border-radius: 14px; box-shadow: 0 8px 15px rgba(0,0,0,0.2);" onclick="closeModal('admin-alert-modal')">確定</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="student-modal">
-        <div class="modal-content">
-            <div id="modal-top-badges" style="display:flex; justify-content:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;"></div>
-            <h2 id="modal-student-name" style="margin-top:0; font-size: 38px;"></h2>
-            <div id="modal-shells"></div>
-            <div id="modal-praise-area" style="margin-top: 15px;"></div>
-            <p id="modal-status" style="font-size: 22px; margin-top: 15px;"></p>
-            <button id="clock-in-btn" class="btn btn-yellow" style="width: 100%; margin-bottom: 25px; font-size: 48px; padding: 28px 0; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.25);">📍 點我出席打卡</button>
-            <div style="margin: 20px 0;">
-                <p style="font-weight: bold; font-size: 22px; margin-bottom: 12px; color: var(--sidebar-bg);">🏷️ 點擊設定目前任務去向：</p>
-                <div class="student-action-btn-group" id="student-task-buttons-container">
-                    <button class="task-option-btn" style="background-color: #E91E63;" onclick="setStudentTaskTag('潔牙')">潔牙</button>
-                    <button class="task-option-btn" style="background-color: #9C27B0;" onclick="setStudentTaskTag('Ｔ－ＢＡＬＬ')">Ｔ－ＢＡＬＬ</button>
-                    <button class="task-option-btn" style="background-color: #FF5722;" onclick="setStudentTaskTag('籃球隊')">籃球隊</button>
-                    <button class="task-option-btn" style="background-color: #3F51B5;" onclick="setStudentTaskTag('弦樂團')">弦樂團</button>
-                    <button class="task-option-btn" style="background-color: #00BCD4;" onclick="setStudentTaskTag('合唱團')">合唱團</button>
-                    <button class="task-option-btn" style="background-color: #4CAF50;" onclick="setStudentTaskTag('志工')">志工</button>
-                    <button class="task-option-btn" style="background-color: #FF9800;" onclick="setStudentTaskTag('童軍團')">童軍團</button>
-                    <button class="task-option-btn" style="background-color: #795548;" onclick="setStudentTaskTag('科展')">科展</button>
-                    <button class="task-option-btn" style="background-color: #607D8B;" onclick="setStudentTaskTag('任務')">任務</button>
-                    <button class="task-option-btn" style="background-color: #00897B;" onclick="setStudentTaskTag('會議')">會議</button>
-                    <button class="task-option-btn" style="background-color: #D32F2F;" onclick="setStudentTaskTag('旗手')">旗手</button>
-                    <button class="task-option-btn" style="background-color: #388E3C;" onclick="setStudentTaskTag('科學')">科學</button>
-                    <button class="task-option-btn" style="background-color: #C2185B;" onclick="setStudentTaskTag('榮譽下午茶')">榮譽下午茶</button>
-                </div>
-                <button class="btn" style="background-color: #999; font-size: 18px; padding: 8px 16px; margin-top: 8px;" onclick="clearStudentTaskTag()">清除任務標籤</button>
-            </div>
-            <div class="task-list">
-                <strong style="font-size: 24px;">📝 今日待辦任務 (全部準時完成可獲 1 🐚)：</strong>
-                <ul id="modal-task-list"></ul>
-                <div id="encouragement-msg" style="margin-top: 25px; font-size: 32px; font-weight: bold; color: #2e7d32; text-align: center; display: none;">
-                    🎉 我超級棒！我都完成了！（拍手）👏
-                </div>
-            </div>
-            <button class="btn" onclick="closeModal('student-modal')" style="font-size: 22px; padding: 14px 30px;">關閉視窗</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="gacha-rank-modal">
-        <div class="modal-content" style="max-width: 700px;">
-            <h2 style="color: #f57f17; font-size: 34px;">🏆 海螺抽卡轉蛋機 🐚</h2>
-            <p style="font-size: 20px; color: #666;">請點選您的名字（海螺需 5 個以上）進入抽卡畫面：</p>
-            <div style="max-height: 450px; overflow-y: auto; margin: 20px 0;">
-                <table>
-                    <thead>
-                        <tr><th style="font-size:20px;">排名</th><th style="font-size:22px;">座號與姓名</th><th style="font-size:20px;">目前海螺 🐚</th><th style="font-size:20px;">狀態</th></tr>
-                    </thead>
-                    <tbody id="gacha-rank-list"></tbody>
-                </table>
-            </div>
-            <button class="btn" onclick="closeModal('gacha-rank-modal')" style="font-size: 20px; padding: 12px 25px;">關閉視窗</button>
-        </div>
-    </div>
-
-    <!-- 🔮 魔法陣抽卡互動視窗 (6張卡牌：上3下3 + 能量條在標題下方) -->
-    <div class="modal-overlay" id="gacha-draw-modal">
-        <div class="modal-content" style="max-width: 950px; background: #0c081e; color: #fff; border: 3px solid #ffd700;">
-            <div class="divine-beam-overlay" id="divine-beam"></div>
-            <h2 id="gacha-draw-title" style="color: #ffd700; font-size: 32px; text-shadow: 0 0 10px rgba(255,215,0,0.6); margin-bottom: 5px;"></h2>
-            <p id="gacha-shell-status" style="font-size: 18px; font-weight: bold; color: #ffeb3b; margin-top: 0;"></p>
-            
-            <!-- 能量條放置在標題下方 -->
-            <div class="aura-bar-container">
-                <div class="aura-bar-title">
-                    <span>✨ 光芒能量條 (集滿 10 個 100% 抽中 2 隻鱷魚)</span>
-                    <span id="aura-count-text">0 / 10</span>
-                </div>
-                <div class="aura-progress-bg">
-                    <div class="aura-progress-fill" id="aura-progress-fill"></div>
-                </div>
-            </div>
-
-            <div class="gacha-magic-arena">
-                <div class="magic-circle-bg"></div>
-                <p id="gacha-hint" style="font-size: 18px; color: #e1bee7; position: relative; z-index: 5; margin-bottom: 12px; font-weight: bold;">🔮 魔法陣已啟動！請從下方 6 張神秘卡牌中挑選 1 張召喚 (每次消耗 5 🐚)</p>
-                <div class="gacha-card-container" id="gacha-cards-box"></div>
-            </div>
-
-            <br>
-            <button class="btn btn-yellow" id="gacha-redraw-btn" style="display: none; font-size: 20px; padding: 12px 25px;" onclick="startGachaDraw()">再抽一次 (消耗 5 海螺)</button>
-            <br><br>
-            <button class="btn" onclick="closeModal('gacha-draw-modal'); openGachaRankModal();" style="font-size: 20px; padding: 10px 22px; background: #4a237a;">返回排行榜</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="task-pie-modal">
-        <div class="modal-content" style="max-width: 800px;">
-            <h2 id="pie-modal-title" style="color: var(--primary-color); font-size: 34px;"></h2>
-            <div style="display: flex; justify-content: center; align-items: center; gap: 18px; margin-bottom: 25px;">
-                <button class="btn" onclick="changeTaskPieMonth(-1)" style="font-size: 18px;">⬅️ 上個月</button>
-                <span id="pie-month-label" style="font-size: 24px; font-weight: bold; color: var(--sidebar-bg);"></span>
-                <button class="btn" onclick="changeTaskPieMonth(1)" style="font-size: 18px;">下個月 ➡</button>
-            </div>
-            <div class="pie-chart-container">
-                <div class="pie-box">
-                    <h4 id="pie-student-name-header" style="margin: 0; color: #333; font-size: 20px;">學生個人完成率</h4>
-                    <div id="student-pie-chart" class="pie-chart">0%</div>
-                    <p id="student-pie-details" style="font-size: 16px; color: #666; margin: 8px 0;">已完成：0 / 總數：0</p>
-                </div>
-                <div class="pie-box">
-                    <h4 style="margin: 0; color: #333; font-size: 20px;">全班平均完成率</h4>
-                    <div id="class-pie-chart" class="pie-chart">0%</div>
-                    <p id="class-pie-details" style="font-size: 16px; color: #666; margin: 8px 0;">全班總完成：0 / 總數：0</p>
-                </div>
-            </div>
-            <button class="btn" style="margin-top: 20px; font-size: 22px; padding: 12px 30px;" onclick="closeModal('task-pie-modal')">關閉視窗</button>
+    <!-- 彈出視窗們 -->
+    <div class="modal-overlay" id="student-login-modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2 style="font-size: 32px;">👨🎓 學生個人面板登入</h2>
+            <input type="number" id="login-seat-input" placeholder="請輸入「座號」" style="width: 80%; text-align:center; font-size:22px; padding:15px; margin-bottom:18px;"><br>
+            <input type="password" id="login-password-input" placeholder="請輸入密碼 (預設為座號)" style="width: 80%; text-align:center; font-size:22px; padding:15px;"><br><br>
+            <button class="btn btn-yellow" onclick="checkStudentLogin()" style="font-size: 22px; padding: 14px 30px;">確認登入</button>
+            <button class="btn" onclick="closeModal('student-login-modal')" style="font-size: 22px; padding: 14px 30px;">取消</button>
         </div>
     </div>
 
@@ -1083,54 +436,19 @@
         <div class="modal-content" style="max-width: 500px;">
             <h2 style="font-size: 32px;">老師登入</h2>
             <p style="font-size: 20px;">請輸入管理員密碼：</p>
-            <input type="password" id="password-input" style="width: 80%; text-align:center; font-size:24px; padding:15px;">
-            <br><br>
+            <input type="password" id="password-input" style="width: 80%; text-align:center; font-size:24px; padding:15px;"><br><br>
             <button class="btn btn-yellow" onclick="checkLogin()" style="font-size: 22px; padding: 14px 30px;">登入</button>
             <button class="btn" onclick="closeModal('login-modal')" style="font-size: 22px; padding: 14px 30px;">取消</button>
         </div>
     </div>
 
-    <div class="modal-overlay" id="student-login-modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <h2 style="font-size: 32px;">👨🎓 學生個人面板登入</h2>
-            <input type="number" id="login-seat-input" placeholder="請輸入「座號」" style="width: 80%; text-align:center; font-size:22px; padding:15px; margin-bottom:18px;">
-            <input type="password" id="login-password-input" placeholder="請輸入密碼 (預設為座號)" style="width: 80%; text-align:center; font-size:22px; padding:15px;">
-            <br><br>
-            <button class="btn btn-yellow" onclick="checkStudentLogin()" style="font-size: 22px; padding: 14px 30px;">確認登入</button>
-            <button class="btn" onclick="closeModal('student-login-modal')" style="font-size: 22px; padding: 14px 30px;">取消</button>
-        </div>
-    </div>
-
     <script>
-        let platformName = "五年級班級平台";
         let students = [
-            { id: 1, seat: 1, name: "王小明", points: 5, alligator: 2, tasks: [], attendance: {}, password: "1" },
-            { id: 2, seat: 2, name: "李小華", points: 3, alligator: 1, tasks: [], attendance: {}, password: "2" }
+            { id: 1, seat: 1, name: "王小明", points: 5, alligator: 2, tasks: [], password: "1" },
+            { id: 2, seat: 2, name: "李小華", points: 3, alligator: 1, tasks: [], password: "2" }
         ];
         let announcements = ["歡迎來到五年級班級平台！"];
-        let dutyStudents = [];
         let loggedInStudentId = null;
-        let sidebarOrder = [];
-        let gachaLogs = [];
-        let studentGroups = []; 
-        let unlockedTrees = []; 
-        
-        let isCloudLoaded = false; 
-        let globalAudioCtx = null;
-
-        const taskTagColors = {
-            '潔牙': '#E91E63', 'Ｔ－ＢＡＬＬ': '#9C27B0', '籃球隊': '#FF5722',
-            '弦樂團': '#3F51B5', '合唱團': '#00BCD4', '志工': '#4CAF50', 
-            '童軍團': '#FF9800', '科展': '#795548', '任務': '#607D8B',
-            '會議': '#00897B', '旗手': '#D32F2F', '科學': '#388E3C', '榮譽下午茶': '#C2185B'
-        };
-
-        let currentStudentId = null;
-        let activeGachaStudentId = null;
-        let activeAdminStudentTaskId = null;
-        let attendanceReportDate = new Date();
-        let taskPieReportDate = new Date();
-        let activePieStudentId = null;
 
         function startLiveClock() {
             function updateClock() {
@@ -1151,13 +469,12 @@
             setInterval(updateClock, 1000);
         }
 
-        // 學生登入成功後呼叫此函式，強制隱藏時鐘
+        // 隱藏與顯示時鐘核心函式
         function hideClockForStudent() {
             const clock = document.getElementById('digital-clock-box');
             if (clock) clock.style.display = 'none';
         }
 
-        // 學生登出或返回首頁時呼叫此函式，重新顯示時鐘
         function showClockForHome() {
             const clock = document.getElementById('digital-clock-box');
             if (clock) clock.style.display = 'flex';
@@ -1169,7 +486,7 @@
             document.getElementById('student-view').style.display = 'flex';
             document.getElementById('student-login-btn').style.display = 'inline-block';
             document.getElementById('student-logout-btn').style.display = 'none';
-            showClockForHome(); // 恢復顯示時鐘
+            showClockForHome(); // 登出後恢復顯示時鐘
         }
 
         function checkStudentLogin() {
@@ -1218,7 +535,7 @@
 
         function checkLogin() {
             const pass = document.getElementById('password-input').value;
-            if (pass === "1234" || pass === "admin") { // 預設老師密碼
+            if (pass === "1234" || pass === "admin") {
                 closeModal('login-modal');
                 document.getElementById('student-view').style.display = 'none';
                 document.getElementById('student-personal-view').style.display = 'none';
@@ -1236,7 +553,7 @@
             document.getElementById('student-view').style.display = 'flex';
             document.getElementById('login-btn').style.display = 'inline-block';
             document.getElementById('logout-btn').style.display = 'none';
-            showClockForHome(); // 返回學生端首頁時恢復顯示時鐘
+            showClockForHome(); // 返回首頁時恢復顯示時鐘
         }
 
         function closeModal(modalId) {
@@ -1248,98 +565,6 @@
             if (!student) return;
             document.getElementById('personal-welcome').innerText = `歡迎回來，${student.seat}號 ${student.name}同學！`;
             document.getElementById('personal-points').innerHTML = `<span class="shell-score">海螺 🐚：${student.points}</span> &nbsp;&nbsp; <span class="alligator-score">鱷魚 🐊：${student.alligator || 0}</span>`;
-            
-            // 渲染公告
-            const annList = document.getElementById('personal-announcement-list');
-            if (annList) {
-                annList.innerHTML = announcements.map(a => `<li>${a}</li>`).join('') || '<li>目前沒有新公告</li>';
-            }
-        }
-
-        function changeStudentPassword() {
-            const newPass = document.getElementById('new-password-input').value.trim();
-            if (newPass.length !== 6 || !/^[A-Za-z0-9]+$/.test(newPass)) {
-                alert("密碼格式不符！必須剛好 6 碼且只能包含英文或數字。");
-                return;
-            }
-            const student = students.find(s => s.id === loggedInStudentId);
-            if (student) {
-                student.password = newPass;
-                alert("密碼修改成功！");
-                document.getElementById('new-password-input').value = '';
-            }
-        }
-
-        function openGachaRankModal() {
-            const tbody = document.getElementById('gacha-rank-list');
-            tbody.innerHTML = students.map((s, idx) => `
-                <tr>
-                    <td>${idx + 1}</td>
-                    <td>${s.seat} 號 - ${s.name}</td>
-                    <td>🐚 ${s.points}</td>
-                    <td><button class="btn btn-yellow" ${s.points < 5 ? 'disabled style="opacity:0.5"' : ''} onclick="openGachaDraw(${s.id})">抽卡 (消耗5海螺)</button></td>
-                </tr>
-            `).join('');
-            document.getElementById('gacha-rank-modal').style.display = 'flex';
-        }
-
-        function openGachaDraw(studentId) {
-            closeModal('gacha-rank-modal');
-            activeGachaStudentId = studentId;
-            const student = students.find(s => s.id === studentId);
-            document.getElementById('gacha-draw-title').innerText = `🔮 ${student.name} 的海螺抽卡召喚陣`;
-            document.getElementById('gacha-shell-status').innerText = `目前擁有海螺：${student.points} 🐚`;
-            document.getElementById('gacha-redraw-btn').style.display = 'none';
-            document.getElementById('gacha-draw-modal').style.display = 'flex';
-            renderGachaCards();
-        }
-
-        function renderGachaCards() {
-            const box = document.getElementById('gacha-cards-box');
-            box.innerHTML = '';
-            for (let i = 0; i < 6; i++) {
-                const card = document.createElement('div');
-                card.className = 'gacha-card';
-                card.innerHTML = `<span>✨ 神秘卡牌 #${i+1}</span><span style="font-size:14px; color:#bbb;">點擊翻開</span>`;
-                card.onclick = () => flipGachaCard(card);
-                box.appendChild(card);
-            }
-        }
-
-        function flipGachaCard(card) {
-            const student = students.find(s => s.id === activeGachaStudentId);
-            if (!student || student.points < 5) {
-                alert("海螺數量不足 5 個！");
-                return;
-            }
-            student.points -= 5;
-            card.classList.add('summoning');
-            setTimeout(() => {
-                card.classList.remove('summoning');
-                card.classList.add('flipped');
-                const gotAlligator = Math.random() < 0.3 ? 2 : 1;
-                student.alligator = (student.alligator || 0) + gotAlligator;
-                card.innerHTML = `🎉 恭喜獲得！<br><span style="font-size:26px; color:#ffeb3b;">${gotAlligator} 隻鱷魚 🐊</span>`;
-                document.getElementById('gacha-shell-status').innerText = `目前擁有海螺：${student.points} 🐚`;
-                document.getElementById('gacha-redraw-btn').style.display = 'inline-block';
-            }, 1400);
-        }
-
-        function startGachaDraw() {
-            openGachaDraw(activeGachaStudentId);
-        }
-
-        function openCampusCodexModal() {
-            const grid = document.getElementById('campus-codex-grid');
-            grid.innerHTML = '';
-            const plants = ['🌱 小草', '🌿 蕨類', '🌷 鬱金香', '🌻 向日葵', '🌳 榕樹', '🌸 櫻花', '🍁 楓樹', '🌴 椰子樹'];
-            plants.forEach((p, idx) => {
-                const item = document.createElement('div');
-                item.className = `codex-item ${idx < 2 ? 'unlocked' : ''}`;
-                item.innerHTML = `<div class="codex-item-icon">${idx < 2 ? p.split(' ')[0] : '❓'}</div><div class="codex-item-name">${p}</div>`;
-                grid.appendChild(item);
-            });
-            document.getElementById('campus-codex-modal').style.display = 'flex';
         }
 
         function switchAdminTab(tabId) {
@@ -1349,12 +574,10 @@
             event.currentTarget.classList.add('active');
         }
 
-        // 初始化載入
         window.onload = function() {
             startLiveClock();
             showClockForHome(); // 確保剛進網頁時時鐘顯示正常
             
-            // 簡易初始化首頁公告
             const annList = document.getElementById('student-announcement-list');
             if (annList) {
                 annList.innerHTML = announcements.map(a => `<li>${a}</li>`).join('');
