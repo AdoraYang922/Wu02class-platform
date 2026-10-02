@@ -1011,20 +1011,33 @@
                 console.log("讀取 Firebase 失敗", err);
             });
 
-            // 每隔 5 秒自動與雲端同步
-            setInterval(() => {
-                if (isCloudSyncing || !isCloudLoaded) return;
-                fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.students && data.students.length > 0) {
-                        isCloudSyncing = true;
-                        applyCloudData(data);
-                        refreshAllViews();
-                        setTimeout(() => { isCloudSyncing = false; }, 500);
-                    }
-                }).catch(e => {});
-            }, 5000);
+           // 每隔 5 秒自動與雲端同步（加入「正在輸入」與「正在勾選」的防護鎖）
+        setInterval(() => {
+            if (isCloudSyncing || !isCloudLoaded) return;
+            
+            // 🛑 防護鎖 1：如果老師或學生目前正在任何輸入框裡打字，絕對禁止自動更新覆蓋！
+            const activeEl = document.activeElement;
+            if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
+                return; 
+            }
+
+            // 🛑 防護鎖 2：如果目前畫面上有任何「已勾選 (checked)」的勾選框，代表老師正在操作選取，絕對禁止重新整理覆蓋！
+            const anyChecked = document.querySelectorAll('input[type="checkbox"]:checked');
+            if (anyChecked && anyChecked.length > 0) {
+                return;
+            }
+
+            fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.students && data.students.length > 0) {
+                    isCloudSyncing = true;
+                    applyCloudData(data);
+                    refreshAllViews();
+                    setTimeout(() => { isCloudSyncing = false; }, 500);
+                }
+            }).catch(e => {});
+        }, 5000);
         }
 
         function applyCloudData(data) {
