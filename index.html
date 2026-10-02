@@ -612,7 +612,7 @@
                 <div class="card" style="border-top: 5px solid var(--warning-color);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
                         <h3 style="margin: 0; color: #f57f17;">📋 目前全班已派發的任務清單</h3>
-                        <button class="btn btn-danger" onclick="clearAllClassTasks()">🗑️️ 一鍵收回所有全班任務</button>
+                        <button class="btn btn-danger" onclick="clearAllClassTasks()">🗑 一鍵收回所有全班任務</button>
                     </div>
                     <p style="font-size: 16px; color: #666; margin-top: 0;">💡 以下顯示目前所有全班性任務，您可以針對特定任務點擊「收回」來刪除它。</p>
                     <table>
@@ -936,7 +936,7 @@
         let sidebarOrder = [];
         let gachaLogs = [];
         let studentGroups = []; 
-        let unlockedTrees = []; // 🌿 校園植物圖鑑解鎖清單
+        let unlockedTrees = []; 
         
         let isCloudLoaded = false; 
 
@@ -949,6 +949,7 @@
 
         let currentStudentId = null;
         let activeGachaStudentId = null;
+        let activeAdminStudentTaskId = null;
         let attendanceReportDate = new Date();
         let taskPieReportDate = new Date();
         let activePieStudentId = null;
@@ -1010,7 +1011,6 @@
             if (selectedTaskInput && !selectedTaskInput.value) selectedTaskInput.value = `${y}-${m}-${d}T23:59`;
         }
 
-        // ==================== Firebase 雲端即時同步設定 ====================
         const FIREBASE_URL = "https://class02-8cb8e-default-rtdb.firebaseio.com/";
         let isCloudSyncing = false;
 
@@ -1025,16 +1025,10 @@
                     applyCloudData(data);
                     isCloudLoaded = true; 
                     refreshAllViews();
-                    console.log("✅ 成功從 Firebase 根目錄載入雲端資料庫並解鎖");
-                } else {
-                    console.log("⚠️ 雲端根目錄目前尚無學生資料，安全鎖維持中");
                 }
             })
-            .catch(err => {
-                console.log("讀取 Firebase 失敗", err);
-            });
+            .catch(err => {});
 
-            // 每隔 5 秒自動與雲端同步（具備防護鎖）
             setInterval(() => {
                 if (isCloudSyncing || !isCloudLoaded) return;
                 
@@ -1095,11 +1089,7 @@
 
         function saveDataToStorage() {
             if (isCloudSyncing) return;
-            
-            if (!isCloudLoaded) {
-                console.log("🛑 安全鎖攔截：雲端資料尚未同步完成，禁止覆蓋寫入以防歸零。");
-                return;
-            }
+            if (!isCloudLoaded) return;
 
             const rootData = {
                 platformName: platformName,
@@ -1116,12 +1106,9 @@
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(rootData)
-            }).catch(e => {
-                console.error("Firebase 同步失敗", e);
-            });
+            }).catch(e => {});
         }
 
-        // 🌿 成長樹階段定義與 8 種校園傳奇植物循環圖鑑清單
         const treeStages = [
             { name: "第一階段 - 種子期", max: 500, icon: "🌱" },
             { name: "第二階段 - 萌芽期", max: 700, icon: "🌿" },
@@ -1129,9 +1116,8 @@
             { name: "第四階段 - 茁壯期", max: 1200, icon: "🌲" },
             { name: "第五階段 - 豐收期", max: 1400, icon: "🍎" }
         ];
-        const totalTreeStagesMax = 500 + 700 + 900 + 1200 + 1400; // 4700 點滿等
+        const totalTreeStagesMax = 500 + 700 + 900 + 1200 + 1400;
 
-        // 完美湊足 8 種校園傳奇樹種與對應圖示
         const campusLegendaryTrees = [
             { name: "大王椰子樹", icon: "🌴" },
             { name: "百年老榕樹", icon: "🌳" },
@@ -1156,7 +1142,6 @@
             if (currentTotal >= totalTreeStagesMax && !localStorage.getItem(harvestedKey)) {
                 localStorage.setItem(harvestedKey, "true");
                 
-                // 依據循環次數解鎖圖鑑中的校園代表樹種 (循環解鎖 8 種)
                 let treeObj = campusLegendaryTrees[(cycleIndex - 1) % campusLegendaryTrees.length];
                 let treeToUnlock = treeObj.name;
                 
@@ -1224,7 +1209,6 @@
             }
         }
 
-        // 開啟校園植物圖鑑彈出視窗 (挖空驚喜模式)
         function openCampusCodexModal() {
             const gridContainer = document.getElementById('campus-codex-grid');
             gridContainer.innerHTML = '';
@@ -1307,7 +1291,6 @@
             }
         }
 
-        // 其他基礎函式保持完整
         function saveGroup() {
             const nameInput = document.getElementById('group-name-input').value.trim();
             const seatsInput = document.getElementById('group-seats-input').value.trim();
@@ -1441,12 +1424,8 @@
                             refreshAllViews();
                             showAdminAlert("還原成功", "✅ 班級所有資料已成功還原並寫入雲端！", "💾");
                         }
-                    } else {
-                        showAdminAlert("格式錯誤", "❌ 檔案格式不正確！", "⚠️");
                     }
-                } catch (err) {
-                    showAdminAlert("讀取失敗", "❌ 檔案讀取失敗！", "⚠️");
-                }
+                } catch (err) {}
                 document.getElementById('import-backup-file').value = '';
             };
             reader.readAsText(file);
@@ -1618,31 +1597,6 @@
                 draggedItem = null;
             }
         }
-        function applySidebarOrder() {
-            if (sidebarOrder.length === 0) return;
-            const sidebar = document.getElementById('admin-sidebar');
-            const items = Array.from(sidebar.querySelectorAll('.nav-item'));
-            sidebarOrder.forEach(tabId => {
-                const item = items.find(i => i.getAttribute('data-tab') === tabId);
-                if (item) sidebar.appendChild(item);
-            });
-        }
-
-        function getTodayDateStr() {
-            const now = new Date();
-            const y = now.getFullYear();
-            const m = String(now.getMonth() + 1).padStart(2, '0');
-            const d = String(now.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
-        }
-
-        function getWeekKey(date) {
-            const d = new Date(date);
-            const day = d.getDay();
-            const diff = d.getDate() - day + (day === 0 ? -6 : 1); 
-            const monday = new Date(d.setDate(diff));
-            return `${monday.getFullYear()}-${String(monday.getMonth()+1).padStart(2,'0')}-${String(monday.getDate()).padStart(2,'0')}`;
-        }
 
         function showStudentLoginModal() {
             document.getElementById('login-seat-input').value = '';
@@ -1766,6 +1720,14 @@
             attDiv.innerHTML = attHtml;
         }
 
+        function getWeekKey(date) {
+            const d = new Date(date);
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1); 
+            const monday = new Date(d.setDate(diff));
+            return `${monday.getFullYear()}-${String(monday.getMonth()+1).padStart(2,'0')}-${String(monday.getDate()).padStart(2,'0')}`;
+        }
+
         function checkWeekOnTimeAttendance(student) {
             const now = new Date();
             const monday = new Date(now);
@@ -1803,6 +1765,14 @@
             }
         }
 
+        function getTodayDateStr() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
         function checkDailyResets() {
             const todayStr = getTodayDateStr();
             let changed = false;
@@ -1819,6 +1789,7 @@
             return changed;
         }
 
+        // ==================== 科技時鐘即時驅動核心 ====================
         function startLiveClock() {
             function updateClock() {
                 const now = new Date();
@@ -2837,7 +2808,6 @@
 
         function saveAllPraises() {
             const inputs = document.querySelectorAll('.admin-praise-input');
-            let updatedCount = 0;
             inputs.forEach(input => {
                 const id = parseInt(input.getAttribute('data-student-id'));
                 const student = students.find(s => s.id === id);
@@ -2846,7 +2816,6 @@
                     if (student.praiseComment !== commentText) {
                         student.praiseComment = commentText;
                         student.praiseTimestamp = commentText ? new Date().getTime() : null;
-                        updatedCount++;
                     }
                 }
             });
@@ -2903,7 +2872,7 @@
                 platformName = val; 
                 saveDataToStorage();
                 refreshAllViews(); 
-                showAdminAlert("儲存成功", "平台名稱已更新！", "⚙️️"); 
+                showAdminAlert("儲存成功", "平台名稱已更新！", "⚙"); 
             }
         }
         function setTheme(themeName) {
