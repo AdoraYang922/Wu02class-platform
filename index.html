@@ -3079,7 +3079,7 @@
 
         function executeBatchSeatPoints() {
             const text = document.getElementById('batch-seats-input').value.trim();
-            if (!text) return showAdminAlert("提示", "❌ 請輸入或貼上要加分的學生座號！", "⚠️️");
+            if (!text) return showAdminAlert("提示", "❌ 請輸入或貼上要加分的學生座號！", "⚠️");
             
             let seatTokens = text.split(/[\n,，\s]+/).map(s => parseInt(s.trim())).filter(s => !isNaN(s));
             if (seatTokens.length === 0) return showAdminAlert("提示", "❌ 沒有解析到有效的座號！", "⚠️");
