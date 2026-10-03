@@ -593,15 +593,17 @@
                 <ul class="personal-task-list" id="personal-tasks"></ul>
             </div>
             <div class="personal-card" style="grid-column: 1 / -1; border-top: 5px solid var(--warning-color);">
-                <h3>🎁 個人抽卡紀錄專區</h3>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr><th>時間</th><th>消耗海螺</th><th>獲得鱷魚</th></tr>
-                        </thead>
-                        <tbody id="personal-gacha-logs"></tbody>
-                    </table>
-                </div>
+                <details style="cursor: pointer;">
+                    <summary style="font-size: 26px; font-weight: bold; color: var(--primary-color); outline: none; user-select: none;">🎁 個人抽卡紀錄專區 (點擊展開/收合)</summary>
+                    <div style="margin-top: 20px; max-height: 300px; overflow-y: auto;">
+                        <table>
+                            <thead>
+                                <tr><th>時間</th><th>消耗海螺</th><th>獲得鱷魚</th></tr>
+                            </thead>
+                            <tbody id="personal-gacha-logs"></tbody>
+                        </table>
+                    </div>
+                </details>
             </div>
             <div class="personal-card" style="grid-column: 1 / -1;">
                 <h3>📅 出缺席紀錄 (本月)</h3>
@@ -2922,7 +2924,7 @@
         function addBatchStudents() {
             let startSeat = parseInt(document.getElementById('batch-start-seat').value) || 1;
             const text = document.getElementById('batch-names-input').value.trim();
-            if(!text) return showAdminAlert("提示", "請輸入學生姓名！", "⚠️");
+            if(!text) return showAdminAlert("提示", "請輸入學生姓名！", "⚠️️");
             const names = text.split(/[\n,，\s]+/).map(n => n.trim()).filter(n => n !== '');
             if(names.length === 0) return showAdminAlert("提示", "沒有有效學生姓名！", "⚠️");
 
@@ -3171,12 +3173,12 @@
                 students.forEach(student => { student.tasks = []; student.shellRewardedToday = false; });
                 saveDataToStorage();
                 refreshAllViews(); 
-                showAdminAlert("清空成功", "全班任務已清空！", "🗑️️");
+                showAdminAlert("清空成功", "全班任務已清空！", "🗑");
             }
         }
         function resetAllPoints(type) {
             let label = type === 'points' ? '海螺 🐚' : '鱷魚 🐊';
-            if(confirm(`⚠️️ 警告：確定要將「全班」的 ${label} 積分歸零嗎？`)) {
+            if(confirm(`⚠ 警告：確定要將「全班」的 ${label} 積分歸零嗎？`)) {
                 students.forEach(student => {
                     if(type === 'points') student.points = 0;
                     if(type === 'alligator') student.alligator = 0;
