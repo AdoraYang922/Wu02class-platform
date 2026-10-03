@@ -1964,7 +1964,7 @@
                 document.getElementById('student-view').style.display = 'none';
                 document.getElementById('teacher-view').style.display = 'none';
                 document.getElementById('student-personal-view').style.display = 'block';
-                // 隱藏右下角時鐘
+                // 學生登入成功時，隱藏右下角時鐘
                 document.getElementById('digital-clock-box').style.display = 'none';
                 document.getElementById('login-btn').style.display = 'none';
                 document.getElementById('student-login-btn').style.display = 'none';
@@ -1982,7 +1982,7 @@
             loggedInStudentId = null;
             document.getElementById('student-personal-view').style.display = 'none';
             document.getElementById('student-view').style.display = 'flex';
-            // 恢復顯示右下角時鐘
+            // 學生登出後，恢復顯示右下角時鐘
             document.getElementById('digital-clock-box').style.display = 'flex';
             document.getElementById('student-logout-btn').style.display = 'none';
             document.getElementById('login-btn').style.display = 'inline-block';
@@ -3171,12 +3171,12 @@
                 students.forEach(student => { student.tasks = []; student.shellRewardedToday = false; });
                 saveDataToStorage();
                 refreshAllViews(); 
-                showAdminAlert("清空成功", "全班任務已清空！", "🗑️");
+                showAdminAlert("清空成功", "全班任務已清空！", "🗑️️");
             }
         }
         function resetAllPoints(type) {
             let label = type === 'points' ? '海螺 🐚' : '鱷魚 🐊';
-            if(confirm(`⚠️ 警告：確定要將「全班」的 ${label} 積分歸零嗎？`)) {
+            if(confirm(`⚠️️ 警告：確定要將「全班」的 ${label} 積分歸零嗎？`)) {
                 students.forEach(student => {
                     if(type === 'points') student.points = 0;
                     if(type === 'alligator') student.alligator = 0;
