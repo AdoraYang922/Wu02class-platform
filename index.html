@@ -519,7 +519,7 @@
             <button class="btn btn-yellow" onclick="openGachaRankModal()" style="background-color: #ff9800; color: white;">🎁 海螺抽卡</button>
             <button id="student-login-btn" class="btn btn-yellow" onclick="showStudentLoginModal()">👨‍🎓 學生登入</button>
             <button id="student-logout-btn" class="btn btn-yellow" onclick="studentLogout()" style="display: none;">登出個人面板</button>
-            <button id="login-btn" class="btn btn-yellow" onclick="showLoginModal()">👨‍‍🏫 老師登入</button>
+            <button id="login-btn" class="btn btn-yellow" onclick="showLoginModal()">👨‍🏫 老師登入</button>
             <button id="logout-btn" class="btn btn-yellow" onclick="logout()" style="display: none;">登出後台 (返回學生端)</button>
         </div>
     </div>
@@ -714,24 +714,22 @@
 
             <div id="admin-account" class="admin-section">
                 <div class="card" style="border-top: 5px solid var(--primary-light);">
-                    <h3 style="color: var(--primary-color); margin-top: 0;">🔐 老師直接修改學生密碼</h3>
-                    <p style="font-size: 16px; color: #666;">💡 您可以在下方選擇學生並直接為其設定新的 6 碼密碼：</p>
-                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
+                    <h3 style="color: var(--primary-color); margin-top: 0;">🔐 學生登入帳號管理與密碼修改</h3>
+                    <p style="font-size: 16px; color: #666;">💡 若學生忘記密碼，老師可以直接在下方選擇學生修改密碼，或點擊列表中的「重設為座號」初始化。</p>
+                    
+                    <!-- 整合進來的修改密碼區塊 -->
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px solid #ddd;">
                         <div>
-                            <label>選擇學生：</label>
+                            <label style="font-weight: bold;">選擇學生：</label>
                             <select id="admin-target-student-select" style="min-width: 200px; margin-bottom: 0;"></select>
                         </div>
                         <div>
-                            <label>新密碼：</label>
+                            <label style="font-weight: bold;">新密碼：</label>
                             <input type="password" id="admin-new-password-input" placeholder="剛好 6 碼英文或數字" style="width: 220px; margin-bottom: 0;">
                         </div>
                         <button class="btn btn-yellow" onclick="adminChangeStudentPassword()">確認修改密碼</button>
                     </div>
-                </div>
 
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">🔐 學生登入帳號總覽與快速重設</h3>
-                    <p style="font-size:16px; color:#666;">💡 若學生忘記密碼，老師也可以直接點擊「重設為座號」，將該生密碼初始化。</p>
                     <table>
                         <thead>
                             <tr><th>座號</th><th>姓名</th><th>目前密碼</th><th>最後登入時間</th><th>最後修改密碼時間</th><th>操作</th></tr>
@@ -1105,7 +1103,7 @@
 
     <div class="modal-overlay" id="student-login-modal">
         <div class="modal-content" style="max-width: 500px;">
-            <h2 style="font-size: 32px;">👨🎓 學生個人面板登入</h2>
+            <h2 style="font-size: 32px;">👨‍🎓 學生個人面板登入</h2>
             <input type="number" id="login-seat-input" placeholder="請輸入「座號」" style="width: 80%; text-align:center; font-size:22px; padding:15px; margin-bottom:18px;">
             <input type="password" id="login-password-input" placeholder="請輸入密碼 (預設為座號)" style="width: 80%; text-align:center; font-size:22px; padding:15px;">
             <br><br>
