@@ -581,13 +581,6 @@
                 <h3>🏆 專屬積分與老師稱讚</h3>
                 <div id="personal-points" style="margin-top:25px; text-align:center;"></div>
             </div>
-            <div class="personal-card">
-                <h3>🔐 修改登入密碼</h3>
-                <p style="font-size:18px; color:#666;">預設密碼為座號。為保護隱私，建議登入後立即修改！</p>
-                <input type="password" id="new-password-input" placeholder="限輸入剛好 6 碼 (英文或數字)" style="width: 70%;">
-                <button class="btn btn-yellow" onclick="changeStudentPassword()">確認修改</button>
-                <p style="font-size:16px; color:var(--danger-color); margin-top:8px;">⚠️ 限制：密碼必須剛好 6 碼，且只能包含英文或數字。</p>
-            </div>
             <div class="personal-card" style="grid-column: 1 / -1;">
                 <h3>📝 今日與近期任務紀錄</h3>
                 <ul class="personal-task-list" id="personal-tasks"></ul>
@@ -625,7 +618,7 @@
             <div class="nav-item active" draggable="true" data-tab="admin-dashboard" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-dashboard')">公告與總覽</div>
             <div class="nav-item" draggable="true" data-tab="admin-students" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-students')">學生管理 (新增/修改/照片/請假)</div>
             <div class="nav-item" draggable="true" data-tab="admin-groups" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-groups')">👥 學生分組與海螺加扣分 🐚</div>
-            <div class="nav-item" draggable="true" data-tab="admin-account" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-account')">學生帳號管理 🔐</div>
+            <div class="nav-item" draggable="true" data-tab="admin-account" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-account')">學生帳號管理與密碼修改 🔐</div>
             <div class="nav-item" draggable="true" data-tab="admin-gacha-logs" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-gacha-logs')">🎁 學生抽卡紀錄總表</div>
             <div class="nav-item" draggable="true" data-tab="admin-duty" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-duty')">本日值日生管理 🌟</div>
             <div class="nav-item" draggable="true" data-tab="admin-tasks" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-tasks')">任務指派中心</div>
@@ -720,9 +713,25 @@
             </div>
 
             <div id="admin-account" class="admin-section">
+                <div class="card" style="border-top: 5px solid var(--primary-light);">
+                    <h3 style="color: var(--primary-color); margin-top: 0;">🔐 老師直接修改學生密碼</h3>
+                    <p style="font-size: 16px; color: #666;">💡 您可以在下方選擇學生並直接為其設定新的 6 碼密碼：</p>
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
+                        <div>
+                            <label>選擇學生：</label>
+                            <select id="admin-target-student-select" style="min-width: 200px; margin-bottom: 0;"></select>
+                        </div>
+                        <div>
+                            <label>新密碼：</label>
+                            <input type="password" id="admin-new-password-input" placeholder="剛好 6 碼英文或數字" style="width: 220px; margin-bottom: 0;">
+                        </div>
+                        <button class="btn btn-yellow" onclick="adminChangeStudentPassword()">確認修改密碼</button>
+                    </div>
+                </div>
+
                 <div class="card">
-                    <h3 style="color: var(--primary-color);">🔐 學生登入帳號管理</h3>
-                    <p style="font-size:16px; color:#666;">💡 若學生忘記密碼，老師可以直接點擊「重設為座號」，將該生密碼初始化。</p>
+                    <h3 style="color: var(--primary-color);">🔐 學生登入帳號總覽與快速重設</h3>
+                    <p style="font-size:16px; color:#666;">💡 若學生忘記密碼，老師也可以直接點擊「重設為座號」，將該生密碼初始化。</p>
                     <table>
                         <thead>
                             <tr><th>座號</th><th>姓名</th><th>目前密碼</th><th>最後登入時間</th><th>最後修改密碼時間</th><th>操作</th></tr>
@@ -1993,17 +2002,20 @@
             document.getElementById('student-login-btn').style.display = 'inline-block';
         }
 
-        function changeStudentPassword() {
-            const newPwd = document.getElementById('new-password-input').value;
+        function adminChangeStudentPassword() {
+            const studentId = parseInt(document.getElementById('admin-target-student-select').value);
+            const newPwd = document.getElementById('admin-new-password-input').value.trim();
             if (!/^[A-Za-z0-9]{6}$/.test(newPwd)) return showAdminAlert("格式錯誤", "❌ 密碼必須為「剛好 6 碼」的英文或數字。", "⚠");
-            const student = students.find(s => s.id === loggedInStudentId);
+            const student = students.find(s => s.id === studentId);
+            if (!student) return showAdminAlert("錯誤", "❌ 找不到該學生。", "⚠");
+
             student.password = newPwd;
             const now = new Date();
-            student.lastPasswordChangeTime = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            student.lastPasswordChangeTime = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} (老師修改)`;
             saveDataToStorage();
             refreshAllViews();
-            showAdminAlert("修改成功", "✅ 密碼修改成功！下次請使用新密碼登入。", "🔒");
-            document.getElementById('new-password-input').value = '';
+            showAdminAlert("修改成功", `✅ 已成功將 ${student.seat}號 ${student.name} 的密碼修改為：${newPwd}`, "🔒");
+            document.getElementById('admin-new-password-input').value = '';
         }
 
         function renderStudentPersonalDashboard() {
@@ -2171,7 +2183,10 @@
 
         function renderAdminAccountList() {
             const tbody = document.getElementById('admin-account-list');
+            const selectEl = document.getElementById('admin-target-student-select');
             tbody.innerHTML = '';
+            if (selectEl) selectEl.innerHTML = '';
+
             students.forEach(student => {
                 tbody.innerHTML += `
                     <tr>
@@ -2181,6 +2196,10 @@
                         <td style="color:#666;">${student.lastPasswordChangeTime}</td>
                         <td><button class="btn btn-danger" style="font-size:15px; padding:8px 14px;" onclick="resetStudentPassword(${student.id})">重設為座號</button></td>
                     </tr>`;
+                
+                if (selectEl) {
+                    selectEl.innerHTML += `<option value="${student.id}">${student.seat}號 - ${student.name}</option>`;
+                }
             });
         }
 
@@ -2981,7 +3000,7 @@
                 students = students.filter(s => s.id !== id); 
                 saveDataToStorage();
                 refreshAllViews(); 
-                showAdminAlert("刪除成功", "學生已刪除！", "🗑️"); 
+                showAdminAlert("刪除成功", "學生已刪除！", "🗑️️"); 
             }
         }
 
@@ -3069,7 +3088,7 @@
             const deadline = document.getElementById('selected-task-deadline').value;
             if(!taskText) return showAdminAlert("提示", "請輸入任務內容！", "⚠️");
             const checkboxes = document.querySelectorAll('.student-checkbox:checked');
-            if(checkboxes.length === 0) return showAdminAlert("提示", "請勾選學生！", "⚠️️");
+            if(checkboxes.length === 0) return showAdminAlert("提示", "請勾選學生！", "⚠");
             const today = getTodayDateStr();
             checkboxes.forEach(cb => {
                 const student = students.find(s => s.id === parseInt(cb.value));
