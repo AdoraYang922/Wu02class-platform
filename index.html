@@ -535,7 +535,7 @@
         <div class="sticky-header-container">
             <h2 class="class-main-title">✨ 五乙打卡站 ✨</h2>
             <div class="daily-routine-bar">
-                <span class="routine-tag">🗣️️ 跟老師問早</span> <span class="routine-arrow">➔</span>
+                <span class="routine-tag">🗣 跟老師問早</span> <span class="routine-arrow">➔</span>
                 <span class="routine-tag">📥 交作業</span> <span class="routine-arrow">➔</span>
                 <span class="routine-tag">📖 抄聯絡簿</span> <span class="routine-arrow">➔</span>
                 <span class="routine-tag">📍 打卡</span> <span class="routine-arrow">➔</span>
@@ -1964,6 +1964,8 @@
                 document.getElementById('student-view').style.display = 'none';
                 document.getElementById('teacher-view').style.display = 'none';
                 document.getElementById('student-personal-view').style.display = 'block';
+                // 隱藏右下角時鐘
+                document.getElementById('digital-clock-box').style.display = 'none';
                 document.getElementById('login-btn').style.display = 'none';
                 document.getElementById('student-login-btn').style.display = 'none';
                 document.getElementById('logout-btn').style.display = 'none';
@@ -1980,6 +1982,8 @@
             loggedInStudentId = null;
             document.getElementById('student-personal-view').style.display = 'none';
             document.getElementById('student-view').style.display = 'flex';
+            // 恢復顯示右下角時鐘
+            document.getElementById('digital-clock-box').style.display = 'flex';
             document.getElementById('student-logout-btn').style.display = 'none';
             document.getElementById('login-btn').style.display = 'inline-block';
             document.getElementById('student-login-btn').style.display = 'inline-block';
@@ -3075,7 +3079,7 @@
 
         function executeBatchSeatPoints() {
             const text = document.getElementById('batch-seats-input').value.trim();
-            if (!text) return showAdminAlert("提示", "❌ 請輸入或貼上要加分的學生座號！", "⚠️");
+            if (!text) return showAdminAlert("提示", "❌ 請輸入或貼上要加分的學生座號！", "⚠️️");
             
             let seatTokens = text.split(/[\n,，\s]+/).map(s => parseInt(s.trim())).filter(s => !isNaN(s));
             if (seatTokens.length === 0) return showAdminAlert("提示", "❌ 沒有解析到有效的座號！", "⚠️");
@@ -3179,7 +3183,7 @@
                 });
                 saveDataToStorage();
                 refreshAllViews(); 
-                showAdminAlert("歸零成功", `全班 ${label} 已歸零！`, "⚠️️");
+                showAdminAlert("歸零成功", `全班 ${label} 已歸零！`, "⚠");
             }
         }
 
