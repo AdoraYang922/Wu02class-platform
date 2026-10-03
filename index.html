@@ -2924,7 +2924,7 @@
         function addBatchStudents() {
             let startSeat = parseInt(document.getElementById('batch-start-seat').value) || 1;
             const text = document.getElementById('batch-names-input').value.trim();
-            if(!text) return showAdminAlert("提示", "請輸入學生姓名！", "⚠️️");
+            if(!text) return showAdminAlert("提示", "請輸入學生姓名！", "⚠");
             const names = text.split(/[\n,，\s]+/).map(n => n.trim()).filter(n => n !== '');
             if(names.length === 0) return showAdminAlert("提示", "沒有有效學生姓名！", "⚠️");
 
