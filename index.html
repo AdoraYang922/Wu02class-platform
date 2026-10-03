@@ -605,9 +605,11 @@
                     </div>
                 </details>
             </div>
-            <div class="personal-card" style="grid-column: 1 / -1;">
-                <h3>📅 出缺席紀錄 (本月)</h3>
-                <div id="personal-attendance" style="margin-top:18px;"></div>
+            <div class="personal-card" style="grid-column: 1 / -1; border-top: 5px solid var(--success-color);">
+                <details style="cursor: pointer;">
+                    <summary style="font-size: 26px; font-weight: bold; color: var(--primary-color); outline: none; user-select: none;">📅 出缺席紀錄 (本月) (點擊展開/收合)</summary>
+                    <div id="personal-attendance" style="margin-top:20px; max-height: 300px; overflow-y: auto;"></div>
+                </details>
             </div>
             <div class="personal-card" style="grid-column: 1 / -1; border-top: 5px solid var(--secondary-color);">
                 <h3>📢 班級最新公告</h3>
