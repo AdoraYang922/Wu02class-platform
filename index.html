@@ -2046,7 +2046,9 @@
             const y = today.getFullYear();
             const m = String(today.getMonth() + 1).padStart(2, '0');
             const daysInMonth = new Date(y, today.getMonth() + 1, 0).getDate();
-            let attHtml = '<ul style="list-style:none; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:18px;">';
+            
+            // 修正：改用垂直清單排版 (display: flex; flex-direction: column;) 讓出缺席紀錄上下整齊排列
+            let attHtml = '<ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:12px; font-size:18px; margin:0;">';
             let hasRecord = false;
             for (let d = 1; d <= daysInMonth; d++) {
                 const dateKey = `${y}-${m}-${String(d).padStart(2, '0')}`;
@@ -2063,8 +2065,8 @@
                         if (!isNaN(h) && h * 60 + min > 480) { color = 'var(--warning-color)'; statusText = `黃燈遲到 (${val})`; }
                         else if (!isNaN(h)) { statusText = `綠燈準時 (${val})`; }
                     }
-                    attHtml += `<li style="background:#f9f9f9; padding:10px 14px; border-radius:6px; border-left:5px solid ${color};">
-                        <strong>${dateKey}</strong> - <span style="color:${color}; font-weight:bold;">${statusText}</span></li>`;
+                    attHtml += `<li style="background:#f9f9f9; padding:12px 18px; border-radius:8px; border-left:6px solid ${color}; display:flex; justify-content:space-between; align-items:center;">
+                        <strong>${dateKey}</strong> <span style="color:${color}; font-weight:bold;">${statusText}</span></li>`;
                 }
             }
             attHtml += '</ul>';
@@ -3067,7 +3069,7 @@
             const deadline = document.getElementById('selected-task-deadline').value;
             if(!taskText) return showAdminAlert("提示", "請輸入任務內容！", "⚠️");
             const checkboxes = document.querySelectorAll('.student-checkbox:checked');
-            if(checkboxes.length === 0) return showAdminAlert("提示", "請勾選學生！", "⚠️");
+            if(checkboxes.length === 0) return showAdminAlert("提示", "請勾選學生！", "⚠️️");
             const today = getTodayDateStr();
             checkboxes.forEach(cb => {
                 const student = students.find(s => s.id === parseInt(cb.value));
