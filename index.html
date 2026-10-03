@@ -626,7 +626,7 @@
             <div class="nav-item" draggable="true" data-tab="admin-task-report" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-task-report')">學生任務狀態報表 📝</div>
             <div class="nav-item" draggable="true" data-tab="admin-points" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-points')">學生獎勵積分 (海螺與鱷魚) 🐚🐊</div>
             <div class="nav-item" draggable="true" data-tab="admin-tree" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-tree')">🌳 乙棵成長樹管理 (加扣分)</div>
-            <!-- 🆕 新增：老師管理員密碼修改側邊欄導覽按鈕 -->
+            <!-- 🔐 老師管理員密碼修改側邊欄導覽按鈕 -->
             <div class="nav-item" draggable="true" data-tab="admin-admin-pwd" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-admin-pwd')">🔐 老師密碼修改</div>
             <div class="nav-item" draggable="true" data-tab="admin-settings" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-settings')">平台與外觀設定 ⚙️</div>
         </div>
@@ -1372,10 +1372,55 @@
                 announcements = data.announcements.map(a => typeof a === 'string' ? { text: a, color: '#333333', weight: 'normal' } : a);
             }
             if (data.dutyStudents) dutyStudents = data.dutyStudents;
-            if (data.sidebarOrder) sidebarOrder = data.sidebarOrder;
+            if (data.sidebarOrder) {
+                sidebarOrder = data.sidebarOrder;
+                // 💡 自動防呆：確保儲存的排序中一定包含新的密碼修改分頁，若沒有則自動補上
+                if (!sidebarOrder.includes('admin-admin-pwd')) {
+                    sidebarOrder.push('admin-admin-pwd');
+                }
+            }
             if (data.gachaLogs) gachaLogs = data.gachaLogs;
             if (data.studentGroups) studentGroups = data.studentGroups;
             if (data.unlockedTrees) unlockedTrees = data.unlockedTrees;
+
+            applySidebarOrder();
+        }
+
+        // 💡 側邊欄動態套用排序與補上密碼修改項目的函式
+        function applySidebarOrder() {
+            const sidebar = document.getElementById('admin-sidebar');
+            if (!sidebar) return;
+            const items = Array.from(sidebar.querySelectorAll('.nav-item'));
+            const itemMap = {};
+            items.forEach(item => {
+                itemMap[item.getAttribute('data-tab')] = item;
+            });
+
+            // 預設順序
+            let defaultOrder = [
+                'admin-dashboard', 'admin-students', 'admin-groups', 'admin-account',
+                'admin-gacha-logs', 'admin-duty', 'admin-tasks', 'admin-attendance',
+                'admin-task-report', 'admin-points', 'admin-tree', 'admin-admin-pwd', 'admin-settings'
+            ];
+
+            let orderToUse = sidebarOrder.length > 0 ? sidebarOrder : defaultOrder;
+            if (!orderToUse.includes('admin-admin-pwd')) {
+                orderToUse.push('admin-admin-pwd');
+            }
+
+            // 清空並依序重新插入
+            orderToUse.forEach(tab => {
+                if (itemMap[tab]) {
+                    sidebar.appendChild(itemMap[tab]);
+                }
+            });
+            // 把任何遺漏的項目也加進去
+            items.forEach(item => {
+                const tab = item.getAttribute('data-tab');
+                if (!orderToUse.includes(tab)) {
+                    sidebar.appendChild(item);
+                }
+            });
         }
 
         function saveDataToStorage() {
@@ -3017,7 +3062,7 @@
                 students = students.filter(s => !selectedIds.includes(s.id));
                 saveDataToStorage();
                 refreshAllViews(); 
-                showAdminAlert("刪除成功", "已成功刪除所選學生！", "🗑️");
+                showAdminAlert("刪除成功", "已成功刪除所選學生！", "🗑️️");
             }
         }
         function editStudent(id) {
