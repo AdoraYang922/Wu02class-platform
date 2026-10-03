@@ -717,7 +717,6 @@
                     <h3 style="color: var(--primary-color); margin-top: 0;">🔐 學生登入帳號管理與密碼修改</h3>
                     <p style="font-size: 16px; color: #666;">💡 若學生忘記密碼，老師可以直接在下方選擇學生修改密碼，或點擊列表中的「重設為座號」初始化。</p>
                     
-                    <!-- 整合進來的修改密碼區塊 -->
                     <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px solid #ddd;">
                         <div>
                             <label style="font-weight: bold;">選擇學生：</label>
@@ -812,7 +811,7 @@
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <button class="btn" onclick="changeAttendanceMonth(-1)">⬅ 上個月</button>
                             <span id="current-report-month-label" style="font-size: 22px; font-weight: bold; color: var(--sidebar-bg);"></span>
-                            <button class="btn" onclick="changeAttendanceMonth(1)">下個月 ➡️</button>
+                            <button class="btn" onclick="changeAttendanceMonth(1)">下個月 ➡️️</button>
                         </div>
                         <button class="btn btn-success" onclick="exportAttendanceCSV()">📥 匯出出席狀況 Excel</button>
                     </div>
@@ -910,6 +909,24 @@
                     <input type="text" id="platform-name-input" placeholder="輸入平台名稱..." style="width: 60%;">
                     <button class="btn btn-yellow" onclick="updatePlatformName()">儲存名稱</button>
                 </div>
+                
+                <!-- 🆕 新增：老師管理員密碼修改專屬區塊 -->
+                <div class="card" style="border-top: 5px solid var(--danger-color);">
+                    <h3 style="color: var(--danger-color); margin-top: 0;">🔐 老師管理員密碼修改</h3>
+                    <p style="font-size: 16px; color: #666;">💡 您可以在此變更進入後台的老師登入密碼（預設為 0922）。</p>
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 15px;">
+                        <div>
+                            <label style="font-weight: bold;">舊密碼：</label>
+                            <input type="password" id="admin-old-pwd" placeholder="請輸入目前密碼" style="width: 180px; margin-bottom:0;">
+                        </div>
+                        <div>
+                            <label style="font-weight: bold;">新密碼：</label>
+                            <input type="password" id="admin-new-pwd" placeholder="請輸入新密碼" style="width: 180px; margin-bottom:0;">
+                        </div>
+                        <button class="btn btn-danger" onclick="updateAdminPassword()">確認變更老師密碼</button>
+                    </div>
+                </div>
+
                 <div class="card">
                     <h3>🎨 平台主題色彩設定</h3>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px;">
@@ -990,7 +1007,7 @@
             <p id="modal-status" style="font-size: 22px; margin-top: 15px;"></p>
             <button id="clock-in-btn" class="btn btn-yellow" style="width: 100%; margin-bottom: 25px; font-size: 48px; padding: 28px 0; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.25);">📍 點我出席打卡</button>
             <div style="margin: 20px 0;">
-                <p style="font-weight: bold; font-size: 22px; margin-bottom: 12px; color: var(--sidebar-bg);">🏷️ 點擊設定目前任務去向：</p>
+                <p style="font-weight: bold; font-size: 22px; margin-bottom: 12px; color: var(--sidebar-bg);">🏷️️ 點擊設定目前任務去向：</p>
                 <div class="student-action-btn-group" id="student-task-buttons-container">
                     <button class="task-option-btn" style="background-color: #E91E63;" onclick="setStudentTaskTag('潔牙')">潔牙</button>
                     <button class="task-option-btn" style="background-color: #9C27B0;" onclick="setStudentTaskTag('Ｔ－ＢＡＬＬ')">Ｔ－ＢＡＬＬ</button>
@@ -1103,7 +1120,7 @@
 
     <div class="modal-overlay" id="student-login-modal">
         <div class="modal-content" style="max-width: 500px;">
-            <h2 style="font-size: 32px;">👨‍🎓 學生個人面板登入</h2>
+            <h2 style="font-size: 32px;">👨‍‍🎓 學生個人面板登入</h2>
             <input type="number" id="login-seat-input" placeholder="請輸入「座號」" style="width: 80%; text-align:center; font-size:22px; padding:15px; margin-bottom:18px;">
             <input type="password" id="login-password-input" placeholder="請輸入密碼 (預設為座號)" style="width: 80%; text-align:center; font-size:22px; padding:15px;">
             <br><br>
@@ -1114,6 +1131,7 @@
 
     <script>
         let platformName = "五年級班級平台";
+        let adminPassword = "0922"; // 預設老師密碼
         let students = [];
         let announcements = [];
         let dutyStudents = [];
@@ -1288,7 +1306,7 @@
             fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
             .then(response => response.json())
             .then(data => {
-                if (data && data.students && data.students.length > 0) {
+                if (data) {
                     applyCloudData(data);
                     isCloudLoaded = true; 
                     refreshAllViews();
@@ -1312,7 +1330,7 @@
                 fetch(FIREBASE_URL + ".json", { cache: 'no-store' })
                 .then(res => res.json())
                 .then(data => {
-                    if (data && data.students && data.students.length > 0) {
+                    if (data) {
                         isCloudSyncing = true;
                         applyCloudData(data);
                         refreshAllViews();
@@ -1324,6 +1342,7 @@
 
         function applyCloudData(data) {
             if (data.platformName) platformName = data.platformName;
+            if (data.adminPassword) adminPassword = data.adminPassword;
             if (data.students) {
                 students = data.students;
                 students.forEach(s => {
@@ -1361,6 +1380,7 @@
 
             const rootData = {
                 platformName: platformName,
+                adminPassword: adminPassword,
                 students: students,
                 announcements: announcements,
                 dutyStudents: dutyStudents,
@@ -1657,7 +1677,7 @@
 
         function exportBackupData() {
             const backupData = {
-                platformName: platformName, students: students, announcements: announcements,
+                platformName: platformName, adminPassword: adminPassword, students: students, announcements: announcements,
                 dutyStudents: dutyStudents, sidebarOrder: sidebarOrder, gachaLogs: gachaLogs, studentGroups: studentGroups, unlockedTrees: unlockedTrees
             };
             const dataStr = JSON.stringify(backupData);
@@ -1680,6 +1700,7 @@
                     if (data.students) {
                         if(confirm("⚠️ 警告：還原資料將會覆蓋目前的「所有」紀錄！確定要繼續嗎？")) {
                             platformName = data.platformName || "五年級班級平台";
+                            adminPassword = data.adminPassword || "0922";
                             students = data.students || [];
                             announcements = data.announcements || [];
                             dutyStudents = data.dutyStudents || [];
@@ -1793,7 +1814,6 @@
             document.getElementById('gacha-draw-title').innerText = `🔮 ${student.seat}號 ${student.name} 的魔法召喚陣`;
             document.getElementById('gacha-shell-status').innerHTML = `目前剩餘海螺：🐚 <span style="font-size:24px;">${student.points}</span> 個`;
             
-            // 更新能量條顯示
             const auraCount = student.gachaAura;
             document.getElementById('aura-count-text').innerText = `${auraCount} / 10`;
             const auraPercent = Math.min(100, (auraCount / 10) * 100);
@@ -1819,7 +1839,6 @@
             }
         }
 
-        // 🔮 播放魔法閃亮音效 (Web Audio API 動態合成)
         function playSparkleSound() {
             try {
                 if (!globalAudioCtx) {
@@ -1895,7 +1914,6 @@
             divineBeam.classList.add('active');
             document.getElementById('gacha-hint').innerText = "⚡ 神聖光柱降臨！魔法卡牌正在凝聚力量...";
 
-            // 🎵 點擊卡片瞬間觸發閃亮音效
             playSparkleSound();
 
             setTimeout(() => {
@@ -1903,7 +1921,6 @@
                 targetCard.classList.remove('summoning');
                 targetCard.classList.add('flipped');
 
-                // 🌟 如果抽中 2 隻鱷魚，額外觸發聚光燈與左右灑花特效！
                 if (alligatorWon === 2) {
                     targetCard.classList.add('spotlight-active');
                     triggerDoubleAlligatorConfetti();
@@ -1975,7 +1992,6 @@
                 document.getElementById('student-view').style.display = 'none';
                 document.getElementById('teacher-view').style.display = 'none';
                 document.getElementById('student-personal-view').style.display = 'block';
-                // 學生登入成功時，隱藏右下角時鐘
                 document.getElementById('digital-clock-box').style.display = 'none';
                 document.getElementById('login-btn').style.display = 'none';
                 document.getElementById('student-login-btn').style.display = 'none';
@@ -1993,7 +2009,6 @@
             loggedInStudentId = null;
             document.getElementById('student-personal-view').style.display = 'none';
             document.getElementById('student-view').style.display = 'flex';
-            // 學生登出後，恢復顯示右下角時鐘
             document.getElementById('digital-clock-box').style.display = 'flex';
             document.getElementById('student-logout-btn').style.display = 'none';
             document.getElementById('login-btn').style.display = 'inline-block';
@@ -2014,6 +2029,25 @@
             refreshAllViews();
             showAdminAlert("修改成功", `✅ 已成功將 ${student.seat}號 ${student.name} 的密碼修改為：${newPwd}`, "🔒");
             document.getElementById('admin-new-password-input').value = '';
+        }
+
+        // 🔐 老師修改管理員密碼函數
+        function updateAdminPassword() {
+            const oldPwd = document.getElementById('admin-old-pwd').value;
+            const newPwd = document.getElementById('admin-new-pwd').value.trim();
+            
+            if (oldPwd !== adminPassword) {
+                return showAdminAlert("修改失敗", "❌ 舊密碼輸入錯誤！", "⚠");
+            }
+            if (!newPwd) {
+                return showAdminAlert("修改失敗", "❌ 新密碼不得為空白！", "⚠");
+            }
+
+            adminPassword = newPwd;
+            saveDataToStorage();
+            document.getElementById('admin-old-pwd').value = '';
+            document.getElementById('admin-new-pwd').value = '';
+            showAdminAlert("修改成功", "✅ 老師管理員密碼已成功更新！", "🔐");
         }
 
         function renderStudentPersonalDashboard() {
@@ -2057,7 +2091,6 @@
             const m = String(today.getMonth() + 1).padStart(2, '0');
             const daysInMonth = new Date(y, today.getMonth() + 1, 0).getDate();
             
-            // 修正：改用垂直清單排版 (display: flex; flex-direction: column;) 讓出缺席紀錄上下整齊排列
             let attHtml = '<ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:12px; font-size:18px; margin:0;">';
             let hasRecord = false;
             for (let d = 1; d <= daysInMonth; d++) {
@@ -2515,7 +2548,8 @@
         }
 
         function checkLogin() {
-            if (document.getElementById('password-input').value === '0922') {
+            const pwdInput = document.getElementById('password-input').value;
+            if (pwdInput === adminPassword) {
                 closeModal('login-modal');
                 document.getElementById('student-view').style.display = 'none';
                 document.getElementById('student-personal-view').style.display = 'none';
