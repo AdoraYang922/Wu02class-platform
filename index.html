@@ -626,6 +626,8 @@
             <div class="nav-item" draggable="true" data-tab="admin-task-report" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-task-report')">學生任務狀態報表 📝</div>
             <div class="nav-item" draggable="true" data-tab="admin-points" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-points')">學生獎勵積分 (海螺與鱷魚) 🐚🐊</div>
             <div class="nav-item" draggable="true" data-tab="admin-tree" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-tree')">🌳 乙棵成長樹管理 (加扣分)</div>
+            <!-- 🆕 新增：老師管理員密碼修改側邊欄導覽按鈕 -->
+            <div class="nav-item" draggable="true" data-tab="admin-admin-pwd" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-admin-pwd')">🔐 老師密碼修改</div>
             <div class="nav-item" draggable="true" data-tab="admin-settings" ondragstart="drag(event)" ondrop="drop(event)" onclick="switchAdminTab('admin-settings')">平台與外觀設定 ⚙️</div>
         </div>
         
@@ -811,7 +813,7 @@
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <button class="btn" onclick="changeAttendanceMonth(-1)">⬅ 上個月</button>
                             <span id="current-report-month-label" style="font-size: 22px; font-weight: bold; color: var(--sidebar-bg);"></span>
-                            <button class="btn" onclick="changeAttendanceMonth(1)">下個月 ➡️️</button>
+                            <button class="btn" onclick="changeAttendanceMonth(1)">下個月 ➡</button>
                         </div>
                         <button class="btn btn-success" onclick="exportAttendanceCSV()">📥 匯出出席狀況 Excel</button>
                     </div>
@@ -903,14 +905,8 @@
                 </div>
             </div>
 
-            <div id="admin-settings" class="admin-section">
-                <div class="card">
-                    <h3 style="color: var(--primary-color);">⚙️ 平台名稱設定</h3>
-                    <input type="text" id="platform-name-input" placeholder="輸入平台名稱..." style="width: 60%;">
-                    <button class="btn btn-yellow" onclick="updatePlatformName()">儲存名稱</button>
-                </div>
-                
-                <!-- 🆕 新增：老師管理員密碼修改專屬區塊 -->
+            <!-- 🔐 獨立出來的老師管理員密碼修改專屬後台頁面區塊 -->
+            <div id="admin-admin-pwd" class="admin-section">
                 <div class="card" style="border-top: 5px solid var(--danger-color);">
                     <h3 style="color: var(--danger-color); margin-top: 0;">🔐 老師管理員密碼修改</h3>
                     <p style="font-size: 16px; color: #666;">💡 您可以在此變更進入後台的老師登入密碼（預設為 0922）。</p>
@@ -925,6 +921,14 @@
                         </div>
                         <button class="btn btn-danger" onclick="updateAdminPassword()">確認變更老師密碼</button>
                     </div>
+                </div>
+            </div>
+
+            <div id="admin-settings" class="admin-section">
+                <div class="card">
+                    <h3 style="color: var(--primary-color);">⚙️ 平台名稱設定</h3>
+                    <input type="text" id="platform-name-input" placeholder="輸入平台名稱..." style="width: 60%;">
+                    <button class="btn btn-yellow" onclick="updatePlatformName()">儲存名稱</button>
                 </div>
 
                 <div class="card">
@@ -1007,7 +1011,7 @@
             <p id="modal-status" style="font-size: 22px; margin-top: 15px;"></p>
             <button id="clock-in-btn" class="btn btn-yellow" style="width: 100%; margin-bottom: 25px; font-size: 48px; padding: 28px 0; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.25);">📍 點我出席打卡</button>
             <div style="margin: 20px 0;">
-                <p style="font-weight: bold; font-size: 22px; margin-bottom: 12px; color: var(--sidebar-bg);">🏷️️ 點擊設定目前任務去向：</p>
+                <p style="font-weight: bold; font-size: 22px; margin-bottom: 12px; color: var(--sidebar-bg);">🏷 點擊設定目前任務去向：</p>
                 <div class="student-action-btn-group" id="student-task-buttons-container">
                     <button class="task-option-btn" style="background-color: #E91E63;" onclick="setStudentTaskTag('潔牙')">潔牙</button>
                     <button class="task-option-btn" style="background-color: #9C27B0;" onclick="setStudentTaskTag('Ｔ－ＢＡＬＬ')">Ｔ－ＢＡＬＬ</button>
