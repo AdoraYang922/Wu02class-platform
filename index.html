@@ -519,7 +519,7 @@
             <button class="btn btn-yellow" onclick="openGachaRankModal()" style="background-color: #ff9800; color: white;">🎁 海螺抽卡</button>
             <button id="student-login-btn" class="btn btn-yellow" onclick="showStudentLoginModal()">👨‍🎓 學生登入</button>
             <button id="student-logout-btn" class="btn btn-yellow" onclick="studentLogout()" style="display: none;">登出個人面板</button>
-            <button id="login-btn" class="btn btn-yellow" onclick="showLoginModal()">👨‍🏫 老師登入</button>
+            <button id="login-btn" class="btn btn-yellow" onclick="showLoginModal()">👨‍‍🏫 老師登入</button>
             <button id="logout-btn" class="btn btn-yellow" onclick="logout()" style="display: none;">登出後台 (返回學生端)</button>
         </div>
     </div>
@@ -3000,7 +3000,7 @@
                 students = students.filter(s => s.id !== id); 
                 saveDataToStorage();
                 refreshAllViews(); 
-                showAdminAlert("刪除成功", "學生已刪除！", "🗑️️"); 
+                showAdminAlert("刪除成功", "學生已刪除！", "🗑"); 
             }
         }
 
